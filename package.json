@@ -9,6 +9,7 @@
     "prestart": "npm run build",
     "build": "tsc",
     "test": "jest --passWithNoTests",
+    "test:coverage": "jest --passWithNoTests --coverage",
     "lint": "eslint --ignore-path .gitignore . && prettier --ignore-path .gitignore -c .",
     "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --ignore-path .gitignore --write .",
     "prepare": "husky install"
