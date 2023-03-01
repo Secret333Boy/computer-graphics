@@ -40,6 +40,12 @@ describe('Vector3D', () => {
       const result = v1.dotProduct(v2);
       expect(result).toBe(32);
     });
+
+    it('should return a correct angle between another vector', () => {
+      const v1 = new Vector3D(1, 0, 0);
+      const v2 = new Vector3D(1, 1, 0);
+      expect(v1.angleBetweenRads(v2)).toBeCloseTo(Math.PI / 4);
+    });
   });
 
   describe('crossProduct', () => {
