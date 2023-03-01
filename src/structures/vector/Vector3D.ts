@@ -1,3 +1,5 @@
+import Vertex3D from '../vertex/Vertex3D';
+
 export default class Vector3D {
   public readonly x: number;
   public readonly y: number;
@@ -43,5 +45,13 @@ export default class Vector3D {
 
   get length() {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+  }
+
+  public toVertex3D(): Vertex3D {
+    return new Vertex3D(this.x, this.y, this.z);
+  }
+
+  public normalize(): Vector3D {
+    return this.multiply(1 / this.length);
   }
 }
