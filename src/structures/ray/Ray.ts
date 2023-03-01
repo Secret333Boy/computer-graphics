@@ -20,4 +20,8 @@ export default class Ray {
 
     return t >= 0;
   }
+
+  public angleBetweenRads(ray: Ray): number {
+    return this.vector.angleBetweenRads(ray.vector);
+  }
 }

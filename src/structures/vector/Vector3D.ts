@@ -35,6 +35,10 @@ export default class Vector3D {
     return this.x * vector.x + this.y * vector.y + this.z * vector.z;
   }
 
+  public angleBetweenRads(vector: Vector3D): number {
+    return Math.acos(this.dotProduct(vector) / (this.length * vector.length));
+  }
+
   public crossProduct(vector: Vector3D): Vector3D {
     return new Vector3D(
       this.y * vector.z - this.z * vector.y,
