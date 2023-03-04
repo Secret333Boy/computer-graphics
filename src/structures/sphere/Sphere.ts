@@ -18,6 +18,7 @@ export class Sphere implements Traceable {
     const b = 2 * ray.vector.dotProduct(ocVector);
     const c = ocVector.dotProduct(ocVector) - this.radius ** 2;
     const D = b * b - 4 * a * c;
+
     if (D < 0) {
       return false;
     } else if (D === 0) {
