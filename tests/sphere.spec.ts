@@ -1,8 +1,7 @@
 import Vertex3D from '../src/structures/vertex/Vertex3D';
-import {Sphere} from '../src/structures/sphere/Sphere';
+import { Sphere } from '../src/structures/sphere/Sphere';
 import Ray from '../src/structures/ray/Ray';
 import Vector3D from '../src/structures/vector/Vector3D';
-
 
 describe('Sphere', () => {
   const center = new Vertex3D(0, 0, 0);
