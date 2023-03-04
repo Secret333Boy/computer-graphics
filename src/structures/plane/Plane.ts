@@ -9,6 +9,4 @@ export default class Plane {
     this.vector = vector;
     this.point = point;
   }
-
-  //public getNormal()
 }
