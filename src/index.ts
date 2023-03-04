@@ -1,4 +1,4 @@
-import ConsoleRenderer from './ConsoleRender';
+import ConsoleRenderer from './ConsoleRenderer';
 import Camera from './structures/camera/Camera';
 import { Sphere } from './structures/sphere/Sphere';
 import Vector3D from './structures/vector/Vector3D';
