@@ -23,4 +23,16 @@ describe('Ray', () => {
       expect(ray.hasInside(vertexC)).toBe(false);
     });
   });
+
+  describe('angleBetweenRads', () => {
+    it('should return a correct angle between another vector', () => {
+      const v1 = new Vector3D(1, 0, 0);
+      const v2 = new Vector3D(1, 1, 0);
+      expect(
+        new Ray(new Vertex3D(0, 3, 1), v1).angleBetweenRads(
+          new Ray(new Vertex3D(13, 3, 2), v2)
+        )
+      ).toBeCloseTo(Math.PI / 4);
+    });
+  });
 });
