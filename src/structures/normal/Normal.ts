@@ -1,7 +1,6 @@
-import Ray from '../../ray/Ray';
-import Vector3D from '../../vector/Vector3D';
+import Vector3D from '../vector/Vector3D';
 
-export class DirectionalLight {
+export default class Normal3D {
   public readonly vector: Vector3D;
   constructor(vector: Vector3D) {
     this.vector = vector.normalize();

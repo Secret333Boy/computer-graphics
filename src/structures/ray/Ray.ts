@@ -7,7 +7,7 @@ export default class Ray {
 
   constructor(position: Vertex3D, vector: Vector3D) {
     this.position = position;
-    this.vector = vector;
+    this.vector = vector.normalize();
   }
 
   public hasInside(vertex: Vertex3D): boolean {
