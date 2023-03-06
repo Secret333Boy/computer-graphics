@@ -7,12 +7,6 @@ import Vector3D from '../src/structures/vector/Vector3D';
 import { DirectionalLight } from '../src/structures/light/directional-light/DirectionalLight';
 import { Sphere } from '../src/structures/sphere/Sphere';
 
-class MockObject implements Traceable {
-  public getIntersection() {
-    return null;
-  }
-}
-
 describe('ConsoleRenderer', () => {
   let scene: Scene;
   let renderer: ConsoleRenderer;
