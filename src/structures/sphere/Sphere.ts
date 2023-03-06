@@ -25,17 +25,13 @@ export class Sphere implements Traceable {
     }
     const t1 = (-b + Math.sqrt(D)) / (2 * a);
     const t2 = (-b - Math.sqrt(D)) / (2 * a);
-    if (t1 < 0 && t2 < 0) {
+    // there are two options, t1 and t2 both < 0 which means ray hits the sphere but from behind,
+    // or just t2 < 0 which means ray hits the sphere but starts inside it;
+    // in both ways let's consider it as no hit
+    if (t2 < 0) {
       return null;
     }
-    let t;
-    if (t1 < 0) {
-      t = t2;
-    } else if (t2 < 0) {
-      t = t1;
-    } else {
-      t = Math.min(t1, t2);
-    }
+    const t = Math.min(t1, t2);
     const pHit = ray.position.toVector().add(ray.vector.multiply(t));
     return {
       normal: new Normal3D(pHit.subtract(this.center.toVector())),
