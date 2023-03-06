@@ -10,7 +10,7 @@ export default class Plane {
     this.vector = vector;
     this.point = point;
   }
-  
+
   public intersection(ray: Ray): number | null {
     const denominator = this.vector.dotProduct(ray.vector);
     //accos a
@@ -20,12 +20,11 @@ export default class Plane {
     if (denominator === 0) {
       //if the ray is paralel to the plane
       return null;
-    } else if ( cosAngle <=0 ){
+    } else if (cosAngle <= 0) {
       //the intersection is behind the ray origin
       return null;
     } else {
-      const angle = Math.acos(cosAngle);
-      return angle;
+      return Math.acos(cosAngle);
     }
   }
 }
