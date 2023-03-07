@@ -36,7 +36,7 @@ export default class Plane implements Traceable {
       //точка перетину
       pHit: pHit.toVertex3D(),
       //відстанб від початку променя до точки перетину
-      t: t / ray.vector.length,
+      t: t,
     };
   }
 }
