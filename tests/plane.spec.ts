@@ -9,7 +9,10 @@ describe('Plane', () => {
   const plane = new Plane(vector, point);
 
   test('constructor initializes vector and point', () => {
-    expect(plane.vector).toEqual(vector);
+    expect(plane.normal.vector.length).toEqual(1);
+    expect(plane.normal.vector.x).toEqual(plane.normal.vector.y);
+    expect(plane.normal.vector.y).toEqual(plane.normal.vector.z);
+    expect(plane.normal.vector.x).toBeGreaterThan(0);
     expect(plane.point).toEqual(point);
   });
 

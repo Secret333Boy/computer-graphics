@@ -14,9 +14,13 @@ export default class Camera {
     // number of horizontal pixels
     public readonly hResolution: number
   ) {
-    this.rightVector = this.viewVector
-      .crossProduct(new Vector3D(0, 0, 1))
-      .normalize();
+    if (this.viewVector.crossProduct(new Vector3D(0, 0, 1)).length === 0) {
+      this.rightVector = new Vector3D(1, 0, 0);
+    } else {
+      this.rightVector = this.viewVector
+        .crossProduct(new Vector3D(0, 0, 1))
+        .normalize();
+    }
     this.upVector = this.viewVector.crossProduct(this.rightVector).normalize();
   }
 
