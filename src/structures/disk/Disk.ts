@@ -1,28 +1,27 @@
-import { Traceable } from '../../types/Traceable';
+import { HitInfo, Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
-import Ray from '../ray/Ray';
-import Vector3D from '../vector/Vector3D';
 import Vertex3D from '../vertex/Vertex3D';
+import Ray from '../ray/Ray';
 
-export default class Plane implements Traceable {
+export default class Disk implements Traceable {
+  public readonly center: Vertex3D;
   public readonly normal: Normal3D;
-  public readonly point: Vertex3D;
+  public readonly radius: number;
 
-  constructor(vector: Vector3D, point: Vertex3D) {
-    this.normal = new Normal3D(vector);
-    this.point = point;
+  constructor(center: Vertex3D, normal: Normal3D, radius: number) {
+    this.center = center;
+    this.normal = normal;
+    this.radius = radius;
   }
 
   public getIntersection(
     ray: Ray
   ): { t: number; pHit: Vertex3D; normal: Normal3D } | null {
     const denominator = this.normal.vector.dotProduct(ray.vector);
-
     if (Math.abs(denominator) < 0.0001) return null;
 
-    //відстань від точки початку до перетина
     const t =
-      this.point
+      this.center
         .toVector()
         .subtract(ray.position.toVector())
         .dotProduct(this.normal.vector) / denominator;
@@ -30,6 +29,10 @@ export default class Plane implements Traceable {
     if (t < 0) return null;
 
     const pHit = ray.position.toVector().add(ray.vector.multiply(t));
+    const distanceToCenter = pHit.subtract(this.center.toVector()).length;
+
+    if (distanceToCenter > this.radius) return null;
+
     return {
       //нормаль
       normal: this.normal,
