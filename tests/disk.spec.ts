@@ -22,12 +22,12 @@ describe('Disk', () => {
     });
 
     it('returns the correct intersection info if the ray hits the disk', () => {
-      const ray = new Ray(new Vertex3D(0, 0, 1), new Vector3D(0, 1, 0));
+      const ray = new Ray(new Vertex3D(0, 1, 1), new Vector3D(0, 0, -1));
       const intersection = disk.getIntersection(ray);
       expect(intersection).not.toBeNull();
-      expect(intersection!.t).toBe(1);
-      expect(intersection!.pHit).toEqual(new Vertex3D(0, 1, 0));
-      expect(intersection!.normal).toEqual(normal);
+      expect(intersection?.t).toBe(1);
+      expect(intersection?.pHit).toEqual(new Vertex3D(0, 1, 0));
+      expect(intersection?.normal).toEqual(normal);
     });
   });
 });
