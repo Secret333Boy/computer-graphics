@@ -16,24 +16,43 @@ describe('Sphere', () => {
   });
 
   describe('isIntersecting', () => {
-    it('should return true when the ray intersects the sphere', () => {
+    it('should return a correct inersection point, t and normal when the ray intersects the sphere', () => {
       const ray = new Ray(new Vertex3D(0, 0, -2), new Vector3D(0, 0, 1));
-      expect(sphere.isIntersecting(ray)).toBe(true);
+      const intersecion = sphere.getIntersection(ray);
+      expect(intersecion?.pHit).toEqual(new Vertex3D(0, 0, -1));
+      expect(intersecion?.normal.vector).toEqual(new Vector3D(0, 0, -1));
+      expect(intersecion?.t).toBe(1);
     });
 
-    it('should return false when the ray does not intersect the sphere', () => {
+    it('should return null when the ray does not intersect the sphere', () => {
       const ray = new Ray(new Vertex3D(0, 0, -2), new Vector3D(1, 1, 1));
-      expect(sphere.isIntersecting(ray)).toBe(false);
+      expect(sphere.getIntersection(ray)).toBe(null);
     });
 
-    it('should return true when the ray is tangent to the sphere', () => {
+    it('should return null when the ray intersects the sphere but only behind', () => {
+      const ray = new Ray(new Vertex3D(0, 0, 2), new Vector3D(0, 0, 1));
+      expect(sphere.getIntersection(ray)).toBe(null);
+    });
+
+    it('should return a correct intersection point, t and normal when the ray is tangent to the sphere', () => {
       const ray = new Ray(new Vertex3D(0, 1, 0), new Vector3D(1, 0, 0));
-      expect(sphere.isIntersecting(ray)).toBe(true);
+      const intersecion = sphere.getIntersection(ray);
+      expect(intersecion?.pHit).toEqual(new Vertex3D(0, 1, 0));
+      expect(intersecion?.normal.vector).toEqual(new Vector3D(0, 1, 0));
+      expect(intersecion?.t).toBeCloseTo(0);
     });
 
-    it('should return true when the ray starts outside the sphere and goes through the center', () => {
+    it('should return correct intersection when the ray starts outside the sphere and goes through the center', () => {
       const ray = new Ray(new Vertex3D(0, 0, -2), new Vector3D(0, 0, 2));
-      expect(sphere.isIntersecting(ray)).toBe(true);
+      const intersecion = sphere.getIntersection(ray);
+      expect(intersecion?.pHit).toEqual(new Vertex3D(0, 0, -1));
+      expect(intersecion?.normal.vector).toEqual(new Vector3D(0, 0, -1));
+      expect(intersecion?.t).toBe(1);
+    });
+    it('should return null intersection when the ray starts inside the sphere', () => {
+      const ray = new Ray(new Vertex3D(0, 0, 0), new Vector3D(0, 0, 1));
+      const intersecion = sphere.getIntersection(ray);
+      expect(intersecion).toBeNull();
     });
   });
 });
