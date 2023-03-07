@@ -24,7 +24,6 @@ describe('Plane', () => {
       const ray = new Ray(new Vertex3D(1, 1, 1), new Vector3D(0, 1, 0));
       expect(plane.intersection(ray)).toBeNull();
     });
-  
     it('should return null if the intersection is behind the ray origin', () => {
       const vector = new Vector3D(1, 0, 0);
       const point = new Vertex3D(0, 0, 0);
@@ -32,7 +31,6 @@ describe('Plane', () => {
       const ray = new Ray(new Vertex3D(-1, 1, 0), new Vector3D(0, 1, 0));
       expect(plane.intersection(ray)).toBeNull();
     });
-  
     it('should return the angle between the plane normal and the ray vector', () => {
       const vector = new Vector3D(1, 0, 0);
       const point = new Vertex3D(0, 0, 0);

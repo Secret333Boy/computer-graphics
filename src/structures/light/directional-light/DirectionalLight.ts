@@ -1,4 +1,3 @@
-import Ray from '../../ray/Ray';
 import Vector3D from '../../vector/Vector3D';
 
 export class DirectionalLight {
