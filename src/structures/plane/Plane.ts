@@ -1,3 +1,4 @@
+import Normal3D from '../normal/Normal';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 import Vertex3D from '../vertex/Vertex3D';
@@ -12,11 +13,12 @@ export default class Plane {
   }
 
   public intersection(ray: Ray): number | null {
-    const denominator = this.vector.dotProduct(ray.vector);
+    const denominator = this.normal.vector.dotProduct(ray.vector);
     //accos a
     //cos α = (n · d) / (|n| |d|),
 
-    const cosAngle = denominator / (this.vector.length * ray.vector.length);
+    const cosAngle =
+      denominator / (this.normal.vector.length * ray.vector.length);
     if (denominator === 0) {
       //if the ray is paralel to the plane
       return null;
