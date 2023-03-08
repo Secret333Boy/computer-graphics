@@ -1,23 +1,23 @@
 import Ray from './structures/ray/Ray';
+import { Hit } from './types/Hit';
 import { Renderer } from './types/Renderer';
 import { Scene } from './types/Scene';
-import { HitInfo } from './types/Traceable';
 import { findClosestHit } from './utils/findClosestHit';
 
 export default class ConsoleRenderer implements Renderer {
   constructor(public readonly scene: Scene) {}
 
-  private static dotProductSymbolMap(dot: number): string {
-    if (dot < -0.8) {
+  private static dotProductSymbolMap(dotProduct: number): string {
+    if (dotProduct < -0.8) {
       return '#';
     }
-    if (dot < -0.5) {
+    if (dotProduct < -0.5) {
       return 'O';
     }
-    if (dot < -0.2) {
+    if (dotProduct < -0.2) {
       return '*';
     }
-    if (dot < 0) {
+    if (dotProduct < 0) {
       return '.';
     }
     return ' ';
@@ -34,18 +34,18 @@ export default class ConsoleRenderer implements Renderer {
           camera.focalPoint,
           screenPixelPosition.toVector().subtract(camera.focalPoint.toVector())
         );
-        const hits = objects
+        const hits: Hit[] = objects
           .map((object) => object.getIntersection(ray))
-          .filter((hit): hit is HitInfo => hit !== null);
+          .filter((hit): hit is Hit => hit !== null);
         if (hits.length === 0) {
           result += ' ';
           continue;
         }
         const closestHit = findClosestHit(hits);
-        const dot = this.scene.light.vector.dotProduct(
+        const dotProduct = this.scene.light.vector.dotProduct(
           closestHit.normal.vector
         );
-        result += ConsoleRenderer.dotProductSymbolMap(dot);
+        result += ConsoleRenderer.dotProductSymbolMap(dotProduct);
       }
       console.log(result);
     }

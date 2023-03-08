@@ -1,3 +1,4 @@
+import { Hit } from '../../types/Hit';
 import { Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
 import Ray from '../ray/Ray';
@@ -6,37 +7,35 @@ import Vertex3D from '../vertex/Vertex3D';
 
 export default class Plane implements Traceable {
   public readonly normal: Normal3D;
-  public readonly point: Vertex3D;
+  public readonly vertex: Vertex3D;
 
-  constructor(vector: Vector3D, point: Vertex3D) {
-    this.normal = new Normal3D(vector);
-    this.point = point;
+  constructor(vertex: Vertex3D, normalVector: Vector3D) {
+    this.normal = new Normal3D(normalVector);
+    this.vertex = vertex;
   }
 
-  public getIntersection(
-    ray: Ray
-  ): { t: number; pHit: Vertex3D; normal: Normal3D } | null {
+  public getIntersection(ray: Ray): Hit | null {
     const denominator = this.normal.vector.dotProduct(ray.vector);
 
-    if (Math.abs(denominator) < 0.0001) return null;
+    if (Math.abs(denominator) === 0) return null;
 
-    //відстань від точки початку до перетина
     const t =
-      this.point
+      this.vertex
         .toVector()
         .subtract(ray.position.toVector())
         .dotProduct(this.normal.vector) / denominator;
 
     if (t < 0) return null;
 
-    const pHit = ray.position.toVector().add(ray.vector.multiply(t));
+    const pHit = ray.position
+      .toVector()
+      .add(ray.vector.multiply(t))
+      .toVertex3D();
+
     return {
-      //нормаль
       normal: this.normal,
-      //точка перетину
-      pHit: pHit.toVertex3D(),
-      //відстанб від початку променя до точки перетину
-      t: t,
+      vertex: pHit,
+      t,
     };
   }
 }
