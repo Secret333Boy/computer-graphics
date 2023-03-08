@@ -1,4 +1,4 @@
-import { HitInfo, Traceable } from '../../types/Traceable';
+import { Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
 import Vertex3D from '../vertex/Vertex3D';
 import Ray from '../ray/Ray';
