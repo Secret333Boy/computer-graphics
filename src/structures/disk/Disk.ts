@@ -1,26 +1,27 @@
-import { Hit } from '../../types/Hit';
 import { Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
+import Vertex3D from '../vertex/Vertex3D';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
-import Vertex3D from '../vertex/Vertex3D';
+import { Hit } from '../../types/Hit';
 
-export default class Plane implements Traceable {
+export default class Disk implements Traceable {
+  public readonly center: Vertex3D;
   public readonly normal: Normal3D;
-  public readonly vertex: Vertex3D;
+  public readonly radius: number;
 
-  constructor(vertex: Vertex3D, normalVector: Vector3D) {
+  constructor(center: Vertex3D, normalVector: Vector3D, radius: number) {
+    this.center = center;
     this.normal = new Normal3D(normalVector);
-    this.vertex = vertex;
+    this.radius = radius;
   }
 
   public getIntersection(ray: Ray): Hit | null {
     const denominator = this.normal.vector.dotProduct(ray.vector);
-
     if (Math.abs(denominator) === 0) return null;
 
     const t =
-      this.vertex
+      this.center
         .toVector()
         .subtract(ray.position.toVector())
         .dotProduct(this.normal.vector) / denominator;
@@ -31,8 +32,14 @@ export default class Plane implements Traceable {
       .toVector()
       .add(ray.vector.multiply(t))
       .toVertex3D();
+    const distanceToCenter = pHit
+      .toVector()
+      .subtract(this.center.toVector()).length;
+
+    if (distanceToCenter > this.radius) return null;
 
     return {
+      // flip this.normal if it's pointing in the opposite direction of the ray
       normal: new Normal3D(
         denominator < 0 ? this.normal.vector : this.normal.vector.multiply(-1)
       ),

@@ -1,6 +1,6 @@
-import { HitInfo } from '../types/Traceable';
+import { Hit } from '../types/Hit';
 
-export const findClosestHit = (hits: HitInfo[]): HitInfo => {
+export const findClosestHit = (hits: Hit[]): Hit => {
   let minT = hits[0].t;
   let closestHit = hits[0];
   for (let i = 1; i < hits.length; i++) {

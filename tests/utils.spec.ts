@@ -1,25 +1,25 @@
 import Normal3D from '../src/structures/normal/Normal';
 import Vector3D from '../src/structures/vector/Vector3D';
 import Vertex3D from '../src/structures/vertex/Vertex3D';
-import { HitInfo } from '../src/types/Traceable';
+import { Hit } from '../src/types/Hit';
 import { findClosestHit } from '../src/utils/findClosestHit';
 
 describe('utils', () => {
   const normal = new Normal3D(new Vector3D(0, 0, 1));
-  const hits: HitInfo[] = [
+  const hits: Hit[] = [
     {
       normal,
-      pHit: new Vertex3D(0, 0, 2),
+      vertex: new Vertex3D(0, 0, 2),
       t: 2,
     },
     {
       normal,
-      pHit: new Vertex3D(0, 0, 1),
+      vertex: new Vertex3D(0, 0, 1),
       t: 1,
     },
     {
       normal,
-      pHit: new Vertex3D(0, 0, 3),
+      vertex: new Vertex3D(0, 0, 3),
       t: 3,
     },
   ];

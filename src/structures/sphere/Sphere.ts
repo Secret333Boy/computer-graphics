@@ -2,6 +2,7 @@ import { Traceable } from '../../types/Traceable';
 import Vertex3D from '../vertex/Vertex3D';
 import Ray from '../ray/Ray';
 import Normal3D from '../normal/Normal';
+import { Hit } from '../../types/Hit';
 
 export class Sphere implements Traceable {
   public readonly center: Vertex3D;
@@ -12,7 +13,7 @@ export class Sphere implements Traceable {
     this.radius = radius;
   }
 
-  public getIntersection(ray: Ray) {
+  public getIntersection(ray: Ray): Hit | null {
     const a = ray.vector.dotProduct(ray.vector);
     // o - c vector
     const ocVector = ray.position.toVector().subtract(this.center.toVector());
@@ -35,8 +36,8 @@ export class Sphere implements Traceable {
     const pHit = ray.position.toVector().add(ray.vector.multiply(t));
     return {
       normal: new Normal3D(pHit.subtract(this.center.toVector())),
-      pHit: pHit.toVertex3D(),
-      t: t / ray.vector.length,
+      vertex: pHit.toVertex3D(),
+      t,
     };
   }
 }
