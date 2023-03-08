@@ -33,7 +33,9 @@ export default class Plane implements Traceable {
       .toVertex3D();
 
     return {
-      normal: this.normal,
+      normal: new Normal3D(
+        denominator < 0 ? this.normal.vector : this.normal.vector.multiply(-1)
+      ),
       vertex: pHit,
       t,
     };

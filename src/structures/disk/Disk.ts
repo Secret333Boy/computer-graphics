@@ -39,7 +39,10 @@ export default class Disk implements Traceable {
     if (distanceToCenter > this.radius) return null;
 
     return {
-      normal: this.normal,
+      // flip this.normal if it's pointing in the opposite direction of the ray
+      normal: new Normal3D(
+        denominator < 0 ? this.normal.vector : this.normal.vector.multiply(-1)
+      ),
       vertex: pHit,
       t,
     };

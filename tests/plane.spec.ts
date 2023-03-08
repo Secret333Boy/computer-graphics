@@ -7,11 +7,11 @@ import Normal3D from '../src/structures/normal/Normal';
 describe('Plane', () => {
   const normal = new Vector3D(0, 0, 1);
   const point = new Vertex3D(0, 0, 0);
-  const plane = new Plane(normal, point);
+  const plane = new Plane(point, normal);
 
   test('constructor initializes vector and point', () => {
     expect(plane.normal.vector).toEqual(new Vector3D(0, 0, 1));
-    expect(plane.point).toEqual(point);
+    expect(plane.vertex).toEqual(point);
   });
 
   describe('getIntersection', () => {
@@ -29,7 +29,7 @@ describe('Plane', () => {
       const ray = new Ray(new Vertex3D(0, 0, 1), new Vector3D(0, 0, -1));
       const intersection = plane.getIntersection(ray);
       expect(intersection).not.toBeNull();
-      expect(intersection?.pHit).toEqual(new Vertex3D(0, 0, 0));
+      expect(intersection?.vertex).toEqual(new Vertex3D(0, 0, 0));
       expect(intersection?.normal).toEqual(new Normal3D(normal));
     });
   });

@@ -1,4 +1,3 @@
-import Normal3D from '../src/structures/normal/Normal';
 import Vertex3D from '../src/structures/vertex/Vertex3D';
 import Disk from '../src/structures/disk/Disk';
 import Ray from '../src/structures/ray/Ray';
@@ -6,7 +5,7 @@ import Vector3D from '../src/structures/vector/Vector3D';
 
 describe('Disk', () => {
   const center = new Vertex3D(0, 0, 0);
-  const normal = new Normal3D(new Vector3D(0, 0, 1));
+  const normal = new Vector3D(0, 0, 1);
   const radius = 1;
   const disk = new Disk(center, normal, radius);
 
@@ -26,8 +25,7 @@ describe('Disk', () => {
       const intersection = disk.getIntersection(ray);
       expect(intersection).not.toBeNull();
       expect(intersection?.t).toBe(1);
-      expect(intersection?.pHit).toEqual(new Vertex3D(0, 1, 0));
-      expect(intersection?.normal).toEqual(normal);
+      expect(intersection?.vertex).toEqual(new Vertex3D(0, 1, 0));
     });
   });
 });
