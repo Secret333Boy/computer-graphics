@@ -2,7 +2,7 @@ import Normal3D from '../src/structures/normal/Normal';
 import Vector3D from '../src/structures/vector/Vector3D';
 import Vertex3D from '../src/structures/vertex/Vertex3D';
 import { Hit } from '../src/types/Hit';
-import { findClosestHit } from '../src/utils/findClosestHit';
+import { findCloserHit } from '../src/utils/findCloserHit';
 
 describe('utils', () => {
   const normal = new Normal3D(new Vector3D(0, 0, 1));
@@ -24,7 +24,7 @@ describe('utils', () => {
     },
   ];
   it('should compute the closest hit of several hits', () => {
-    const closestHit = findClosestHit(hits);
+    const closestHit = findCloserHit(...hits);
     expect(closestHit).toBe(hits[1]);
   });
 });
