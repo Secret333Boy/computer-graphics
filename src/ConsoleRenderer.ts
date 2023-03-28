@@ -2,7 +2,7 @@ import Ray from './structures/ray/Ray';
 import { Hit } from './types/Hit';
 import { Renderer } from './types/Renderer';
 import { Scene } from './types/Scene';
-import { findClosestHit } from './utils/findClosestHit';
+import { findCloserHit } from './utils/findCloserHit';
 
 export default class ConsoleRenderer implements Renderer {
   constructor(public readonly scene: Scene) {}
@@ -34,20 +34,26 @@ export default class ConsoleRenderer implements Renderer {
           camera.focalPoint,
           screenPixelPosition.toVector().subtract(camera.focalPoint.toVector())
         );
-        const hits: Hit[] = objects
-          .map((object) => object.getIntersection(ray))
-          .filter((hit): hit is Hit => hit !== null);
-        if (hits.length === 0) {
-          result += ' ';
-          continue;
+        let closestHit: Hit | null = null;
+
+        for (const object of objects) {
+          const hit = object.getIntersection(ray);
+
+          if (!hit) continue;
+
+          closestHit = closestHit ? findCloserHit(hit, closestHit) : hit;
         }
-        const closestHit = findClosestHit(hits);
-        const dotProduct = this.scene.light.vector.dotProduct(
-          closestHit.normal.vector
-        );
-        result += ConsoleRenderer.dotProductSymbolMap(dotProduct);
+
+        result += this.getChar(closestHit);
       }
       console.log(result);
     }
+  }
+
+  private getChar(hit: Hit | null) {
+    if (!hit) return ' ';
+
+    const dotProduct = this.scene.light.vector.dotProduct(hit.normal.vector);
+    return ConsoleRenderer.dotProductSymbolMap(dotProduct);
   }
 }
