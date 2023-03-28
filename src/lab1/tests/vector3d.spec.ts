@@ -1,4 +1,4 @@
-import Vector3D from '../src/structures/vector/Vector3D';
+import Vector3D from '../structures/vector/Vector3D';
 
 describe('Vector3D', () => {
   describe('add', () => {

@@ -1,7 +1,7 @@
-import Vertex3D from '../src/structures/vertex/Vertex3D';
-import Disk from '../src/structures/disk/Disk';
-import Ray from '../src/structures/ray/Ray';
-import Vector3D from '../src/structures/vector/Vector3D';
+import Vertex3D from '../structures/vertex/Vertex3D';
+import Disk from '../structures/disk/Disk';
+import Ray from '../structures/ray/Ray';
+import Vector3D from '../structures/vector/Vector3D';
 
 describe('Disk', () => {
   const center = new Vertex3D(0, 0, 0);

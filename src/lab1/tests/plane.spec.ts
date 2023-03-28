@@ -1,8 +1,8 @@
-import Vector3D from '../src/structures/vector/Vector3D';
-import Vertex3D from '../src/structures/vertex/Vertex3D';
-import Plane from '../src/structures/plane/Plane';
-import Ray from '../src/structures/ray/Ray';
-import Normal3D from '../src/structures/normal/Normal';
+import Vector3D from '../structures/vector/Vector3D';
+import Vertex3D from '../structures/vertex/Vertex3D';
+import Plane from '../structures/plane/Plane';
+import Ray from '../structures/ray/Ray';
+import Normal3D from '../structures/normal/Normal';
 
 describe('Plane', () => {
   const normal = new Vector3D(0, 0, 1);
