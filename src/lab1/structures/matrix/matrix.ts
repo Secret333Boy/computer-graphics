@@ -7,6 +7,10 @@ export class Matrix {
     }
 
     public multiply(other: Matrix): Matrix {
+        // check for dimensions
+        if (this.arr[0].length !== other.arr.length) {
+            throw new Error("Dimensions of matrices are not compatible");
+        }
         let result = new Matrix([]);
         for (let i = 0; i < this.arr.length; i++) {
             result.arr[i] = [];
@@ -27,9 +31,5 @@ export class Matrix {
 
     public toVector(): Vector3D {
         return new Vector3D(this.arr[0][0], this.arr[1][0], this.arr[2][0]);
-    }
-
-    public multiplyWithVector(vector: Vector3D): Vector3D {
-        return this.multiply(Matrix.fromVector(vector)).toVector();
     }
 }
