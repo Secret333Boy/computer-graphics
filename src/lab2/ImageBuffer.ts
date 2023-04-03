@@ -1,5 +1,4 @@
 import { ImageInfo } from './interfaces/ImageInfo';
-import { Pixel } from './interfaces/Pixel';
 import { Readable } from 'stream';
 
 export class ImageBuffer {
