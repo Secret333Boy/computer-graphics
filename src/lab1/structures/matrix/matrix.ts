@@ -11,7 +11,7 @@ export class Matrix {
     if (this.arr[0].length !== other.arr.length) {
       throw new Error('Dimensions of matrices are not compatible');
     }
-    let result = new Matrix([]);
+    const result = new Matrix([]);
     for (let i = 0; i < this.arr.length; i++) {
       result.arr[i] = [];
       for (let j = 0; j < other.arr[0].length; j++) {
