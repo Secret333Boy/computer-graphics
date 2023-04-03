@@ -1,6 +1,6 @@
-import Camera from '../src/structures/camera/Camera';
-import Vector3D from '../src/structures/vector/Vector3D';
-import Vertex3D from '../src/structures/vertex/Vertex3D';
+import Camera from '../structures/camera/Camera';
+import Vector3D from '../structures/vector/Vector3D';
+import Vertex3D from '../structures/vertex/Vertex3D';
 
 describe('Camera', () => {
   // camera with focal point at (1, 1, 1)

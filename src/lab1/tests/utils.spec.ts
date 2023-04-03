@@ -1,8 +1,8 @@
-import Normal3D from '../src/structures/normal/Normal';
-import Vector3D from '../src/structures/vector/Vector3D';
-import Vertex3D from '../src/structures/vertex/Vertex3D';
-import { Hit } from '../src/types/Hit';
-import { findClosestHit } from '../src/utils/findClosestHit';
+import Normal3D from '../structures/normal/Normal';
+import Vector3D from '../structures/vector/Vector3D';
+import Vertex3D from '../structures/vertex/Vertex3D';
+import { Hit } from '../types/Hit';
+import { findClosestHit } from '../utils/findClosestHit';
 
 describe('utils', () => {
   const normal = new Normal3D(new Vector3D(0, 0, 1));

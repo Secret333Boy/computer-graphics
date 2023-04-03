@@ -1,6 +1,6 @@
-import Vertex3D from '../src/structures/vertex/Vertex3D';
-import Vector3D from '../src/structures/vector/Vector3D';
-import Ray from '../src/structures/ray/Ray';
+import Vertex3D from '../structures/vertex/Vertex3D';
+import Vector3D from '../structures/vector/Vector3D';
+import Ray from '../structures/ray/Ray';
 
 describe('Ray', () => {
   const position = new Vertex3D(0, 0, 0);
