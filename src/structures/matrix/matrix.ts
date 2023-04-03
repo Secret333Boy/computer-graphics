@@ -1,3 +1,5 @@
+import Vector3D from "../vector/Vector3D";
+
 export class Matrix {
     private arr : number[][];
     constructor(arr: number[][]){
@@ -19,5 +21,15 @@ export class Matrix {
         return result;
     }
 
-    public 
+    public static fromVector(vector: Vector3D): Matrix {
+        return new Matrix([[vector.x], [vector.y], [vector.z]]);
+    }
+
+    public toVector(): Vector3D {
+        return new Vector3D(this.arr[0][0], this.arr[1][0], this.arr[2][0]);
+    }
+
+    public multiplyWithVector(vector: Vector3D): Vector3D {
+        return this.multiply(Matrix.fromVector(vector)).toVector();
+    }
 }
