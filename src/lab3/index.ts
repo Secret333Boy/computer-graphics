@@ -4,6 +4,7 @@ import Disk from './structures/disk/Disk';
 import { DirectionalLight } from './structures/light/directional-light/DirectionalLight';
 import Plane from './structures/plane/Plane';
 import { Sphere } from './structures/sphere/Sphere';
+import { Triangle } from './structures/triangle/Triangle';
 import Vector3D from './structures/vector/Vector3D';
 import Vertex3D from './structures/vertex/Vertex3D';
 import { Scene } from './types/Scene';
@@ -23,11 +24,17 @@ const disk = new Disk(new Vertex3D(0, 0, 10), new Vector3D(0, 0, -1), 3);
 
 const sphere = new Sphere(new Vertex3D(1, 1, 5), 1);
 
+const triangle = new Triangle(
+  new Vertex3D(0, 0, 5),
+  new Vertex3D(0, 1, 5),
+  new Vertex3D(1, 0, 5)
+);
+
 const directionalLight = new DirectionalLight(new Vector3D(0, 0, 1));
 
 const mainScene: Scene = {
   camera,
-  objects: [disk, sphere],
+  objects: [triangle],
   light: directionalLight,
 };
 

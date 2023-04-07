@@ -2,7 +2,6 @@ import { Hit } from '../../types/Hit';
 import { Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
 import Ray from '../ray/Ray';
-import Vector3D from '../vector/Vector3D';
 import Vertex3D from '../vertex/Vertex3D';
 
 export class Triangle implements Traceable {
@@ -12,7 +11,7 @@ export class Triangle implements Traceable {
     public readonly vertex3: Vertex3D
   ) {}
 
-  getIntersection(ray: Ray) {
+  getIntersection(ray: Ray): Hit | null {
     const E1 = this.vertex2.toVector().subtract(this.vertex1.toVector());
     const E2 = this.vertex3.toVector().subtract(this.vertex1.toVector());
     const D = ray.vector;
@@ -35,13 +34,18 @@ export class Triangle implements Traceable {
 
     if (u + v > 1) return null;
 
-    //TODO: vertex and normal
-    const pHit: Hit = {
-      t,
-      vertex: O.add(D.multiply(t)).toVertex3D(),
-      normal: new Normal3D(new Vector3D(0, 0, 0)),
-    };
+    const pHit = O.add(D.multiply(t)).toVertex3D();
 
-    return pHit;
+    const possibleNormal = E1.crossProduct(E2);
+
+    return {
+      t,
+      vertex: pHit,
+      normal: new Normal3D(
+        possibleNormal.dotProduct(D) < 0
+          ? possibleNormal
+          : possibleNormal.multiply(-1)
+      ),
+    };
   }
 }
