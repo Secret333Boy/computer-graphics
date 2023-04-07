@@ -1,7 +1,7 @@
+import Ray from '../lab1/structures/ray/Ray';
+import { Renderer } from '../lab1/types/Renderer';
+import { Scene } from '../lab1/types/Scene';
 import { CommonRenderer } from './CommonRenderer';
-import Ray from './structures/ray/Ray';
-import { Renderer } from './types/Renderer';
-import { Scene } from './types/Scene';
 
 export class RendererFactory {
   public static createRenderer(
