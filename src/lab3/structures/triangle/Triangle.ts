@@ -38,7 +38,7 @@ export class Triangle implements Traceable {
     //TODO: vertex and normal
     const pHit: Hit = {
       t,
-      vertex: new Vertex3D(0, 0, 0),
+      vertex: O.add(D.multiply(t)).toVertex3D(),
       normal: new Normal3D(new Vector3D(0, 0, 0)),
     };
 
