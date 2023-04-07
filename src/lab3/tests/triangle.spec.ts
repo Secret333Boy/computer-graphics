@@ -34,5 +34,15 @@ describe('Triangle', () => {
       expect(hit?.vertex.y).toBe(0.5);
       expect(hit?.vertex.z).toBe(0);
     });
+
+    it('should return null if the ray hits the back side of the triangle', () => {
+      const ray = new Ray(new Vertex3D(0.5, 0.5, 1), new Vector3D(0, 0, 1));
+      expect(triangle.getIntersection(ray)).toBeNull();
+    });
+
+    it('should return null if the ray intersects outside the triangle', () => {
+      const ray = new Ray(new Vertex3D(2, 2, 1), new Vector3D(0, 0, -1));
+      expect(triangle.getIntersection(ray)).toBeNull();
+    });
   });
 });
