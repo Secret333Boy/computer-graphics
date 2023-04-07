@@ -1,5 +1,5 @@
 import { Matrix } from '../structures/matrix/matrix';
-import Vector3D from '../structures/vector/Vector3D';
+import Vector3D from '../../lab1/structures/vector/Vector3D';
 
 describe('matrix', () => {
   it('should be able to multiply two matrices', () => {

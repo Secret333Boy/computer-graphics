@@ -2,8 +2,8 @@ import {
   transformVector,
   transformations,
 } from '../structures/matrix/transformation-factories';
-import Vector3D from '../structures/vector/Vector3D';
-import { expectVector3DCloseTo } from './helpers';
+import Vector3D from '../../lab1/structures/vector/Vector3D';
+import { expectVector3DCloseTo } from '../../lab1/tests/helpers';
 
 describe('transformation-factories', () => {
   const initialVector = new Vector3D(1, 2, 3);
