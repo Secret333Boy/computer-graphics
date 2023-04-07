@@ -4,7 +4,7 @@ import Vertex3D from '../../../lab1/structures/vertex/Vertex3D';
 import { Hit } from '../../../lab1/types/Hit';
 import { Traceable } from '../../../lab1/types/Traceable';
 
-export class Triangle implements Traceable {
+export default class Triangle implements Traceable {
   constructor(
     public readonly vertex1: Vertex3D,
     public readonly vertex2: Vertex3D,

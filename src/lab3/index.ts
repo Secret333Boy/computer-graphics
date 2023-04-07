@@ -4,7 +4,7 @@ import { DirectionalLight } from '../lab1/structures/light/directional-light/Dir
 import Vector3D from '../lab1/structures/vector/Vector3D';
 import Vertex3D from '../lab1/structures/vertex/Vertex3D';
 import { Scene } from '../lab1/types/Scene';
-import { Triangle } from './structures/triangle/Triangle';
+import Triangle from './structures/triangle/Triangle';
 
 const camera = new Camera(
   new Vertex3D(0, 0, 0),
