@@ -1,8 +1,8 @@
-import { Hit } from '../../types/Hit';
-import { Traceable } from '../../types/Traceable';
-import Normal3D from '../normal/Normal';
-import Ray from '../ray/Ray';
-import Vertex3D from '../vertex/Vertex3D';
+import Normal3D from '../../../lab1/structures/normal/Normal';
+import Ray from '../../../lab1/structures/ray/Ray';
+import Vertex3D from '../../../lab1/structures/vertex/Vertex3D';
+import { Hit } from '../../../lab1/types/Hit';
+import { Traceable } from '../../../lab1/types/Traceable';
 
 export class Triangle implements Traceable {
   constructor(

@@ -1,4 +1,4 @@
-import Vector3D from '../vector/Vector3D';
+import Vector3D from '../../../lab1/structures/vector/Vector3D';
 
 export class Matrix {
   private arr: number[][];

@@ -1,6 +1,6 @@
-import Ray from './structures/ray/Ray';
-import { Renderer } from './types/Renderer';
-import { Scene } from './types/Scene';
+import Ray from '../lab1/structures/ray/Ray';
+import { Renderer } from '../lab1/types/Renderer';
+import { Scene } from '../lab1/types/Scene';
 
 export class CommonRenderer implements Renderer {
   constructor(
