@@ -4,7 +4,7 @@ import { Traceable } from '../../../lab1/types/Traceable';
 import { findCloserHit } from '../../../lab1/utils/findCloserHit';
 
 export default class TraceableGroup<T extends Traceable> implements Traceable {
-  constructor(private traceableObjects: T[] = []) {}
+  constructor(protected traceableObjects: T[] = []) {}
 
   public getIntersection(ray: Ray): Hit | null {
     let closestHit: Hit | null = null;

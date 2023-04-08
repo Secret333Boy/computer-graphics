@@ -1,13 +1,12 @@
 import fs, { ReadStream } from 'fs';
 import Mesh from './structures/mesh/Mesh';
-import path from 'path';
 import readline from 'readline';
 import Vertex3D from '../lab1/structures/vertex/Vertex3D';
 import Triangle from './structures/triangle/Triangle';
 
 export default class ReaderOBJ {
   public static async read(pathToFile: string): Promise<Mesh> {
-    const stream = fs.createReadStream(path.resolve(__dirname, pathToFile));
+    const stream = fs.createReadStream(pathToFile);
     return ReaderOBJ.readStream(stream);
   }
 
