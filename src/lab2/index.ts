@@ -3,6 +3,7 @@ import { ImageBuffer } from './ImageBuffer';
 import { WriterPPM } from './plugins/ppm/WriterPPM';
 import { createWriteStream } from 'fs';
 import path from 'path';
+import WriterPNG from './plugins/png/WriterPNG.writer';
 
 const pixels = new PassThrough({ objectMode: true });
 pixels.push({ r: 0, g: 0, b: 0 });
@@ -17,6 +18,6 @@ const imageBuffer = new ImageBuffer(
   },
   pixels
 );
-const stream = new WriterPPM().write(imageBuffer);
-const fileStream = createWriteStream(path.resolve(__dirname, 'file.ppm'));
+const stream = new WriterPNG().write(imageBuffer);
+const fileStream = createWriteStream(path.resolve(__dirname, 'file.png'));
 stream.pipe(fileStream);

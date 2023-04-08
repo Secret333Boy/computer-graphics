@@ -2,6 +2,7 @@ import { ReadStream } from 'fs';
 import { ImageBuffer } from './ImageBuffer';
 import { ImageReader } from './interfaces/ImageReader';
 import { ImageWriter } from './interfaces/ImageWriter';
+import { Readable } from 'stream';
 
 export class ImageConvertor {
   private readonly imageReaders: ImageReader[] = [];
@@ -10,10 +11,7 @@ export class ImageConvertor {
     // "png": ...
   };
 
-  public async convert(
-    stream: ReadStream,
-    imageType: string
-  ): Promise<ReadableStream<string>> {
+  public async convert(stream: Readable, imageType: string): Promise<Readable> {
     const writer = this.writersMap[imageType];
     if (!writer) throw new Error('This output format is not supported');
 
