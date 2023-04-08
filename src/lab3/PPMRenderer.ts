@@ -18,9 +18,7 @@ export default class PPMRenderer implements Renderer {
   public render() {
     const { camera, objects } = this.scene;
 
-    const writeStream = createWriteStream(
-      path.resolve(__dirname, this.filePath)
-    );
+    const writeStream = createWriteStream(this.filePath);
 
     const pixelsStream = new PassThrough({ objectMode: true });
 

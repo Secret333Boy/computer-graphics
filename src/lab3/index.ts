@@ -8,19 +8,19 @@ import PPMRenderer from './PPMRenderer';
 import ReaderOBJ from './ReaderOBJ';
 
 let objFilePath = '';
-let output = '';
+let outputPath = '';
 for (let i = 0; i < process.argv.length; i++) {
   if (process.argv[i] === '--objFile') {
     objFilePath = process.argv[i + 1];
   }
 
   if (process.argv[i] === '--output') {
-    output = process.argv[i + 1];
+    outputPath = process.argv[i + 1];
   }
 }
 
 if (!objFilePath) throw new Error('Invalid input: no obj path');
-if (!output) throw new Error('Invalid input: no output path');
+if (!outputPath) throw new Error('Invalid input: no output path');
 
 (async () => {
   const mesh = await ReaderOBJ.read(objFilePath);
@@ -41,7 +41,7 @@ if (!output) throw new Error('Invalid input: no output path');
     objects: [new Sphere(new Vertex3D(0, 0, 5), 300), mesh],
   };
 
-  const ppmRenderer = new PPMRenderer(scene, output);
+  const ppmRenderer = new PPMRenderer(scene, outputPath);
 
   ppmRenderer.render();
 })();
