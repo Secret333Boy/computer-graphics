@@ -58,7 +58,7 @@ export default class PPMRenderer implements Renderer {
     }
   }
 
-  private handleHit(hit: Hit | null): Pixel {
+  public handleHit(hit: Hit | null): Pixel {
     if (!hit) return { r: 0, g: 0, b: 0 };
 
     const dotProduct = hit.normal.vector.dotProduct(this.scene.light.vector);
