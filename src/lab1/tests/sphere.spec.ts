@@ -20,7 +20,7 @@ describe('Sphere', () => {
       const ray = new Ray(new Vertex3D(0, 0, -2), new Vector3D(0, 0, 1));
       const intersecion = sphere.getIntersection(ray);
       expect(intersecion?.vertex).toEqual(new Vertex3D(0, 0, -1));
-      expect(intersecion?.normal.vector).toEqual(new Vector3D(0, 0, -1));
+      expect(intersecion?.normal.vector).toEqual(new Vector3D(0, 0, 1));
       expect(intersecion?.t).toBe(1);
     });
 
@@ -38,7 +38,7 @@ describe('Sphere', () => {
       const ray = new Ray(new Vertex3D(0, 1, 0), new Vector3D(1, 0, 0));
       const intersecion = sphere.getIntersection(ray);
       expect(intersecion?.vertex).toEqual(new Vertex3D(0, 1, 0));
-      expect(intersecion?.normal.vector).toEqual(new Vector3D(0, 1, 0));
+      expect(intersecion?.normal.vector).toEqual(new Vector3D(0, -1, 0));
       expect(intersecion?.t).toBeCloseTo(0);
     });
 
@@ -46,11 +46,11 @@ describe('Sphere', () => {
       const ray = new Ray(new Vertex3D(0, 0, -2), new Vector3D(0, 0, 2));
       const intersecion = sphere.getIntersection(ray);
       expect(intersecion?.vertex).toEqual(new Vertex3D(0, 0, -1));
-      expect(intersecion?.normal.vector).toEqual(new Vector3D(0, 0, -1));
+      expect(intersecion?.normal.vector).toEqual(new Vector3D(0, 0, 1));
       expect(intersecion?.t).toBe(1);
     });
     it('should return null intersection when the ray starts inside the sphere', () => {
-      const ray = new Ray(new Vertex3D(0, 0, 0), new Vector3D(0, 0, 1));
+      const ray = new Ray(new Vertex3D(0, 0, 0), new Vector3D(0, 0, -1));
       const intersecion = sphere.getIntersection(ray);
       expect(intersecion).toBeNull();
     });

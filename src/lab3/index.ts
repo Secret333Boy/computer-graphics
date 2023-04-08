@@ -1,33 +1,47 @@
-import ConsoleRenderer from '../lab1/ConsoleRenderer';
 import Camera from '../lab1/structures/camera/Camera';
 import { DirectionalLight } from '../lab1/structures/light/directional-light/DirectionalLight';
+import { Sphere } from '../lab1/structures/sphere/Sphere';
 import Vector3D from '../lab1/structures/vector/Vector3D';
 import Vertex3D from '../lab1/structures/vertex/Vertex3D';
 import { Scene } from '../lab1/types/Scene';
-import Triangle from './structures/triangle/Triangle';
+import PPMRenderer from './structures/renderers/PPMRenderer';
+import ReaderOBJ from './ReaderOBJ';
+import { createReadStream, createWriteStream } from 'fs';
 
-const camera = new Camera(
-  new Vertex3D(0, 0, 0),
-  new Vector3D(0, 0, 1),
-  1,
-  Math.PI / 3,
-  50
-);
+let objFilePath = '';
+let outputPath = '';
+for (let i = 0; i < process.argv.length; i++) {
+  if (process.argv[i] === '--objFile') {
+    objFilePath = process.argv[i + 1];
+  }
 
-const triangle = new Triangle(
-  new Vertex3D(0, 0, 5),
-  new Vertex3D(0, 1, 5),
-  new Vertex3D(1, 0, 5)
-);
+  if (process.argv[i] === '--output') {
+    outputPath = process.argv[i + 1];
+  }
+}
 
-const directionalLight = new DirectionalLight(new Vector3D(0, 0, 1));
+if (!objFilePath) throw new Error('Invalid input: no obj path');
+if (!outputPath) throw new Error('Invalid input: no output path');
 
-const mainScene: Scene = {
-  camera,
-  objects: [triangle],
-  light: directionalLight,
-};
+(async () => {
+  const inputReadStream = createReadStream(objFilePath);
+  const mesh = await ReaderOBJ.readStream(inputReadStream);
 
-const consoleRenderer = new ConsoleRenderer(mainScene);
+  const camera = new Camera(
+    new Vertex3D(0, 500, -2000),
+    new Vector3D(0, 0, 1),
+    1,
+    Math.PI / 3,
+    600
+  );
+  const directionalLight = new DirectionalLight(new Vector3D(-1, 0, 1));
+  const scene: Scene = {
+    camera,
+    light: directionalLight,
+    objects: [new Sphere(new Vertex3D(0, 0, 5), 300), mesh],
+  };
 
-consoleRenderer.render();
+  const outputWriteStream = createWriteStream(outputPath);
+  const ppmRenderer = new PPMRenderer(scene, outputWriteStream);
+  await ppmRenderer.render();
+})();

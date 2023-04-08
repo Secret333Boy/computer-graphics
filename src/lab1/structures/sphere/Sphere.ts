@@ -35,7 +35,7 @@ export class Sphere implements Traceable {
     const t = Math.min(t1, t2);
     const pHit = ray.position.toVector().add(ray.vector.multiply(t));
     return {
-      normal: new Normal3D(pHit.subtract(this.center.toVector())),
+      normal: new Normal3D(this.center.toVector().subtract(pHit)),
       vertex: pHit.toVertex3D(),
       t,
     };
