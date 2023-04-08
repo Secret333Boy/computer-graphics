@@ -43,8 +43,8 @@ export default class Triangle implements Traceable {
       vertex: pHit,
       normal: new Normal3D(
         possibleNormal.dotProduct(D) < 0
-          ? possibleNormal
-          : possibleNormal.multiply(-1)
+          ? possibleNormal.multiply(-1)
+          : possibleNormal
       ),
     };
   }

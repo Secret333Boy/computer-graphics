@@ -6,16 +6,16 @@ export default class ConsoleRenderer extends CommonRenderer {
   private line = '';
 
   private static dotProductSymbolMap(dotProduct: number): string {
-    if (dotProduct < -0.8) {
+    if (dotProduct > 0.8) {
       return '#';
     }
-    if (dotProduct < -0.5) {
+    if (dotProduct > 0.5) {
       return 'O';
     }
-    if (dotProduct < -0.2) {
+    if (dotProduct > 0.2) {
       return '*';
     }
-    if (dotProduct < 0) {
+    if (dotProduct > 0) {
       return '.';
     }
     return ' ';

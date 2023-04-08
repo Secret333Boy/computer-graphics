@@ -41,7 +41,7 @@ export default class Disk implements Traceable {
     return {
       // flip this.normal if it's pointing in the opposite direction of the ray
       normal: new Normal3D(
-        denominator < 0 ? this.normal.vector : this.normal.vector.multiply(-1)
+        denominator < 0 ? this.normal.vector.multiply(-1) : this.normal.vector
       ),
       vertex: pHit,
       t,

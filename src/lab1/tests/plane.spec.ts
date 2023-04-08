@@ -5,12 +5,12 @@ import Ray from '../structures/ray/Ray';
 import Normal3D from '../structures/normal/Normal';
 
 describe('Plane', () => {
-  const normal = new Vector3D(0, 0, 1);
+  const normal = new Vector3D(0, 0, -1);
   const point = new Vertex3D(0, 0, 0);
   const plane = new Plane(point, normal);
 
   test('constructor initializes vector and point', () => {
-    expect(plane.normal.vector).toEqual(new Vector3D(0, 0, 1));
+    expect(plane.normal.vector).toEqual(new Vector3D(0, 0, -1));
     expect(plane.vertex).toEqual(point);
   });
 

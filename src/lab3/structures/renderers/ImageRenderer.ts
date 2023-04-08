@@ -41,7 +41,7 @@ export default abstract class ImageRenderer extends CommonRenderer {
           this.scene.light.vector
         );
 
-        const color = Math.round(dotProduct * -255);
+        const color = dotProduct < 0 ? 0 : Math.round(dotProduct * 255);
 
         pixelsStream.push({ r: color, g: color, b: color });
       },
