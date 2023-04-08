@@ -4,7 +4,7 @@ import { Sphere } from '../lab1/structures/sphere/Sphere';
 import Vector3D from '../lab1/structures/vector/Vector3D';
 import Vertex3D from '../lab1/structures/vertex/Vertex3D';
 import { Scene } from '../lab1/types/Scene';
-import PPMRenderer from './PPMRenderer';
+import PPMRenderer from './structures/renderers/PPMRenderer';
 import ReaderOBJ from './ReaderOBJ';
 
 let objFilePath = '';
@@ -43,5 +43,5 @@ if (!outputPath) throw new Error('Invalid input: no output path');
 
   const ppmRenderer = new PPMRenderer(scene, outputPath);
 
-  ppmRenderer.render();
+  await ppmRenderer.render();
 })();

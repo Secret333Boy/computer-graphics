@@ -1,11 +1,9 @@
-import Ray from './structures/ray/Ray';
+import CommonRenderer from '../lab3/structures/renderers/CommonRenderer';
 import { Hit } from './types/Hit';
-import { Renderer } from './types/Renderer';
 import { Scene } from './types/Scene';
-import { findCloserHit } from './utils/findCloserHit';
 
-export default class ConsoleRenderer implements Renderer {
-  constructor(public readonly scene: Scene) {}
+export default class ConsoleRenderer extends CommonRenderer {
+  private line = '';
 
   private static dotProductSymbolMap(dotProduct: number): string {
     if (dotProduct < -0.8) {
@@ -23,31 +21,17 @@ export default class ConsoleRenderer implements Renderer {
     return ' ';
   }
 
-  public render() {
-    const { camera, objects } = this.scene;
-
-    for (let y = camera.vResolution - 1; y >= 0; y--) {
-      let result = '';
-      for (let x = 0; x < camera.hResolution; x++) {
-        const screenPixelPosition = camera.getScreenPixelCoordinates(x, y);
-        const ray = new Ray(
-          camera.focalPoint,
-          screenPixelPosition.toVector().subtract(camera.focalPoint.toVector())
-        );
-        let closestHit: Hit | null = null;
-
-        for (const object of objects) {
-          const hit = object.getIntersection(ray);
-
-          if (!hit) continue;
-
-          closestHit = closestHit ? findCloserHit(hit, closestHit) : hit;
-        }
-
-        result += this.getChar(closestHit);
-      }
-      console.log(result);
-    }
+  constructor(scene: Scene) {
+    super({
+      scene,
+      onHit: (hit) => {
+        this.line += this.getChar(hit);
+      },
+      onRowStart: () => {
+        this.line = '';
+      },
+      onRowEnd: () => console.log(this.line),
+    });
   }
 
   private getChar(hit: Hit | null) {
