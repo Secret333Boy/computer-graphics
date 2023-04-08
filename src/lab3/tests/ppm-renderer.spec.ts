@@ -14,8 +14,8 @@ describe('PPMRenderer', () => {
     new Camera(
       new Vertex3D(0, 0, 0),
       new Vector3D(0, 0, 1),
-      1,
       Math.PI / 3,
+      50,
       50
     ),
     new DirectionalLight(new Vector3D(0, 0, 1))

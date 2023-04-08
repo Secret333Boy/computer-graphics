@@ -11,9 +11,9 @@ describe('Camera', () => {
   const camera = new Camera(
     new Vertex3D(1, 1, 1),
     new Vector3D(1, 1, 1),
-    ratio,
     Math.PI / 3,
-    1920
+    1920,
+    Math.floor(1920 / ratio)
   );
   it('should have a screen center', () => {
     expect(camera.screenCenter).toEqual(new Vertex3D(2, 2, 2));
@@ -39,8 +39,8 @@ describe('Camera', () => {
   const convenientCamera = new Camera(
     new Vertex3D(0, 0, 0),
     new Vector3D(1, 1, 0),
-    1,
     Math.PI / 2,
+    1920,
     1920
   );
 

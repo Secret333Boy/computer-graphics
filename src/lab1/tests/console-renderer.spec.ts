@@ -18,8 +18,8 @@ describe('ConsoleRenderer', () => {
     camera = new Camera(
       new Vertex3D(0, 0, -2),
       new Vector3D(0, 0, 1),
-      1,
       Math.PI / 3,
+      50,
       50
     );
     const light = new DirectionalLight(new Vector3D(1, 0, 0));
