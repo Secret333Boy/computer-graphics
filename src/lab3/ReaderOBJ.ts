@@ -29,11 +29,7 @@ export default class ReaderOBJ {
         vertices.push(new Vertex3D(x, y, z));
       }
 
-      if (
-        /^f\s\d+(\/\d*)?(\/\d+)?\s\d+(\/\d*)?(\/\d+)?\s\d+(\/\d*)?(\/\d+)?/.test(
-          line
-        )
-      ) {
+      if (/^f(\s\d+(\/\d*)?(\/\d+)?){1,3}/.test(line)) {
         const lineParts = line.split(/\s/);
         const part1 = lineParts[1];
         const part2 = lineParts[2];
