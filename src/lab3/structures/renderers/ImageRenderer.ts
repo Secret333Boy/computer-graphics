@@ -1,4 +1,4 @@
-import { createWriteStream } from 'fs';
+import { WriteStream } from 'fs';
 import { PassThrough } from 'stream';
 import { Scene } from '../../../lab1/types/Scene';
 import { ImageBuffer } from '../../../lab2/ImageBuffer';
@@ -7,15 +7,13 @@ import CommonRenderer from './CommonRenderer';
 
 export interface ImageRendererProps {
   scene: Scene;
-  filePath: string;
+  writeStream: WriteStream;
   imageWriter: ImageWriter;
 }
 
 export default abstract class ImageRenderer extends CommonRenderer {
   constructor(props: ImageRendererProps) {
-    const { scene, filePath, imageWriter } = props;
-
-    const writeStream = createWriteStream(filePath);
+    const { scene, writeStream, imageWriter } = props;
 
     const pixelsStream = new PassThrough({ objectMode: true });
 

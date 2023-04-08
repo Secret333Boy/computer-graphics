@@ -6,6 +6,7 @@ import Vertex3D from '../lab1/structures/vertex/Vertex3D';
 import { Scene } from '../lab1/types/Scene';
 import PPMRenderer from './structures/renderers/PPMRenderer';
 import ReaderOBJ from './ReaderOBJ';
+import { createReadStream, createWriteStream } from 'fs';
 
 let objFilePath = '';
 let outputPath = '';
@@ -23,7 +24,8 @@ if (!objFilePath) throw new Error('Invalid input: no obj path');
 if (!outputPath) throw new Error('Invalid input: no output path');
 
 (async () => {
-  const mesh = await ReaderOBJ.read(objFilePath);
+  const inputReadStream = createReadStream(objFilePath);
+  const mesh = await ReaderOBJ.readStream(inputReadStream);
 
   const camera = new Camera(
     new Vertex3D(0, 500, -2000),
@@ -32,16 +34,14 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     Math.PI / 3,
     600
   );
-
   const directionalLight = new DirectionalLight(new Vector3D(-1, 0, 1));
-
   const scene: Scene = {
     camera,
     light: directionalLight,
     objects: [new Sphere(new Vertex3D(0, 0, 5), 300), mesh],
   };
 
-  const ppmRenderer = new PPMRenderer(scene, outputPath);
-
+  const outputWriteStream = createWriteStream(outputPath);
+  const ppmRenderer = new PPMRenderer(scene, outputWriteStream);
   await ppmRenderer.render();
 })();

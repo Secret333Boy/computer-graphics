@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs, { createWriteStream } from 'fs';
 import path from 'path';
 import Camera from '../../lab1/structures/camera/Camera';
 import { Scene } from '../../lab1/types/Scene';
@@ -21,7 +21,8 @@ describe('PPMRenderer', () => {
     light: new DirectionalLight(new Vector3D(0, 0, 1)),
   };
   const filePath = path.resolve(__dirname, './test.ppm');
-  const renderer = new PPMRenderer(scene, filePath);
+  const writeStream = createWriteStream(filePath);
+  const renderer = new PPMRenderer(scene, writeStream);
 
   it('should render an image', async () => {
     await renderer.render();
