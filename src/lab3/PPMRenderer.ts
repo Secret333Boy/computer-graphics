@@ -2,7 +2,6 @@ import { createWriteStream } from 'fs';
 import { Renderer } from '../lab1/types/Renderer';
 import { Scene } from '../lab1/types/Scene';
 import { WriterPPM } from '../lab2/plugins/ppm/WriterPPM';
-import path from 'path';
 import { ImageBuffer } from '../lab2/ImageBuffer';
 import { PassThrough } from 'stream';
 import Ray from '../lab1/structures/ray/Ray';
