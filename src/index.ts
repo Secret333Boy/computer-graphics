@@ -54,7 +54,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   // camera.rotate(0, -Math.PI / 6, 0);
 
   // look upside down
-  camera.rotate(0, 0, Math.PI);
+  // camera.rotate(0, 0, Math.PI);
 
   const outputWriteStream = createWriteStream(outputPath);
   const ppmRenderer = new PPMRenderer(scene, outputWriteStream);

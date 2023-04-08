@@ -6,6 +6,7 @@ import Vertex3D from '../structures/vertex/Vertex3D';
 import Vector3D from '../structures/vector/Vector3D';
 import { DirectionalLight } from '../structures/light/directional-light/DirectionalLight';
 import { Sphere } from '../structures/sphere/Sphere';
+import { SceneObject } from '../../lab3/types/Transformable';
 
 describe('ConsoleRenderer', () => {
   let scene: Scene;
@@ -13,7 +14,7 @@ describe('ConsoleRenderer', () => {
   let camera: Camera;
 
   beforeEach(() => {
-    const objects: Traceable[] = [new Sphere(new Vertex3D(0, 0, 0), 1)];
+    const objects: SceneObject[] = [new Sphere(new Vertex3D(0, 0, 0), 1)];
     camera = new Camera(
       new Vertex3D(0, 0, -2),
       new Vector3D(0, 0, 1),
@@ -22,7 +23,7 @@ describe('ConsoleRenderer', () => {
       50
     );
     const light = new DirectionalLight(new Vector3D(1, 0, 0));
-    scene = { objects, camera, light };
+    scene = new Scene(objects, camera, light);
     renderer = new ConsoleRenderer(scene);
   });
 
