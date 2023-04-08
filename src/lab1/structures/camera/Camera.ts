@@ -1,18 +1,18 @@
+import { Rotatable, Translatable } from '../../../lab3/types/Transformable';
 import Vector3D from '../vector/Vector3D';
 import Vertex3D from '../vertex/Vertex3D';
 
-export default class Camera {
-  public readonly rightVector: Vector3D;
-  public readonly upVector: Vector3D;
+export default class Camera implements Translatable, Rotatable {
+  public rightVector: Vector3D;
+  public upVector: Vector3D;
 
   constructor(
-    public readonly focalPoint: Vertex3D,
-    public readonly viewVector: Vector3D,
-    // like 16:9
-    public readonly widthToHeightRatio: number,
+    public focalPoint: Vertex3D,
+    public viewVector: Vector3D,
     public readonly hFieldOfViewRads: number,
     // number of horizontal pixels
-    public readonly hResolution: number
+    public readonly hResolution: number,
+    public readonly vResolution: number
   ) {
     if (this.viewVector.crossProduct(new Vector3D(0, 0, 1)).length === 0) {
       this.rightVector = new Vector3D(1, 0, 0);
@@ -23,9 +23,19 @@ export default class Camera {
     }
     this.upVector = this.viewVector.crossProduct(this.rightVector).normalize();
   }
+  translate(x: number, y: number, z: number): void {
+    this.focalPoint = this.focalPoint.translate(x, y, z);
+  }
+  rotate(angleX: number, angleY: number, angleZ: number): void {
+    this.viewVector = this.viewVector.rotate(angleX, angleY, angleZ);
+    this.rightVector = this.rightVector.rotate(angleX, angleY, angleZ);
+    this.upVector = this.upVector.rotate(angleX, angleY, angleZ);
+    this.focalPoint = this.focalPoint.rotate(angleX, angleY, angleZ);
+  }
 
-  public get vResolution(): number {
-    return this.hResolution / this.widthToHeightRatio;
+  // like 16:9
+  public get widthToHeightRatio(): number {
+    return this.hResolution / this.vResolution;
   }
 
   public get screenCenter(): Vertex3D {

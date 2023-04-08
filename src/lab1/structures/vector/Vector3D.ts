@@ -1,3 +1,7 @@
+import {
+  transformVector,
+  transformations,
+} from '../../../lab3/structures/matrix/transformation-factories';
 import Vertex3D from '../vertex/Vertex3D';
 
 export default class Vector3D {
@@ -9,6 +13,16 @@ export default class Vector3D {
     this.x = x;
     this.y = y;
     this.z = z;
+  }
+
+  rotate(angleX: number, angleY: number, angleZ: number): Vector3D {
+    return transformVector(
+      this,
+      transformations.rotate3d(angleX, angleY, angleZ)
+    );
+  }
+  scale(x: number, y: number, z: number): Vector3D {
+    return transformVector(this, transformations.scale3d(x, y, z));
   }
 
   public add(vector: Vector3D): Vector3D {

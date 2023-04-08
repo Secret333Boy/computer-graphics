@@ -12,6 +12,7 @@ export interface ImageRendererProps {
 }
 
 export default abstract class ImageRenderer extends CommonRenderer {
+  private linesRendered = 0;
   constructor(props: ImageRendererProps) {
     const { scene, writeStream, imageWriter } = props;
 
@@ -44,6 +45,16 @@ export default abstract class ImageRenderer extends CommonRenderer {
         const color = dotProduct < 0 ? 0 : Math.round(dotProduct * 255);
 
         pixelsStream.push({ r: color, g: color, b: color });
+      },
+      onRenderStart: () => {
+        console.log('Rendering started');
+        this.linesRendered = 0;
+      },
+      onRowEnd: () => {
+        this.linesRendered++;
+        if (this.linesRendered % 10 === 0) {
+          console.log(`Rendered ${this.linesRendered} lines`);
+        }
       },
     });
   }

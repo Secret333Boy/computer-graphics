@@ -2,14 +2,29 @@ import Normal3D from '../../../lab1/structures/normal/Normal';
 import Ray from '../../../lab1/structures/ray/Ray';
 import Vertex3D from '../../../lab1/structures/vertex/Vertex3D';
 import { Hit } from '../../../lab1/types/Hit';
-import { Traceable } from '../../../lab1/types/Traceable';
+import { SceneObject } from '../../types/Transformable';
 
-export default class Triangle implements Traceable {
+export default class Triangle implements SceneObject {
   constructor(
-    public readonly vertex1: Vertex3D,
-    public readonly vertex2: Vertex3D,
-    public readonly vertex3: Vertex3D
+    public vertex1: Vertex3D,
+    public vertex2: Vertex3D,
+    public vertex3: Vertex3D
   ) {}
+  translate(x: number, y: number, z: number): void {
+    this.vertex1 = this.vertex1.translate(x, y, z);
+    this.vertex2 = this.vertex2.translate(x, y, z);
+    this.vertex3 = this.vertex3.translate(x, y, z);
+  }
+  rotate(angleX: number, angleY: number, angleZ: number): void {
+    this.vertex1 = this.vertex1.rotate(angleX, angleY, angleZ);
+    this.vertex2 = this.vertex2.rotate(angleX, angleY, angleZ);
+    this.vertex3 = this.vertex3.rotate(angleX, angleY, angleZ);
+  }
+  scale(x: number, y: number, z: number): void {
+    this.vertex1 = this.vertex1.scale(x, y, z);
+    this.vertex2 = this.vertex2.scale(x, y, z);
+    this.vertex3 = this.vertex3.scale(x, y, z);
+  }
 
   getIntersection(ray: Ray): Hit | null {
     const E1 = this.vertex2.toVector().subtract(this.vertex1.toVector());
