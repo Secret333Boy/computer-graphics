@@ -1,4 +1,4 @@
-import { Writable } from 'stream';
+import { PassThrough, Readable, Writable } from 'stream';
 import { crc } from './CRC32';
 
 export class Chunk {
@@ -27,12 +27,17 @@ export class Chunk {
   }
 
   public toBuffer(): Buffer {
-    console.log(this.length, this.type, this.crc, this.data);
     const buf = Buffer.alloc(this.length + 12);
     buf.writeUInt32BE(this.length, 0);
     buf.write(this.type, 4, 4, 'ascii');
     this.data.copy(buf, 8);
     buf.writeUInt32BE(this.crc, this.length + 8);
     return buf;
+  }
+
+  public toStream(): Readable {
+    const stream = new PassThrough();
+    this.write(stream);
+    return stream;
   }
 }

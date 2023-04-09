@@ -2,6 +2,7 @@ import { Chunk } from './Chunk';
 import zlib from 'zlib';
 import { FilterType, filterEncoders, prependFilterType } from './Filter';
 import {
+  logPassthrough,
   mergeScanlineStream,
   pixelStreamToScanlineStream,
   scanlineStreamToBufferStream,

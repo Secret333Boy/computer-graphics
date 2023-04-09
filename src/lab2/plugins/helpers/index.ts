@@ -1,4 +1,4 @@
-import { PassThrough, Readable, Transform } from 'stream';
+import { PassThrough, Readable, Transform, Writable } from 'stream';
 import { ImageBuffer } from '../../ImageBuffer';
 import { Pixel } from '../../interfaces/Pixel';
 
@@ -50,3 +50,11 @@ export const mergeScanlineStream = (scanlines: Readable): Readable => {
   const concatStream = new PassThrough();
   return scanlines.pipe(concatStream);
 };
+
+export const logPassthrough = (prefix: string) =>
+  new Transform({
+    transform: (chunk: Buffer, _, callback) => {
+      console.log(prefix, chunk);
+      callback(null, chunk);
+    },
+  });
