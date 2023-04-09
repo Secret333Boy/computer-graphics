@@ -58,3 +58,28 @@ export const logPassthrough = (prefix: string) =>
       callback(null, chunk);
     },
   });
+
+export const readNBytes = (n: number, stream: Readable): Promise<Buffer> => {
+  console.log('reading', n, 'bytes');
+  return new Promise((resolve) => {
+    let buffer = Buffer.alloc(0);
+    let chunk: Buffer;
+    while ((chunk = stream.read(n - buffer.length)) !== null) {
+      buffer = Buffer.concat([buffer, chunk]);
+      if (buffer.length === n) {
+        resolve(buffer);
+        return;
+      }
+    }
+    stream.on('readable', () => {
+      let chunk: Buffer;
+      while ((chunk = stream.read(n - buffer.length)) !== null) {
+        buffer = Buffer.concat([buffer, chunk]);
+        if (buffer.length === n) {
+          resolve(buffer);
+          return;
+        }
+      }
+    });
+  });
+};

@@ -1,4 +1,3 @@
-import { ReadStream } from 'fs';
 import { ImageBuffer } from './ImageBuffer';
 import { ImageReader } from './interfaces/ImageReader';
 import { ImageWriter } from './interfaces/ImageWriter';

@@ -1,11 +1,11 @@
-import { PassThrough, Transform, Writable } from 'stream';
+import { PassThrough, Writable } from 'stream';
 import { ImageBuffer } from '../../ImageBuffer';
 import { ImageWriter } from '../../interfaces/ImageWriter';
 import { COLOR_TYPE, IHDRChunk, INTERLACE_METHOD } from './lib/chunks/IHDR';
 import { generateIDATChunks } from './lib/chunks/IDAT';
 import { FilterType } from './lib/chunks/Filter';
 import { IENDChunk } from './lib/chunks/IEND';
-import { logPassthrough } from '../helpers';
+import { magic } from './lib/chunks/Magic';
 
 export default class WriterPNG implements ImageWriter {
   public readonly format = 'png';
@@ -18,7 +18,7 @@ export default class WriterPNG implements ImageWriter {
   }
 
   private writeHeader(stream: Writable) {
-    stream.write(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+    stream.write(magic);
   }
 
   private writeIHDR(stream: Writable, imageBuffer: ImageBuffer) {

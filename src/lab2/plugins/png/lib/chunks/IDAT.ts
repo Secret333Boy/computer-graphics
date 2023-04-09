@@ -1,8 +1,12 @@
 import { Chunk } from './Chunk';
 import zlib from 'zlib';
-import { FilterType, filterEncoders, prependFilterType } from './Filter';
 import {
-  logPassthrough,
+  FilterType,
+  filterDecoders,
+  filterEncoders,
+  prependFilterType,
+} from './Filter';
+import {
   mergeScanlineStream,
   pixelStreamToScanlineStream,
   scanlineStreamToBufferStream,
@@ -11,8 +15,12 @@ import { ImageBuffer } from '../../../../ImageBuffer';
 import { Readable, Transform } from 'stream';
 
 export class IDATChunk extends Chunk {
-  constructor(data: Buffer) {
-    super('IDAT', data);
+  constructor(data: Buffer, crc?: number) {
+    super('IDAT', data, data.length, crc);
+  }
+
+  public static fromChunk(chunk: Chunk): IDATChunk {
+    return new IDATChunk(chunk.data, chunk.crc);
   }
 }
 
@@ -57,4 +65,30 @@ export const generateIDATChunks = (
     },
   });
   return compressedStream.pipe(chunkStream);
+};
+
+export const unwrapIDATChunks = (idatChunks: Readable): Readable => {
+  const concatStream = new Transform({
+    transform: (chunk: IDATChunk, _, callback) => {
+      callback(null, chunk.data);
+    },
+  });
+  return idatChunks.pipe(concatStream);
+};
+
+export const decompressStream = (compressedStream: Readable): Readable => {
+  return compressedStream.pipe(zlib.createInflate());
+};
+
+export const mergedStreamToScanlineBufferStream = (
+  mergedStream: Readable,
+  
+): Readable => {
+  const scanlineBufferStream = new Transform({
+    transform: (chunk: Buffer, _, callback) => {
+      callback(null, chunk.slice(1));
+    },
+    objectMode: true,
+  });
+  return mergedStream.pipe(scanlineBufferStream);
 };
