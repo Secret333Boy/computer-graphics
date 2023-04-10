@@ -14,4 +14,4 @@ export interface Scalable {
 
 export interface Transformable extends Rotatable, Translatable, Scalable {}
 
-export interface SceneObject extends Transformable, Traceable {}
+export interface TraceableTransformable extends Transformable, Traceable {}

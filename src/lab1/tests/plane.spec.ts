@@ -3,6 +3,7 @@ import Vertex3D from '../structures/vertex/Vertex3D';
 import Plane from '../structures/plane/Plane';
 import Ray from '../structures/ray/Ray';
 import Normal3D from '../structures/normal/Normal';
+import { expectVector3DCloseTo, expectVertex3DCloseTo } from './helpers';
 
 describe('Plane', () => {
   const normal = new Vector3D(0, 0, -1);
@@ -31,6 +32,29 @@ describe('Plane', () => {
       expect(intersection).not.toBeNull();
       expect(intersection?.vertex).toEqual(new Vertex3D(0, 0, 0));
       expect(intersection?.normal).toEqual(new Normal3D(normal));
+    });
+  });
+
+  describe('transforms', () => {
+    let mutablPlane: Plane;
+    beforeEach(() => {
+      mutablPlane = new Plane(point, normal);
+    });
+
+    it('should translate the plane', () => {
+      mutablPlane.translate(1, 1, 1);
+      expectVertex3DCloseTo(mutablPlane.vertex, new Vertex3D(1, 1, 1));
+    });
+
+    it('should scale the plane', () => {
+      mutablPlane.scale(2, 2, 2);
+      expectVertex3DCloseTo(mutablPlane.vertex, new Vertex3D(0, 0, 0));
+    });
+
+    it('should rotate the plane', () => {
+      mutablPlane.rotate(0, Math.PI / 2, 0);
+      expectVertex3DCloseTo(mutablPlane.vertex, new Vertex3D(0, 0, 0));
+      expectVector3DCloseTo(mutablPlane.normal.vector, new Vector3D(1, 0, 0));
     });
   });
 });

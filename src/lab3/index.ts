@@ -1,11 +1,11 @@
-import Camera from './lab1/structures/camera/Camera';
-import { DirectionalLight } from './lab1/structures/light/directional-light/DirectionalLight';
-import { Sphere } from './lab1/structures/sphere/Sphere';
-import Vector3D from './lab1/structures/vector/Vector3D';
-import Vertex3D from './lab1/structures/vertex/Vertex3D';
-import { Scene } from './lab1/types/Scene';
-import PPMRenderer from './lab3/structures/renderers/PPMRenderer';
-import ReaderOBJ from './lab3/ReaderOBJ';
+import Camera from '../lab1/structures/camera/Camera';
+import { DirectionalLight } from '../lab1/structures/light/directional-light/DirectionalLight';
+import { Sphere } from '../lab1/structures/sphere/Sphere';
+import Vector3D from '../lab1/structures/vector/Vector3D';
+import Vertex3D from '../lab1/structures/vertex/Vertex3D';
+import { Scene } from '../lab1/types/Scene';
+import PPMRenderer from './structures/renderers/PPMRenderer';
+import ReaderOBJ from './ReaderOBJ';
 import { createReadStream, createWriteStream } from 'fs';
 
 let objFilePath = '';

@@ -2,9 +2,9 @@ import Vertex3D from '../vertex/Vertex3D';
 import Ray from '../ray/Ray';
 import Normal3D from '../normal/Normal';
 import { Hit } from '../../types/Hit';
-import { SceneObject } from '../../../lab3/types/Transformable';
+import { TraceableTransformable } from '../../../lab3/types/Transformable';
 
-export class Sphere implements SceneObject {
+export class Sphere implements TraceableTransformable {
   public center: Vertex3D;
   public radius: number;
 
@@ -12,13 +12,16 @@ export class Sphere implements SceneObject {
     this.center = center;
     this.radius = radius;
   }
-  translate(x: number, y: number, z: number): void {
+
+  public translate(x: number, y: number, z: number): void {
     this.center = this.center.translate(x, y, z);
   }
-  rotate(angleX: number, angleY: number, angleZ: number): void {
+
+  public rotate(angleX: number, angleY: number, angleZ: number): void {
     this.center = this.center.rotate(angleX, angleY, angleZ);
   }
-  scale(x: number, y: number, z: number): void {
+
+  public scale(x: number, y: number, z: number): void {
     this.center = this.center.scale(x, y, z);
     this.radius *= Math.max(x, y, z);
   }

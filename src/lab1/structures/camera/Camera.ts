@@ -9,10 +9,10 @@ export default class Camera implements Translatable, Rotatable {
   constructor(
     public focalPoint: Vertex3D,
     public viewVector: Vector3D,
-    public readonly hFieldOfViewRads: number,
+    public readonly fov: number,
     // number of horizontal pixels
-    public readonly hResolution: number,
-    public readonly vResolution: number
+    public readonly horizontailResolution: number,
+    public readonly verticalResolution: number
   ) {
     if (this.viewVector.crossProduct(new Vector3D(0, 0, 1)).length === 0) {
       this.rightVector = new Vector3D(1, 0, 0);
@@ -23,10 +23,12 @@ export default class Camera implements Translatable, Rotatable {
     }
     this.upVector = this.viewVector.crossProduct(this.rightVector).normalize();
   }
-  translate(x: number, y: number, z: number): void {
+
+  public translate(x: number, y: number, z: number): void {
     this.focalPoint = this.focalPoint.translate(x, y, z);
   }
-  rotate(angleX: number, angleY: number, angleZ: number): void {
+
+  public rotate(angleX: number, angleY: number, angleZ: number): void {
     this.viewVector = this.viewVector.rotate(angleX, angleY, angleZ);
     this.rightVector = this.rightVector.rotate(angleX, angleY, angleZ);
     this.upVector = this.upVector.rotate(angleX, angleY, angleZ);
@@ -35,7 +37,7 @@ export default class Camera implements Translatable, Rotatable {
 
   // like 16:9
   public get widthToHeightRatio(): number {
-    return this.hResolution / this.vResolution;
+    return this.horizontailResolution / this.verticalResolution;
   }
 
   public get screenCenter(): Vertex3D {
@@ -43,7 +45,7 @@ export default class Camera implements Translatable, Rotatable {
   }
 
   public get screenWidth(): number {
-    return 2 * this.viewVector.length * Math.tan(this.hFieldOfViewRads / 2);
+    return 2 * this.viewVector.length * Math.tan(this.fov / 2);
   }
 
   public get screenHeight(): number {
@@ -56,12 +58,14 @@ export default class Camera implements Translatable, Rotatable {
     const fromFocalPointToPointOnScreen = this.viewVector
       .subtract(
         this.rightVector.multiply(
-          ((x - this.hResolution / 2) * this.screenWidth) / this.hResolution
+          ((x - this.horizontailResolution / 2) * this.screenWidth) /
+            this.horizontailResolution
         )
       )
       .subtract(
         this.upVector.multiply(
-          ((y - this.vResolution / 2) * this.screenHeight) / this.vResolution
+          ((y - this.verticalResolution / 2) * this.screenHeight) /
+            this.verticalResolution
         )
       );
     return new Vector3D(this.focalPoint.x, this.focalPoint.y, this.focalPoint.z)

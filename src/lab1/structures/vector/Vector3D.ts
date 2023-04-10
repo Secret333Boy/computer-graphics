@@ -2,6 +2,7 @@ import {
   transformVector,
   transformations,
 } from '../../../lab3/structures/matrix/transformation-factories';
+import { Transformable } from '../../../lab3/types/Transformable';
 import Vertex3D from '../vertex/Vertex3D';
 
 export default class Vector3D {
@@ -15,13 +16,14 @@ export default class Vector3D {
     this.z = z;
   }
 
-  rotate(angleX: number, angleY: number, angleZ: number): Vector3D {
+  public rotate(angleX: number, angleY: number, angleZ: number): Vector3D {
     return transformVector(
       this,
       transformations.rotate3d(angleX, angleY, angleZ)
     );
   }
-  scale(x: number, y: number, z: number): Vector3D {
+
+  public scale(x: number, y: number, z: number): Vector3D {
     return transformVector(this, transformations.scale3d(x, y, z));
   }
 
@@ -61,7 +63,7 @@ export default class Vector3D {
     );
   }
 
-  get length() {
+  public get length() {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
   }
 

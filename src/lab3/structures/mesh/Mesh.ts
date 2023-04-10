@@ -1,4 +1,4 @@
-import { SceneObjectGroup } from '../traceable-group/TraceableGroup';
+import { SceneObjectGroup } from '../scene-object-group/SceneObjectGroup';
 import Triangle from '../triangle/Triangle';
 
 export default class Mesh extends SceneObjectGroup<Triangle> {
