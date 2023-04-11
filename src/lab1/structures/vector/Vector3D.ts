@@ -100,4 +100,8 @@ export default class Vector3D implements Transformable {
   public normalize(): Vector3D {
     return this.multiply(1 / this.length);
   }
+
+  public negate(): Vector3D {
+    return new Vector3D(-this.x, -this.y, -this.z);
+  }
 }

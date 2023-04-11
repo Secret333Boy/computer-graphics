@@ -7,12 +7,12 @@ import { Scene } from '../lab1/types/Scene';
 import PPMRenderer from './structures/renderers/PPMRenderer';
 import ReaderOBJ from './ReaderOBJ';
 import { createReadStream, createWriteStream } from 'fs';
-import { transformations } from './structures/matrix/transformation-factories';
+import Disk from '../lab1/structures/disk/Disk';
 
 let objFilePath = '';
 let outputPath = '';
 for (let i = 0; i < process.argv.length; i++) {
-  if (process.argv[i] === '--objFile') {
+  if (process.argv[i] === '--source') {
     objFilePath = process.argv[i + 1];
   }
 
@@ -28,26 +28,29 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const inputReadStream = createReadStream(objFilePath);
   const mesh = await ReaderOBJ.readStream(inputReadStream);
   console.log('Mesh loaded');
-  const cameraWidth = 50;
-  const resolution = 1;
   const camera = new Camera(
     // use for relative to (0, 0, 0)
     // new Vertex3D(0, 0, 0),
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    cameraWidth,
-    Math.floor(cameraWidth / resolution),
-    transformations.rotate3dY(Math.PI)
+    1920,
+    1080
   );
-  const directionalLight = new DirectionalLight(new Vector3D(-1, 0, -1));
+
+  const directionalLight = new DirectionalLight(new Vector3D(-1, -1, 1));
   const scene: Scene = new Scene(
-    [new Sphere(new Vertex3D(0, 0, 5), 300), mesh],
+    [
+      new Sphere(new Vertex3D(0, 1100, 8000), 3500),
+      mesh,
+      new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
+    ],
     camera,
     directionalLight
   );
-  camera.translate(0, 0, 4000);
-  // scene.translate(0, -500, 2000);
+  scene.translate(-400, -500, 2000);
+  mesh.translate(900, 100, 700);
+  mesh.scale(2, 2, 2);
   // mesh.translate(0, 0, 1000);
 
   // transforms relative to (0, 0, 0)
