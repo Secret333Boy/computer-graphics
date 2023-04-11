@@ -14,15 +14,15 @@ export class Sphere implements TraceableTransformable {
   }
 
   public translate(x: number, y: number, z: number): void {
-    this.center = this.center.translate(x, y, z);
+    this.center = this.center.getTranslated(x, y, z);
   }
 
   public rotate(angleX: number, angleY: number, angleZ: number): void {
-    this.center = this.center.rotate(angleX, angleY, angleZ);
+    this.center = this.center.getRotated(angleX, angleY, angleZ);
   }
 
   public scale(x: number, y: number, z: number): void {
-    this.center = this.center.scale(x, y, z);
+    this.center = this.center.getScaled(x, y, z);
     this.radius *= Math.max(x, y, z);
   }
 

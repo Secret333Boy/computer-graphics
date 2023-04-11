@@ -1,4 +1,3 @@
-import { Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
 import Vertex3D from '../vertex/Vertex3D';
 import Ray from '../ray/Ray';
@@ -18,16 +17,16 @@ export default class Disk implements TraceableTransformable {
   }
 
   public rotate(angleX: number, angleY: number, angleZ: number): void {
-    this.center = this.center.rotate(angleX, angleY, angleZ);
+    this.center = this.center.getRotated(angleX, angleY, angleZ);
     this.normal = this.normal.rotate(angleX, angleY, angleZ);
   }
 
   public translate(x: number, y: number, z: number): void {
-    this.center = this.center.translate(x, y, z);
+    this.center = this.center.getTranslated(x, y, z);
   }
 
   public scale(x: number, y: number, z: number): void {
-    this.center = this.center.scale(x, y, z);
+    this.center = this.center.getScaled(x, y, z);
     this.radius *= Math.abs(x);
   }
 

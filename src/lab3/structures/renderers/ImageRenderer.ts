@@ -21,7 +21,7 @@ export default abstract class ImageRenderer extends CommonRenderer {
     const imageBuffer = new ImageBuffer(
       {
         height: scene.camera.verticalResolution,
-        width: scene.camera.horizontailResolution,
+        width: scene.camera.horizontalResolution,
         maxColor: 255,
       },
       pixelsStream
