@@ -3,7 +3,6 @@ import { Hit } from '../../../lab1/types/Hit';
 import { Renderer } from '../../../lab1/types/Renderer';
 import { Scene } from '../../../lab1/types/Scene';
 import { findCloserHit } from '../../../lab1/utils/findCloserHit';
-import { TraceableTransformable } from '../../types/Transformable';
 
 export interface CommonRendererProps {
   scene: Scene;
@@ -42,12 +41,9 @@ export default abstract class CommonRenderer implements Renderer {
 
     for (let y = 0; y < camera.verticalResolution; y++) {
       await this.onRowStart?.();
-      for (let x = 0; x < camera.horizontailResolution; x++) {
-        const screenPixelPosition = camera.getScreenPixelCoordinates(x, y);
-        const ray = new Ray(
-          camera.focalPoint,
-          screenPixelPosition.toVector().subtract(camera.focalPoint.toVector())
-        );
+      for (let x = 0; x < camera.horizontalResolution; x++) {
+        const screenPixelVector = camera.getScreenPixelVector(x, y);
+        const ray = new Ray(camera.focalPoint, screenPixelVector);
         let closestHit: Hit | null = null;
 
         for (const object of objects) {

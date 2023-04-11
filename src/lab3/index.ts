@@ -29,7 +29,9 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const mesh = await ReaderOBJ.readStream(inputReadStream);
   console.log('Mesh loaded');
   const camera = new Camera(
-    new Vertex3D(0, 0, 0),
+    // use for relative to (0, 0, 0)
+    // new Vertex3D(0, 0, 0),
+    new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
     1920,
@@ -51,6 +53,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   mesh.scale(2, 2, 2);
   // mesh.translate(0, 0, 1000);
 
+  // transforms relative to (0, 0, 0)
   // look from below
   // camera.translate(0, -1000, 0);
   // camera.rotate(Math.PI / 6, 0, 0);
@@ -62,7 +65,13 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   // look upside down
   // camera.rotate(0, 0, Math.PI);
 
+  // look behind
+  // camera.rotate(0, Math.PI, 0);
+
   const outputWriteStream = createWriteStream(outputPath);
   const ppmRenderer = new PPMRenderer(scene, outputWriteStream);
+  // transforms relative to the camera
+  // await ppmRenderer.render();
+  // look behind
   await ppmRenderer.render();
 })();

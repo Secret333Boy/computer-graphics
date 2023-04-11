@@ -13,21 +13,21 @@ export default class Triangle implements TraceableTransformable {
   ) {}
 
   public translate(x: number, y: number, z: number): void {
-    this.vertex1 = this.vertex1.translate(x, y, z);
-    this.vertex2 = this.vertex2.translate(x, y, z);
-    this.vertex3 = this.vertex3.translate(x, y, z);
+    this.vertex1 = this.vertex1.getTranslated(x, y, z);
+    this.vertex2 = this.vertex2.getTranslated(x, y, z);
+    this.vertex3 = this.vertex3.getTranslated(x, y, z);
   }
 
   public rotate(angleX: number, angleY: number, angleZ: number): void {
-    this.vertex1 = this.vertex1.rotate(angleX, angleY, angleZ);
-    this.vertex2 = this.vertex2.rotate(angleX, angleY, angleZ);
-    this.vertex3 = this.vertex3.rotate(angleX, angleY, angleZ);
+    this.vertex1 = this.vertex1.getRotated(angleX, angleY, angleZ);
+    this.vertex2 = this.vertex2.getRotated(angleX, angleY, angleZ);
+    this.vertex3 = this.vertex3.getRotated(angleX, angleY, angleZ);
   }
 
   public scale(x: number, y: number, z: number): void {
-    this.vertex1 = this.vertex1.scale(x, y, z);
-    this.vertex2 = this.vertex2.scale(x, y, z);
-    this.vertex3 = this.vertex3.scale(x, y, z);
+    this.vertex1 = this.vertex1.getScaled(x, y, z);
+    this.vertex2 = this.vertex2.getScaled(x, y, z);
+    this.vertex3 = this.vertex3.getScaled(x, y, z);
   }
 
   public getIntersection(ray: Ray): Hit | null {

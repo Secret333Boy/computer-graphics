@@ -38,7 +38,7 @@ describe('ConsoleRenderer', () => {
     const spy = jest.spyOn(console, 'log').mockImplementation(() => void 0);
     await renderer.render();
     expect(spy).toHaveBeenCalledTimes(camera.verticalResolution * 2);
-    expect(spy.mock.calls[0][0].length).toEqual(camera.horizontailResolution);
+    expect(spy.mock.calls[0][0].length).toEqual(camera.horizontalResolution);
   });
 
   it('should output different shades', async () => {

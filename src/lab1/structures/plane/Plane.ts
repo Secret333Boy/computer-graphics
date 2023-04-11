@@ -16,15 +16,15 @@ export default class Plane implements TraceableTransformable {
 
   public rotate(angleX: number, angleY: number, angleZ: number): void {
     this.normal = this.normal.rotate(angleX, angleY, angleZ);
-    this.vertex = this.vertex.rotate(angleX, angleY, angleZ);
+    this.vertex = this.vertex.getRotated(angleX, angleY, angleZ);
   }
 
   public translate(x: number, y: number, z: number): void {
-    this.vertex = this.vertex.translate(x, y, z);
+    this.vertex = this.vertex.getTranslated(x, y, z);
   }
 
   public scale(x: number, y: number, z: number): void {
-    this.vertex = this.vertex.scale(x, y, z);
+    this.vertex = this.vertex.getScaled(x, y, z);
   }
 
   public getIntersection(ray: Ray): Hit | null {

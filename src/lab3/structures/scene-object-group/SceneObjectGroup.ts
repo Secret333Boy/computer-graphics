@@ -1,7 +1,7 @@
 import { TraceableTransformable } from '../../types/Transformable';
 import TraceableGroup from '../traceable-group/TraceableGroup';
 
-export class SceneObjectGroup<T extends TraceableTransformable>
+export class TraceableTransformableGroup<T extends TraceableTransformable>
   extends TraceableGroup<T>
   implements TraceableTransformable
 {

@@ -7,10 +7,10 @@ export default class Normal3D {
   }
 
   public rotate(angleX: number, angleY: number, angleZ: number): Normal3D {
-    return new Normal3D(this.vector.rotate(angleX, angleY, angleZ));
+    return new Normal3D(this.vector.getRotated(angleX, angleY, angleZ));
   }
 
   public scale(x: number, y: number, z: number): Normal3D {
-    return new Normal3D(this.vector.scale(x, y, z));
+    return new Normal3D(this.vector.getScaled(x, y, z));
   }
 }
