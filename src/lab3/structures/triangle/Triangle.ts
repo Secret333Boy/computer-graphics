@@ -5,6 +5,7 @@ import { Hit } from '../../../lab1/types/Hit';
 import { TraceableTransformable } from '../../types/Transformable';
 
 export default class Triangle implements TraceableTransformable {
+  private eps = 0.00000001;
   constructor(
     public vertex1: Vertex3D,
     public vertex2: Vertex3D,
@@ -42,7 +43,7 @@ export default class Triangle implements TraceableTransformable {
     const PE1 = P.dotProduct(E1);
 
     const t = Q.dotProduct(E2) / PE1;
-    if (t <= 0) return null;
+    if (t <= this.eps) return null;
 
     const u = P.dotProduct(T) / PE1;
     if (u < 0) return null;
