@@ -34,7 +34,7 @@ export default abstract class CommonRenderer implements Renderer {
     this.onRenderEnd = onRenderEnd;
   }
 
-  public async render(cameraTransformMatrix?: Matrix) {
+  public async render() {
     const { camera, objects } = this.scene;
 
     await this.onRenderStart?.();
@@ -42,11 +42,7 @@ export default abstract class CommonRenderer implements Renderer {
     for (let y = 0; y < camera.verticalResolution; y++) {
       await this.onRowStart?.();
       for (let x = 0; x < camera.horizontalResolution; x++) {
-        const screenPixelVector = camera.getScreenPixelVector(
-          x,
-          y,
-          cameraTransformMatrix
-        );
+        const screenPixelVector = camera.getScreenPixelVector(x, y);
         const ray = new Ray(camera.focalPoint, screenPixelVector);
         let closestHit: Hit | null = null;
 

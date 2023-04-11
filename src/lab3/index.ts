@@ -7,6 +7,7 @@ import { Scene } from '../lab1/types/Scene';
 import PPMRenderer from './structures/renderers/PPMRenderer';
 import ReaderOBJ from './ReaderOBJ';
 import { createReadStream, createWriteStream } from 'fs';
+import { transformations } from './structures/matrix/transformation-factories';
 
 let objFilePath = '';
 let outputPath = '';
@@ -32,19 +33,21 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const camera = new Camera(
     // use for relative to (0, 0, 0)
     // new Vertex3D(0, 0, 0),
-    new Vertex3D(0, 0, -200),
+    new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
     cameraWidth,
-    Math.floor(cameraWidth / resolution)
+    Math.floor(cameraWidth / resolution),
+    transformations.rotate3dY(Math.PI)
   );
-  const directionalLight = new DirectionalLight(new Vector3D(-1, 0, 1));
+  const directionalLight = new DirectionalLight(new Vector3D(-1, 0, -1));
   const scene: Scene = new Scene(
     [new Sphere(new Vertex3D(0, 0, 5), 300), mesh],
     camera,
     directionalLight
   );
-  scene.translate(0, -500, 2000);
+  camera.translate(0, 0, 4000);
+  // scene.translate(0, -500, 2000);
   // mesh.translate(0, 0, 1000);
 
   // transforms relative to (0, 0, 0)
@@ -59,14 +62,13 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   // look upside down
   // camera.rotate(0, 0, Math.PI);
 
-  // transforms relative to the camera
-  // look up a bit
-  // camera.rotate(Math.PI / 8, 0, 0);
-
-  // look to the right a bit
-  // camera.rotate(0, Math.PI / 6, 0);
+  // look behind
+  // camera.rotate(0, Math.PI, 0);
 
   const outputWriteStream = createWriteStream(outputPath);
   const ppmRenderer = new PPMRenderer(scene, outputWriteStream);
+  // transforms relative to the camera
+  // await ppmRenderer.render();
+  // look behind
   await ppmRenderer.render();
 })();

@@ -14,7 +14,8 @@ export default class Camera implements Translatable, Rotatable {
     public readonly fov: number,
     // number of horizontal pixels
     public readonly horizontalResolution: number,
-    public readonly verticalResolution: number
+    public readonly verticalResolution: number,
+    public readonly cameraTransformMatrix?: Matrix
   ) {
     if (this.viewVector.crossProduct(new Vector3D(0, 0, 1)).length === 0) {
       this.rightVector = new Vector3D(1, 0, 0);
@@ -54,17 +55,13 @@ export default class Camera implements Translatable, Rotatable {
     return this.screenWidth / this.widthToHeightRatio;
   }
 
-  public getScreenPixelVector(
-    x: number,
-    y: number,
-    cameraTransformMatrix?: Matrix
-  ): Vector3D {
+  public getScreenPixelVector(x: number, y: number): Vector3D {
     const screenPixelPosition = this.getScreenPixelCoordinates(x, y);
     let vector = screenPixelPosition
       .toVector()
       .subtract(this.focalPoint.toVector());
-    if (cameraTransformMatrix) {
-      vector = transformVector(vector, cameraTransformMatrix);
+    if (this.cameraTransformMatrix) {
+      vector = transformVector(vector, this.cameraTransformMatrix);
     }
     return vector;
   }
