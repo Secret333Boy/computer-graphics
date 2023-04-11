@@ -2,12 +2,12 @@ import Vertex3D from '../../lab1/structures/vertex/Vertex3D';
 import { Sphere } from '../../lab1/structures/sphere/Sphere';
 import Disk from '../../lab1/structures/disk/Disk';
 import Vector3D from '../../lab1/structures/vector/Vector3D';
-import { SceneObjectGroup } from '../structures/scene-object-group/SceneObjectGroup';
+import { TraceableTransformableGroup } from '../structures/scene-object-group/SceneObjectGroup';
 
 describe('SceneObjectGroup', () => {
   const sphere = new Sphere(new Vertex3D(1, 0, 0), 1);
   const disk = new Disk(new Vertex3D(0, 0, 0), new Vector3D(0, 0, 1), 1);
-  const group = new SceneObjectGroup([sphere, disk]);
+  const group = new TraceableTransformableGroup([sphere, disk]);
 
   it('should translate every object in the group', () => {
     const sphereTranslateSpy = jest.spyOn(sphere, 'translate');
