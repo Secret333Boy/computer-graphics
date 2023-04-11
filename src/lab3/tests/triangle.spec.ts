@@ -2,6 +2,7 @@ import Ray from '../../lab1/structures/ray/Ray';
 import Vertex3D from '../../lab1/structures/vertex/Vertex3D';
 import Vector3D from '../../lab1/structures/vector/Vector3D';
 import Triangle from '../structures/triangle/Triangle';
+import { expectVertex3DCloseTo } from '../../lab1/tests/helpers';
 
 describe('Triangle', () => {
   const v1 = new Vertex3D(0, 0, 0);
@@ -43,6 +44,34 @@ describe('Triangle', () => {
     it('should return null if the ray intersects outside the triangle', () => {
       const ray = new Ray(new Vertex3D(2, 2, 1), new Vector3D(0, 0, -1));
       expect(triangle.getIntersection(ray)).toBeNull();
+    });
+  });
+
+  describe('transforms', () => {
+    let mutableTriangle: Triangle;
+    beforeEach(() => {
+      mutableTriangle = new Triangle(v1, v2, v3);
+    });
+
+    it('should translate the triangle', () => {
+      mutableTriangle.translate(1, 1, 1);
+      expectVertex3DCloseTo(mutableTriangle.vertex1, new Vertex3D(1, 1, 1));
+      expectVertex3DCloseTo(mutableTriangle.vertex2, new Vertex3D(2, 1, 1));
+      expectVertex3DCloseTo(mutableTriangle.vertex3, new Vertex3D(1, 2, 1));
+    });
+
+    it('should scale the triangle', () => {
+      mutableTriangle.scale(2, 2, 2);
+      expectVertex3DCloseTo(mutableTriangle.vertex1, new Vertex3D(0, 0, 0));
+      expectVertex3DCloseTo(mutableTriangle.vertex2, new Vertex3D(2, 0, 0));
+      expectVertex3DCloseTo(mutableTriangle.vertex3, new Vertex3D(0, 2, 0));
+    });
+
+    it('should rotate the triangle', () => {
+      mutableTriangle.rotate(0, 0, Math.PI / 2);
+      expectVertex3DCloseTo(mutableTriangle.vertex1, new Vertex3D(0, 0, 0));
+      expectVertex3DCloseTo(mutableTriangle.vertex2, new Vertex3D(0, -1, 0));
+      expectVertex3DCloseTo(mutableTriangle.vertex3, new Vertex3D(1, 0, 0));
     });
   });
 });

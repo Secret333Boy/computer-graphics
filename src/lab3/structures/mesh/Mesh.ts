@@ -1,6 +1,6 @@
-import TraceableGroup from '../traceable-group/TraceableGroup';
+import { TraceableTransformableGroup } from '../scene-object-group/SceneObjectGroup';
 import Triangle from '../triangle/Triangle';
 
-export default class Mesh extends TraceableGroup<Triangle> {
+export default class Mesh extends TraceableTransformableGroup<Triangle> {
   public readonly triangles = this.traceableObjects;
 }

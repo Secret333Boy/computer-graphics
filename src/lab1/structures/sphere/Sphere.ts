@@ -1,16 +1,29 @@
-import { Traceable } from '../../types/Traceable';
 import Vertex3D from '../vertex/Vertex3D';
 import Ray from '../ray/Ray';
 import Normal3D from '../normal/Normal';
 import { Hit } from '../../types/Hit';
+import { TraceableTransformable } from '../../../lab3/types/Transformable';
 
-export class Sphere implements Traceable {
-  public readonly center: Vertex3D;
-  public readonly radius: number;
+export class Sphere implements TraceableTransformable {
+  public center: Vertex3D;
+  public radius: number;
 
   constructor(center: Vertex3D, radius: number) {
     this.center = center;
     this.radius = radius;
+  }
+
+  public translate(x: number, y: number, z: number): void {
+    this.center = this.center.getTranslated(x, y, z);
+  }
+
+  public rotate(angleX: number, angleY: number, angleZ: number): void {
+    this.center = this.center.getRotated(angleX, angleY, angleZ);
+  }
+
+  public scale(x: number, y: number, z: number): void {
+    this.center = this.center.getScaled(x, y, z);
+    this.radius *= Math.max(x, y, z);
   }
 
   public getIntersection(ray: Ray): Hit | null {

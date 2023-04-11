@@ -1,3 +1,7 @@
+import {
+  transformVector,
+  transformations,
+} from '../../../lab3/structures/matrix/transformation-factories';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 
@@ -10,6 +14,30 @@ export default class Vertex3D {
     this.x = x;
     this.y = y;
     this.z = z;
+  }
+
+  public getTranslated(x: number, y: number, z: number): Vertex3D {
+    const tranformed = transformVector(
+      this.toVector(),
+      transformations.translate3d(x, y, z)
+    );
+    return tranformed.toVertex3D();
+  }
+
+  public getRotated(angleX: number, angleY: number, angleZ: number): Vertex3D {
+    const tranformed = transformVector(
+      this.toVector(),
+      transformations.rotate3d(angleX, angleY, angleZ)
+    );
+    return tranformed.toVertex3D();
+  }
+
+  public getScaled(x: number, y: number, z: number): Vertex3D {
+    const tranformed = transformVector(
+      this.toVector(),
+      transformations.scale3d(x, y, z)
+    );
+    return tranformed.toVertex3D();
   }
 
   public getLengthTo(vertex: Vertex3D) {

@@ -1,19 +1,33 @@
-import { Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
 import Vertex3D from '../vertex/Vertex3D';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 import { Hit } from '../../types/Hit';
+import { TraceableTransformable } from '../../../lab3/types/Transformable';
 
-export default class Disk implements Traceable {
-  public readonly center: Vertex3D;
-  public readonly normal: Normal3D;
-  public readonly radius: number;
+export default class Disk implements TraceableTransformable {
+  public center: Vertex3D;
+  public normal: Normal3D;
+  public radius: number;
 
   constructor(center: Vertex3D, normalVector: Vector3D, radius: number) {
     this.center = center;
     this.normal = new Normal3D(normalVector);
     this.radius = radius;
+  }
+
+  public rotate(angleX: number, angleY: number, angleZ: number): void {
+    this.center = this.center.getRotated(angleX, angleY, angleZ);
+    this.normal = this.normal.rotate(angleX, angleY, angleZ);
+  }
+
+  public translate(x: number, y: number, z: number): void {
+    this.center = this.center.getTranslated(x, y, z);
+  }
+
+  public scale(x: number, y: number, z: number): void {
+    this.center = this.center.getScaled(x, y, z);
+    this.radius *= Math.abs(x);
   }
 
   public getIntersection(ray: Ray): Hit | null {

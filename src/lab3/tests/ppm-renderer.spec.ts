@@ -9,17 +9,17 @@ import { DirectionalLight } from '../../lab1/structures/light/directional-light/
 import PPMRenderer from '../structures/renderers/PPMRenderer';
 
 describe('PPMRenderer', () => {
-  const scene: Scene = {
-    camera: new Camera(
+  const scene: Scene = new Scene(
+    [new Sphere(new Vertex3D(0, 0, 5), 1)],
+    new Camera(
       new Vertex3D(0, 0, 0),
       new Vector3D(0, 0, 1),
-      1,
       Math.PI / 3,
+      50,
       50
     ),
-    objects: [new Sphere(new Vertex3D(0, 0, 5), 1)],
-    light: new DirectionalLight(new Vector3D(0, 0, 1)),
-  };
+    new DirectionalLight(new Vector3D(0, 0, 1))
+  );
   const filePath = path.resolve(__dirname, './test.ppm');
   const writeStream = createWriteStream(filePath);
   const renderer = new PPMRenderer(scene, writeStream);

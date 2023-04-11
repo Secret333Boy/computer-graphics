@@ -1,17 +1,30 @@
+import { TraceableTransformable } from '../../../lab3/types/Transformable';
 import { Hit } from '../../types/Hit';
-import { Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 import Vertex3D from '../vertex/Vertex3D';
 
-export default class Plane implements Traceable {
-  public readonly normal: Normal3D;
-  public readonly vertex: Vertex3D;
+export default class Plane implements TraceableTransformable {
+  public normal: Normal3D;
+  public vertex: Vertex3D;
 
   constructor(vertex: Vertex3D, normalVector: Vector3D) {
     this.normal = new Normal3D(normalVector);
     this.vertex = vertex;
+  }
+
+  public rotate(angleX: number, angleY: number, angleZ: number): void {
+    this.normal = this.normal.rotate(angleX, angleY, angleZ);
+    this.vertex = this.vertex.getRotated(angleX, angleY, angleZ);
+  }
+
+  public translate(x: number, y: number, z: number): void {
+    this.vertex = this.vertex.getTranslated(x, y, z);
+  }
+
+  public scale(x: number, y: number, z: number): void {
+    this.vertex = this.vertex.getScaled(x, y, z);
   }
 
   public getIntersection(ray: Ray): Hit | null {
