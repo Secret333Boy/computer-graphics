@@ -30,7 +30,9 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const cameraWidth = 50;
   const resolution = 1;
   const camera = new Camera(
-    new Vertex3D(0, 0, 0),
+    // use for relative to (0, 0, 0)
+    // new Vertex3D(0, 0, 0),
+    new Vertex3D(0, 0, -200),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
     cameraWidth,
@@ -45,6 +47,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   scene.translate(0, -500, 2000);
   // mesh.translate(0, 0, 1000);
 
+  // transforms relative to (0, 0, 0)
   // look from below
   // camera.translate(0, -1000, 0);
   // camera.rotate(Math.PI / 6, 0, 0);
@@ -55,6 +58,13 @@ if (!outputPath) throw new Error('Invalid input: no output path');
 
   // look upside down
   // camera.rotate(0, 0, Math.PI);
+
+  // transforms relative to the camera
+  // look up a bit
+  // camera.rotate(Math.PI / 8, 0, 0);
+
+  // look to the right a bit
+  // camera.rotate(0, Math.PI / 6, 0);
 
   const outputWriteStream = createWriteStream(outputPath);
   const ppmRenderer = new PPMRenderer(scene, outputWriteStream);
