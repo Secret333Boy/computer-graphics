@@ -1,6 +1,5 @@
 import { TraceableTransformable } from '../../../lab3/types/Transformable';
 import { Hit } from '../../types/Hit';
-import { Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
@@ -39,7 +38,7 @@ export default class Plane implements TraceableTransformable {
         .subtract(ray.position.toVector())
         .dotProduct(this.normal.vector) / denominator;
 
-    if (t < 0) return null;
+    if (t <= 0) return null;
 
     const pHit = ray.position
       .toVector()
@@ -52,6 +51,7 @@ export default class Plane implements TraceableTransformable {
       ),
       vertex: pHit,
       t,
+      object: this,
     };
   }
 }

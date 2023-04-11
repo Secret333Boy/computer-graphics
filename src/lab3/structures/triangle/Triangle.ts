@@ -42,7 +42,7 @@ export default class Triangle implements TraceableTransformable {
     const PE1 = P.dotProduct(E1);
 
     const t = Q.dotProduct(E2) / PE1;
-    if (t < 0) return null;
+    if (t <= 0) return null;
 
     const u = P.dotProduct(T) / PE1;
     if (u < 0) return null;
@@ -64,6 +64,7 @@ export default class Triangle implements TraceableTransformable {
           ? possibleNormal.multiply(-1)
           : possibleNormal
       ),
+      object: this,
     };
   }
 }

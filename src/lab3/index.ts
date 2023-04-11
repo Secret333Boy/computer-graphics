@@ -27,7 +27,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const inputReadStream = createReadStream(objFilePath);
   const mesh = await ReaderOBJ.readStream(inputReadStream);
   console.log('Mesh loaded');
-  const cameraWidth = 50;
+  const cameraWidth = 200;
   const resolution = 1;
   const camera = new Camera(
     new Vertex3D(0, 0, 0),

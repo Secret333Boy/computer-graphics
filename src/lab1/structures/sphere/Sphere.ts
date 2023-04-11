@@ -46,11 +46,13 @@ export class Sphere implements TraceableTransformable {
       return null;
     }
     const t = Math.min(t1, t2);
+    if (t <= 0) return null;
     const pHit = ray.position.toVector().add(ray.vector.multiply(t));
     return {
       normal: new Normal3D(this.center.toVector().subtract(pHit)),
       vertex: pHit.toVertex3D(),
       t,
+      object: this,
     };
   }
 }

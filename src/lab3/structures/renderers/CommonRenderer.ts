@@ -3,6 +3,7 @@ import { Hit } from '../../../lab1/types/Hit';
 import { Renderer } from '../../../lab1/types/Renderer';
 import { Scene } from '../../../lab1/types/Scene';
 import { findCloserHit } from '../../../lab1/utils/findCloserHit';
+import { TraceableTransformable } from '../../types/Transformable';
 
 export interface CommonRendererProps {
   scene: Scene;
@@ -34,7 +35,7 @@ export default abstract class CommonRenderer implements Renderer {
   }
 
   public async render() {
-    const { camera, objects, light } = this.scene;
+    const { camera, objects } = this.scene;
 
     await this.onRenderStart?.();
 
@@ -57,18 +58,17 @@ export default abstract class CommonRenderer implements Renderer {
         }
 
         if (closestHit) {
-          const shadowRay = new Ray(closestHit.vertex, light.vector.negate());
-          let hasShadow = false;
-
+          const shadowRay = new Ray(
+            closestHit.vertex,
+            this.scene.light.vector.multiply(-1)
+          );
           for (const object of objects) {
-            if (object.getIntersection(shadowRay)) {
-              hasShadow = true;
+            if (object === closestHit.object) continue;
+            const shadowHit = object.getIntersection(shadowRay);
+            if (shadowHit) {
+              closestHit = null;
               break;
             }
-          }
-
-          if (!hasShadow) {
-            await this.onHit(closestHit);
           }
         }
 

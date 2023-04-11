@@ -1,4 +1,3 @@
-import { Traceable } from '../types/Traceable';
 import { Scene } from '../types/Scene';
 import ConsoleRenderer from '../ConsoleRenderer';
 import Camera from '../structures/camera/Camera';
