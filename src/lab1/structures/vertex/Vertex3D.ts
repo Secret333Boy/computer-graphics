@@ -2,7 +2,6 @@ import {
   transformVector,
   transformations,
 } from '../../../lab3/structures/matrix/transformation-factories';
-import { Transformable } from '../../../lab3/types/Transformable';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 

@@ -3,7 +3,6 @@ import { Hit } from '../../../lab1/types/Hit';
 import { Renderer } from '../../../lab1/types/Renderer';
 import { Scene } from '../../../lab1/types/Scene';
 import { findCloserHit } from '../../../lab1/utils/findCloserHit';
-import { Matrix } from '../matrix/matrix';
 
 export interface CommonRendererProps {
   scene: Scene;
