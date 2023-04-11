@@ -34,7 +34,7 @@ export default abstract class CommonRenderer implements Renderer {
   }
 
   public async render() {
-    const { camera, objects } = this.scene;
+    const { camera, objects, light } = this.scene;
 
     await this.onRenderStart?.();
 
@@ -54,6 +54,22 @@ export default abstract class CommonRenderer implements Renderer {
           if (!hit) continue;
 
           closestHit = closestHit ? findCloserHit(hit, closestHit) : hit;
+        }
+
+        if (closestHit) {
+          const shadowRay = new Ray(closestHit.vertex, light.vector.negate());
+          let hasShadow = false;
+
+          for (const object of objects) {
+            if (object.getIntersection(shadowRay)) {
+              hasShadow = true;
+              break;
+            }
+          }
+
+          if (!hasShadow) {
+            await this.onHit(closestHit);
+          }
         }
 
         await this.onHit(closestHit);
