@@ -12,7 +12,7 @@ import Disk from '../lab1/structures/disk/Disk';
 let objFilePath = '';
 let outputPath = '';
 for (let i = 0; i < process.argv.length; i++) {
-  if (process.argv[i] === '--objFile') {
+  if (process.argv[i] === '--source') {
     objFilePath = process.argv[i + 1];
   }
 
@@ -28,14 +28,12 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const inputReadStream = createReadStream(objFilePath);
   const mesh = await ReaderOBJ.readStream(inputReadStream);
   console.log('Mesh loaded');
-  const cameraWidth = 600;
-  const resolution = 1;
   const camera = new Camera(
     new Vertex3D(0, 0, 0),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    cameraWidth,
-    Math.floor(cameraWidth / resolution)
+    1920,
+    1080
   );
 
   const directionalLight = new DirectionalLight(new Vector3D(-1, -1, 1));
