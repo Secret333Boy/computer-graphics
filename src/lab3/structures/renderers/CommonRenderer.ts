@@ -3,6 +3,7 @@ import { Hit } from '../../../lab1/types/Hit';
 import { Renderer } from '../../../lab1/types/Renderer';
 import { Scene } from '../../../lab1/types/Scene';
 import { findCloserHit } from '../../../lab1/utils/findCloserHit';
+import os from 'os';
 
 export interface CommonRendererProps {
   scene: Scene;
@@ -37,6 +38,9 @@ export default abstract class CommonRenderer implements Renderer {
     const { camera, objects } = this.scene;
 
     await this.onRenderStart?.();
+
+    const cpusCount = os.cpus().length;
+    console.log(cpusCount);
 
     for (let y = 0; y < camera.verticalResolution; y++) {
       await this.onRowStart?.();
