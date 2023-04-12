@@ -1,4 +1,4 @@
-import { createReadStream, createWriteStream } from 'fs';
+import { createWriteStream } from 'fs';
 import Camera from '../../lab1/structures/camera/Camera';
 import { DirectionalLight } from '../../lab1/structures/light/directional-light/DirectionalLight';
 import { Sphere } from '../../lab1/structures/sphere/Sphere';
@@ -25,7 +25,7 @@ describe('Common Renderer', () => {
     ),
     new DirectionalLight(new Vector3D(0, 0, 1))
   );
-  const outputPath = '';
+  const outputPath = './test1.ppm';
   const outputWriteStream = createWriteStream(outputPath);
 
   const renderer = new PPMRenderer(scene, outputWriteStream);

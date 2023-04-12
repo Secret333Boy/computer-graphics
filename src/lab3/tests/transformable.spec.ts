@@ -1,7 +1,6 @@
 import {
   Rotatable,
   Scalable,
-  TraceableTransformable,
   Transformable,
   Translatable,
 } from '../types/Transformable';
