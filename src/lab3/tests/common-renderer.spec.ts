@@ -1,4 +1,4 @@
-import { createReadStream, createWriteStream } from 'fs';
+import { createWriteStream } from 'fs';
 import Camera from '../../lab1/structures/camera/Camera';
 import { DirectionalLight } from '../../lab1/structures/light/directional-light/DirectionalLight';
 import { Sphere } from '../../lab1/structures/sphere/Sphere';
