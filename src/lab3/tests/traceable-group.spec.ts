@@ -1,4 +1,3 @@
-import Normal3D from '../../lab1/structures/normal/Normal';
 import Ray from '../../lab1/structures/ray/Ray';
 import Vector3D from '../../lab1/structures/vector/Vector3D';
 import Vertex3D from '../../lab1/structures/vertex/Vertex3D';
@@ -28,29 +27,48 @@ describe('TraceableGroup', () => {
       expect(group.getIntersection(ray)).toBeNull();
     });
 
-    it('should return the closest intersection if multiple objects intersect the ray', () => {
-      const object1: Traceable = {
-        getIntersection: () => ({
-          t: 1,
-          vertex: new Vertex3D(0, 0, 0),
-          normal: new Normal3D(new Vector3D(0, 0, 1)),
-        }),
-      };
-      const object2: Traceable = {
-        getIntersection: () => ({
-          t: 2,
-          vertex: new Vertex3D(0, 0, 0),
-          normal: new Normal3D(new Vector3D(0, 0, 1)),
-        }),
-      };
-      const group = new TraceableGroup([object1, object2]);
-      const ray = new Ray(new Vertex3D(0, 0, 0), new Vector3D(0, 0, 1));
+    it('should return the closest hit among multiple objects in the group', () => {
+      const ray = new Ray(new Vertex3D(0, 0, 0), new Vector3D(0, 0, -1));
 
-      expect(group.getIntersection(ray)).toEqual({
-        t: 1,
-        vertex: new Vertex3D(0, 0, 0),
-        normal: new Normal3D(new Vector3D(0, 0, 1)),
-      });
+      const object1 = {
+        getIntersection: jest
+          .fn()
+          .mockReturnValueOnce(null)
+          .mockReturnValueOnce({ t: 2 }),
+      };
+
+      const object2 = {
+        getIntersection: jest.fn().mockReturnValueOnce({ t: 1 }),
+      };
+
+      const traceableGroup = new TraceableGroup([object1, object2]);
+      const hit = traceableGroup.getIntersection(ray);
+
+      expect(object1.getIntersection).toHaveBeenCalledWith(ray);
+      expect(object2.getIntersection).toHaveBeenCalledWith(ray);
+
+      expect(hit).not.toBeNull();
+      expect(hit?.t).toBe(1);
+    });
+
+    it('should return null when all objects miss the ray', () => {
+      const ray = new Ray(new Vertex3D(0, 0, 0), new Vector3D(0, 0, -1));
+
+      const object1 = {
+        getIntersection: jest.fn().mockReturnValueOnce(null),
+      };
+
+      const object2 = {
+        getIntersection: jest.fn().mockReturnValueOnce(null),
+      };
+
+      const traceableGroup = new TraceableGroup([object1, object2]);
+      const hit = traceableGroup.getIntersection(ray);
+
+      expect(object1.getIntersection).toHaveBeenCalledWith(ray);
+      expect(object2.getIntersection).toHaveBeenCalledWith(ray);
+
+      expect(hit).toBeNull();
     });
   });
 });
