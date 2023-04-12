@@ -38,7 +38,7 @@ export default class Plane implements TraceableTransformable {
         .subtract(ray.position.toVector())
         .dotProduct(this.normal.vector) / denominator;
 
-    if (t < 0) return null;
+    if (t <= 0) return null;
 
     const pHit = ray.position
       .toVector()
@@ -51,6 +51,7 @@ export default class Plane implements TraceableTransformable {
       ),
       vertex: pHit,
       t,
+      object: this,
     };
   }
 }
