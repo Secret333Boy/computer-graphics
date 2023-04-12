@@ -25,7 +25,7 @@ describe('Common Renderer', () => {
     ),
     new DirectionalLight(new Vector3D(0, 0, 1))
   );
-  const outputPath = '';
+  const outputPath = './test1.ppm';
   const outputWriteStream = createWriteStream(outputPath);
 
   const renderer = new PPMRenderer(scene, outputWriteStream);
