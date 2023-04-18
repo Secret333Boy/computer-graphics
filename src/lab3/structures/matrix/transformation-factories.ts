@@ -1,4 +1,5 @@
 import Vector3D from '../../../lab1/structures/vector/Vector3D';
+import Vertex3D from '../../../lab1/structures/vertex/Vertex3D';
 import { Matrix } from './matrix';
 
 export const transformations = {
@@ -72,6 +73,20 @@ export const transformations = {
   },
 } as const;
 
+export const transformVertex = (
+  vector: Vertex3D,
+  transformation: Matrix
+): Vertex3D => {
+  const vectorMatrix = new Matrix([
+    [vector.x],
+    [vector.y],
+    [vector.z],
+    // for translation
+    [1],
+  ]);
+  return transformation.multiply(vectorMatrix).toVertex3D();
+};
+
 export const transformVector = (
   vector: Vector3D,
   transformation: Matrix
@@ -81,8 +96,15 @@ export const transformVector = (
     [vector.y],
     [vector.z],
     // for translation
-    [1],
+    [0],
   ]);
-  const result = transformation.multiply(vectorMatrix);
-  return result.toVector();
+  return transformation.multiply(vectorMatrix).toVector();
+};
+
+export const transformScalar = (
+  scalar: number,
+  transformation: Matrix
+): number => {
+  const scalarMatrix = new Matrix([[scalar], [0], [0], [0]]);
+  return transformation.multiply(scalarMatrix).at(0, 0);
 };

@@ -3,6 +3,8 @@ import Ray from '../../../lab1/structures/ray/Ray';
 import Vertex3D from '../../../lab1/structures/vertex/Vertex3D';
 import { Hit } from '../../../lab1/types/Hit';
 import { TraceableTransformable } from '../../types/Transformable';
+import { Matrix } from '../matrix/matrix';
+import { transformVertex } from '../matrix/transformation-factories';
 
 export default class Triangle implements TraceableTransformable {
   private eps = 0.00000001;
@@ -12,22 +14,10 @@ export default class Triangle implements TraceableTransformable {
     public vertex3: Vertex3D
   ) {}
 
-  public translate(x: number, y: number, z: number): void {
-    this.vertex1 = this.vertex1.getTranslated(x, y, z);
-    this.vertex2 = this.vertex2.getTranslated(x, y, z);
-    this.vertex3 = this.vertex3.getTranslated(x, y, z);
-  }
-
-  public rotate(angleX: number, angleY: number, angleZ: number): void {
-    this.vertex1 = this.vertex1.getRotated(angleX, angleY, angleZ);
-    this.vertex2 = this.vertex2.getRotated(angleX, angleY, angleZ);
-    this.vertex3 = this.vertex3.getRotated(angleX, angleY, angleZ);
-  }
-
-  public scale(x: number, y: number, z: number): void {
-    this.vertex1 = this.vertex1.getScaled(x, y, z);
-    this.vertex2 = this.vertex2.getScaled(x, y, z);
-    this.vertex3 = this.vertex3.getScaled(x, y, z);
+  public transform(matrix: Matrix): void {
+    this.vertex1 = transformVertex(this.vertex1, matrix);
+    this.vertex2 = transformVertex(this.vertex2, matrix);
+    this.vertex3 = transformVertex(this.vertex3, matrix);
   }
 
   public getIntersection(ray: Ray): Hit | null {

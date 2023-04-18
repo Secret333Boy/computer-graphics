@@ -1,3 +1,5 @@
+import { Matrix } from '../../../lab3/structures/matrix/matrix';
+import { transformVertex } from '../../../lab3/structures/matrix/transformation-factories';
 import { TraceableTransformable } from '../../../lab3/types/Transformable';
 import { Hit } from '../../types/Hit';
 import Normal3D from '../normal/Normal';
@@ -14,17 +16,9 @@ export default class Plane implements TraceableTransformable {
     this.vertex = vertex;
   }
 
-  public rotate(angleX: number, angleY: number, angleZ: number): void {
-    this.normal = this.normal.rotate(angleX, angleY, angleZ);
-    this.vertex = this.vertex.getRotated(angleX, angleY, angleZ);
-  }
-
-  public translate(x: number, y: number, z: number): void {
-    this.vertex = this.vertex.getTranslated(x, y, z);
-  }
-
-  public scale(x: number, y: number, z: number): void {
-    this.vertex = this.vertex.getScaled(x, y, z);
+  public transform(matrix: Matrix): void {
+    this.normal = this.normal.getTranformed(matrix);
+    this.vertex = transformVertex(this.vertex, matrix);
   }
 
   public getIntersection(ray: Ray): Hit | null {
