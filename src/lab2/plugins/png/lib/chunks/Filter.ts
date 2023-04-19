@@ -22,6 +22,10 @@ export const prependFilterType = (
   return result;
 };
 
+export const removeFilterType = (data: Buffer): Buffer => {
+  return data.subarray(1);
+};
+
 export const filterEncoders: Record<FilterType, Filter> = {
   [FilterType.None]: (data) => data,
   [FilterType.Sub]: (data, bpp) => {

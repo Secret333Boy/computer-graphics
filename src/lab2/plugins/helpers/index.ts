@@ -57,13 +57,25 @@ export const logPassthrough = (prefix: string) =>
       console.log(prefix, chunk);
       callback(null, chunk);
     },
+    objectMode: true,
   });
 
 export const readNBytes = (n: number, stream: Readable): Promise<Buffer> => {
-  console.log('reading', n, 'bytes');
   return new Promise((resolve) => {
     let buffer = Buffer.alloc(0);
+    if (n === 0) resolve(buffer);
     let chunk: Buffer;
+    const onReadable = () => {
+      let chunk: Buffer;
+      while ((chunk = stream.read(n - buffer.length)) !== null) {
+        buffer = Buffer.concat([buffer, chunk]);
+        if (buffer.length === n) {
+          stream.removeListener('readable', onReadable);
+          resolve(buffer);
+          return;
+        }
+      }
+    };
     while ((chunk = stream.read(n - buffer.length)) !== null) {
       buffer = Buffer.concat([buffer, chunk]);
       if (buffer.length === n) {
@@ -71,15 +83,9 @@ export const readNBytes = (n: number, stream: Readable): Promise<Buffer> => {
         return;
       }
     }
-    stream.on('readable', () => {
-      let chunk: Buffer;
-      while ((chunk = stream.read(n - buffer.length)) !== null) {
-        buffer = Buffer.concat([buffer, chunk]);
-        if (buffer.length === n) {
-          resolve(buffer);
-          return;
-        }
-      }
+    stream.on('readable', onReadable);
+    stream.on('end', () => {
+      resolve(buffer);
     });
   });
 };

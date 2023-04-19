@@ -13,7 +13,9 @@ export default class WriterPNG implements ImageWriter {
     const stream = new PassThrough();
     this.writeHeader(stream);
     this.writeIHDR(stream, imageBuffer);
-    this.writeIDATs(stream, imageBuffer).then(() => this.writeIEND(stream));
+    this.writeIDATs(stream, imageBuffer).then(() => {
+      this.writeIEND(stream);
+    });
     return stream;
   }
 
@@ -42,9 +44,13 @@ export default class WriterPNG implements ImageWriter {
   ): Promise<void> {
     const idatChunkStream = generateIDATChunks(imageBuffer, FilterType.None);
     return new Promise((resolve, reject) => {
-      idatChunkStream.on('end', () => resolve());
+      idatChunkStream.on('end', () => {
+        resolve();
+      });
       idatChunkStream.on('error', (err) => reject(err));
-      idatChunkStream.pipe(stream);
+      idatChunkStream.pipe(stream, {
+        end: false,
+      });
     });
   }
 

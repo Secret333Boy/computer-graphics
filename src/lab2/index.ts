@@ -8,7 +8,7 @@ import { logPassthrough } from './plugins/helpers';
 
 // const pixels = new PassThrough({ objectMode: true });
 // pixels.push({ r: 0, g: 0, b: 0 });
-// pixels.push({ r: 255, g: 255, b: 255 });
+// pixels.push({ r: 255, g: 255, b: 0 });
 // pixels.push({ r: 255, g: 255, b: 255 });
 // pixels.push({ r: 0, g: 0, b: 0 });
 // pixels.push(null);
@@ -31,5 +31,6 @@ new ReaderPNG().read(readStream).then((imageBuffer) => {
     return;
   }
   console.log(imageBuffer.imageInfo);
-  imageBuffer.pixels.pipe(logPassthrough(''));
+  const passthrough = logPassthrough('');
+  imageBuffer.pixels.pipe(passthrough);
 });

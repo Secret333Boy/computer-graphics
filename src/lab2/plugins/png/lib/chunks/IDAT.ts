@@ -72,6 +72,7 @@ export const unwrapIDATChunks = (idatChunks: Readable): Readable => {
     transform: (chunk: IDATChunk, _, callback) => {
       callback(null, chunk.data);
     },
+    objectMode: true,
   });
   return idatChunks.pipe(concatStream);
 };
@@ -80,15 +81,82 @@ export const decompressStream = (compressedStream: Readable): Readable => {
   return compressedStream.pipe(zlib.createInflate());
 };
 
-export const mergedStreamToScanlineBufferStream = (
-  mergedStream: Readable,
-  
+export const filteredStreamIntoFilteredScanlineStream = (
+  filteredStream: Readable,
+  scanlineSizeInBytesExceptFilter: number
 ): Readable => {
-  const scanlineBufferStream = new Transform({
+  let scanlineBuffer: Buffer = Buffer.alloc(0);
+  let scanlineBytes = 0;
+  const scanlineSizeWithFilter = scanlineSizeInBytesExceptFilter + 1;
+  const transform = new Transform({
     transform: (chunk: Buffer, _, callback) => {
-      callback(null, chunk.slice(1));
+      while (chunk.length > 0) {
+        const chunkOfThisScanline = chunk.subarray(
+          0,
+          scanlineSizeWithFilter - scanlineBytes
+        );
+        const chunkOfNextScanlines = chunk.subarray(
+          scanlineSizeWithFilter - scanlineBytes
+        );
+        scanlineBuffer = Buffer.concat([scanlineBuffer, chunkOfThisScanline]);
+        scanlineBytes = scanlineBuffer.length;
+        if (scanlineBytes === scanlineSizeWithFilter) {
+          transform.push(scanlineBuffer);
+          scanlineBuffer = Buffer.alloc(0);
+          scanlineBytes = 0;
+        }
+        chunk = chunkOfNextScanlines;
+      }
+      callback();
     },
     objectMode: true,
   });
-  return mergedStream.pipe(scanlineBufferStream);
+  filteredStream.on('end', () => console.log('EEEEND'));
+  return filteredStream.pipe(transform);
+};
+
+export const filteredScanlinesIntoUnfilteredByteStream = (
+  filteredScanlineStream: Readable
+): Readable => {
+  let prevScanline: Buffer | undefined;
+  const unfilteredScanlineStream = new Transform({
+    transform: (chunk: Buffer, _, callback) => {
+      const filterType: FilterType = chunk[0];
+      const scanlineWithoutFilter = chunk.subarray(1);
+      const unfilteredScanline = filterDecoders[filterType](
+        scanlineWithoutFilter,
+        3,
+        prevScanline
+      );
+      prevScanline = unfilteredScanline;
+      callback(null, unfilteredScanline);
+    },
+    objectMode: true,
+  });
+  return filteredScanlineStream.pipe(unfilteredScanlineStream);
+};
+
+export const byteStreamIntoPixelStream = (
+  byteStream: Readable,
+  bpp: number
+): Readable => {
+  let pixel: number[] = [];
+  const pixelStream = new Transform({
+    transform(chunk: Buffer, _, callback) {
+      for (let i = 0; i < chunk.length; i++) {
+        pixel.push(chunk[i]);
+        if (pixel.length === bpp) {
+          this.push({
+            r: pixel[0],
+            g: pixel[1],
+            b: pixel[2],
+          });
+          pixel = [];
+        }
+      }
+      callback();
+    },
+    objectMode: true,
+  });
+  return byteStream.pipe(pixelStream);
 };

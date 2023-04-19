@@ -44,14 +44,11 @@ export class Chunk {
 
   public static async chunkFromStream(stream: Readable): Promise<Chunk> {
     const length: number = await readNBytes(4, stream).then((buf) => {
-      console.log(buf);
       return buf.readUInt32BE();
     });
-    console.log(length);
     const type: string = await readNBytes(4, stream).then((buf) =>
       buf.toString('ascii')
     );
-    console.log(type);
     const data: Buffer = await readNBytes(length, stream);
     const crc: number = await readNBytes(4, stream).then((buf) =>
       buf.readUInt32BE()
