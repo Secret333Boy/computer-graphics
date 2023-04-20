@@ -1,7 +1,8 @@
-import { createReadStream } from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
 import path from 'path';
 import ReaderPNG from './plugins/png/ReaderPNG.reader';
 import { logPassthrough } from './plugins/helpers';
+import WriterPNG from './plugins/png/WriterPNG.writer';
 
 // const pixels = new PassThrough({ objectMode: true });
 // pixels.push({ r: 0, g: 0, b: 0 });
@@ -24,12 +25,15 @@ import { logPassthrough } from './plugins/helpers';
 const readStream = createReadStream(
   path.resolve(__dirname, 'plugins/png/samples/cubes.png')
 );
+const writeStream = createWriteStream(path.resolve(__dirname, 'file.png'));
+const writerPng = new WriterPNG();
 new ReaderPNG().read(readStream).then((imageBuffer) => {
   if (imageBuffer === null) {
     console.log('Wrong format');
     return;
   }
   console.log(imageBuffer.imageInfo);
-  const passthrough = logPassthrough('');
-  imageBuffer.pixels.pipe(passthrough);
+  // const passthrough = logPassthrough('');
+  // imageBuffer.pixels.pipe(passthrough);
+  writerPng.write(imageBuffer).pipe(writeStream);
 });

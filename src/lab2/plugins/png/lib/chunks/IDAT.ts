@@ -13,6 +13,9 @@ import {
 } from '../../../helpers';
 import { ImageBuffer } from '../../../../ImageBuffer';
 import { Readable, Transform } from 'stream';
+import { ImageInfo } from '../../../../interfaces/ImageInfo';
+import { COLOR_TYPE, imageInfoToColorType } from './IHDR';
+import { Pixel } from '../../../../interfaces/Pixel';
 
 export class IDATChunk extends Chunk {
   constructor(data: Buffer, crc?: number) {
@@ -145,19 +148,32 @@ export const filteredScanlinesIntoUnfilteredByteStream = (
 
 export const byteStreamIntoPixelStream = (
   byteStream: Readable,
+  imageInfo: ImageInfo,
   bpp: number
 ): Readable => {
   let pixel: number[] = [];
+  const colorType = imageInfoToColorType(imageInfo);
   const pixelStream = new Transform({
     transform(chunk: Buffer, _, callback) {
       for (let i = 0; i < chunk.length; i++) {
         pixel.push(chunk[i]);
         if (pixel.length === bpp) {
-          this.push({
-            r: pixel[0],
-            g: pixel[1],
-            b: pixel[2],
-          });
+          const pixelObj: Pixel = {
+            r: 0,
+            g: 0,
+            b: 0,
+          };
+          if (imageInfo.isGrayscale) {
+            pixelObj.r = pixelObj.g = pixelObj.b = pixel[0];
+          } else {
+            pixelObj.r = pixel[0];
+            pixelObj.g = pixel[1];
+            pixelObj.b = pixel[2];
+          }
+          if (imageInfo.hasAlpha) {
+            pixelObj.a = pixel[3];
+          }
+          this.push(pixelObj);
           pixel = [];
         }
       }

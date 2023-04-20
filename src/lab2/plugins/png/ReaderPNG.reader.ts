@@ -103,7 +103,11 @@ export default class ReaderPNG implements ImageReader {
           imageBuffer.imageInfo.height,
           bpp
         );
-        const pixels = byteStreamIntoPixelStream(unfilteredBytes, bpp);
+        const pixels = byteStreamIntoPixelStream(
+          unfilteredBytes,
+          imageBuffer.imageInfo,
+          bpp
+        );
         pixels.pipe(stream);
         this.IDATChunkStream = IDATChunksStream;
       }
