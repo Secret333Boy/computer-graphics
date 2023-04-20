@@ -26,17 +26,19 @@ export class IDATChunk extends Chunk {
 
 export const pixelStreamToFilteredStream = (
   image: ImageBuffer,
-  filterType: FilterType
+  filterType: FilterType,
+  bpp: number
 ): Readable => {
   const scanlineBufferStream = scanlineStreamToBufferStream(
-    pixelStreamToScanlineStream(image)
+    pixelStreamToScanlineStream(image),
+    image.imageInfo
   );
   let prevScanline: Buffer | undefined;
   const filteredStream = new Transform({
     transform: (scanline: Buffer, _, callback) => {
       const filteredScanline = prependFilterType(
         filterType,
-        filterEncoders[filterType](scanline, 3, prevScanline)
+        filterEncoders[filterType](scanline, bpp, prevScanline)
       );
       prevScanline = scanline;
       callback(null, filteredScanline);
@@ -55,9 +57,10 @@ export const compressFilteredStream = (filteredStream: Readable): Readable => {
 
 export const generateIDATChunks = (
   image: ImageBuffer,
-  filterType: FilterType
+  filterType: FilterType,
+  bpp: number
 ): Readable => {
-  const filteredStream = pixelStreamToFilteredStream(image, filterType);
+  const filteredStream = pixelStreamToFilteredStream(image, filterType, bpp);
   const compressedStream = compressFilteredStream(filteredStream);
   const chunkStream = new Transform({
     transform: (chunk: Buffer, _, callback) => {
@@ -83,7 +86,8 @@ export const decompressStream = (compressedStream: Readable): Readable => {
 
 export const filteredStreamIntoFilteredScanlineStream = (
   filteredStream: Readable,
-  scanlineSizeInBytesExceptFilter: number
+  scanlineSizeInBytesExceptFilter: number,
+  scanlineNumber: number
 ): Readable => {
   let scanlineBuffer: Buffer = Buffer.alloc(0);
   let scanlineBytes = 0;
@@ -109,14 +113,16 @@ export const filteredStreamIntoFilteredScanlineStream = (
       }
       callback();
     },
+    highWaterMark: scanlineNumber,
     objectMode: true,
   });
-  filteredStream.on('end', () => console.log('EEEEND'));
   return filteredStream.pipe(transform);
 };
 
 export const filteredScanlinesIntoUnfilteredByteStream = (
-  filteredScanlineStream: Readable
+  filteredScanlineStream: Readable,
+  scanlineNum: number,
+  bpp: number
 ): Readable => {
   let prevScanline: Buffer | undefined;
   const unfilteredScanlineStream = new Transform({
@@ -125,13 +131,14 @@ export const filteredScanlinesIntoUnfilteredByteStream = (
       const scanlineWithoutFilter = chunk.subarray(1);
       const unfilteredScanline = filterDecoders[filterType](
         scanlineWithoutFilter,
-        3,
+        bpp,
         prevScanline
       );
       prevScanline = unfilteredScanline;
       callback(null, unfilteredScanline);
     },
     objectMode: true,
+    highWaterMark: scanlineNum,
   });
   return filteredScanlineStream.pipe(unfilteredScanlineStream);
 };

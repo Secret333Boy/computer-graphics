@@ -1,7 +1,13 @@
 import { PassThrough, Writable } from 'stream';
 import { ImageBuffer } from '../../ImageBuffer';
 import { ImageWriter } from '../../interfaces/ImageWriter';
-import { COLOR_TYPE, IHDRChunk, INTERLACE_METHOD } from './lib/chunks/IHDR';
+import {
+  IHDRChunk,
+  INTERLACE_METHOD,
+  colorTypeToBpp,
+  imageInfoToBitDepth,
+  imageInfoToColorType,
+} from './lib/chunks/IHDR';
 import { generateIDATChunks } from './lib/chunks/IDAT';
 import { FilterType } from './lib/chunks/Filter';
 import { IENDChunk } from './lib/chunks/IEND';
@@ -25,8 +31,8 @@ export default class WriterPNG implements ImageWriter {
 
   private writeIHDR(stream: Writable, imageBuffer: ImageBuffer) {
     const { width, height } = imageBuffer.imageInfo;
-    const bitDepth = 8;
-    const colorType = COLOR_TYPE.TRUECOLOR;
+    const bitDepth = imageInfoToBitDepth(imageBuffer.imageInfo);
+    const colorType = imageInfoToColorType(imageBuffer.imageInfo);
     const interlaceMethod = INTERLACE_METHOD.NONE;
     const chunk = new IHDRChunk(
       width,
@@ -42,7 +48,14 @@ export default class WriterPNG implements ImageWriter {
     stream: Writable,
     imageBuffer: ImageBuffer
   ): Promise<void> {
-    const idatChunkStream = generateIDATChunks(imageBuffer, FilterType.None);
+    const idatChunkStream = generateIDATChunks(
+      imageBuffer,
+      FilterType.None,
+      colorTypeToBpp(
+        imageInfoToColorType(imageBuffer.imageInfo),
+        imageInfoToBitDepth(imageBuffer.imageInfo)
+      )
+    );
     return new Promise((resolve, reject) => {
       idatChunkStream.on('end', () => {
         resolve();

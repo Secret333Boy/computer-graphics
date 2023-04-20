@@ -1,3 +1,4 @@
+import { ImageInfo } from '../../../../interfaces/ImageInfo';
 import { Chunk } from './Chunk';
 
 export enum COLOR_TYPE {
@@ -7,6 +8,53 @@ export enum COLOR_TYPE {
   GRAYSCALE_WITH_ALPHA = 4,
   TRUECOLOR_WITH_ALPHA = 6,
 }
+
+const COLOR_TYPE_TO_BPP = {
+  [COLOR_TYPE.GRAYSCALE]: 1,
+  [COLOR_TYPE.TRUECOLOR]: 3,
+  [COLOR_TYPE.INDEXED_COLOR]: 1,
+  [COLOR_TYPE.GRAYSCALE_WITH_ALPHA]: 2,
+  [COLOR_TYPE.TRUECOLOR_WITH_ALPHA]: 4,
+};
+
+export const colorTypeToBpp = (
+  colorType: COLOR_TYPE,
+  bitDepth: number
+): number => {
+  return COLOR_TYPE_TO_BPP[colorType] * Math.floor(bitDepth / 8);
+};
+
+export const COLOR_TYPE_TO_NAME = {
+  [COLOR_TYPE.GRAYSCALE]: 'grayscale',
+  [COLOR_TYPE.TRUECOLOR]: 'truecolor',
+  [COLOR_TYPE.INDEXED_COLOR]: 'indexed color',
+  [COLOR_TYPE.GRAYSCALE_WITH_ALPHA]: 'grayscale with alpha',
+  [COLOR_TYPE.TRUECOLOR_WITH_ALPHA]: 'truecolor with alpha',
+};
+
+export const imageInfoToColorType = (info: ImageInfo): COLOR_TYPE => {
+  if (info.isGrayscale) {
+    if (info.hasAlpha) {
+      return COLOR_TYPE.GRAYSCALE_WITH_ALPHA;
+    } else {
+      return COLOR_TYPE.GRAYSCALE;
+    }
+  } else {
+    if (info.hasAlpha) {
+      return COLOR_TYPE.TRUECOLOR_WITH_ALPHA;
+    } else {
+      return COLOR_TYPE.TRUECOLOR;
+    }
+  }
+};
+
+export const imageInfoToBitDepth = (info: ImageInfo): number => {
+  if (info.maxColor <= 255) {
+    return 8;
+  } else {
+    return 16;
+  }
+};
 
 export enum INTERLACE_METHOD {
   NONE = 0,
@@ -18,7 +66,7 @@ export class IHDRChunk extends Chunk {
     public width: number,
     public height: number,
     public bitDepth: number,
-    public colorType: number,
+    public colorType: COLOR_TYPE,
     public interlaceMethod: number,
     buffer?: Buffer,
     crc?: number

@@ -1,8 +1,5 @@
-import { PassThrough } from 'stream';
-import { ImageBuffer } from './ImageBuffer';
-import { createReadStream, createWriteStream } from 'fs';
+import { createReadStream } from 'fs';
 import path from 'path';
-import WriterPNG from './plugins/png/WriterPNG.writer';
 import ReaderPNG from './plugins/png/ReaderPNG.reader';
 import { logPassthrough } from './plugins/helpers';
 
@@ -24,7 +21,9 @@ import { logPassthrough } from './plugins/helpers';
 // const fileStream = createWriteStream(path.resolve(__dirname, 'file.png'));
 // stream.pipe(fileStream);
 
-const readStream = createReadStream(path.resolve(__dirname, 'file.png'));
+const readStream = createReadStream(
+  path.resolve(__dirname, 'plugins/png/samples/cubes.png')
+);
 new ReaderPNG().read(readStream).then((imageBuffer) => {
   if (imageBuffer === null) {
     console.log('Wrong format');

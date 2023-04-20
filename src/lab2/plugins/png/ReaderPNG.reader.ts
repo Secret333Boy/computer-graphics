@@ -1,10 +1,17 @@
 import { PassThrough, Readable, Transform, Writable } from 'stream';
 import { ImageBuffer } from '../../ImageBuffer';
 import { ImageReader } from '../../interfaces/ImageReader';
-import { readNBytes } from '../helpers';
+import { logPassthrough, readNBytes } from '../helpers';
 import { magic } from './lib/chunks/Magic';
 import { Chunk } from './lib/chunks/Chunk';
-import { IHDRChunk } from './lib/chunks/IHDR';
+import {
+  COLOR_TYPE,
+  COLOR_TYPE_TO_NAME,
+  IHDRChunk,
+  colorTypeToBpp,
+  imageInfoToBitDepth,
+  imageInfoToColorType,
+} from './lib/chunks/IHDR';
 import {
   IDATChunk,
   byteStreamIntoPixelStream,
@@ -39,6 +46,7 @@ export default class ReaderPNG implements ImageReader {
         console.warn(`Unknown chunk type encountered ${chunk.type}`);
       }
     }
+    this.IDATChunkStream = null;
     return imageBuffer;
   }
   private async isPng(stream: Readable): Promise<boolean> {
@@ -61,6 +69,13 @@ export default class ReaderPNG implements ImageReader {
       const ihdrChunk = IHDRChunk.fromChunk(chunk);
       imageBuffer.imageInfo.width = ihdrChunk.width;
       imageBuffer.imageInfo.height = ihdrChunk.height;
+      imageBuffer.imageInfo.hasAlpha =
+        ihdrChunk.colorType === COLOR_TYPE.GRAYSCALE_WITH_ALPHA ||
+        ihdrChunk.colorType === COLOR_TYPE.TRUECOLOR_WITH_ALPHA;
+      imageBuffer.imageInfo.isGrayscale =
+        ihdrChunk.colorType === COLOR_TYPE.GRAYSCALE ||
+        ihdrChunk.colorType === COLOR_TYPE.GRAYSCALE_WITH_ALPHA;
+      console.log('Image type:', COLOR_TYPE_TO_NAME[ihdrChunk.colorType]);
       return true;
     },
     IDAT: async (imageBuffer: ImageBuffer, chunk: Chunk, stream: Writable) => {
@@ -75,13 +90,20 @@ export default class ReaderPNG implements ImageReader {
         const decompressedIDATChunksStream = decompressStream(
           unwrappedIDATChunksStream
         );
+        const colorType = imageInfoToColorType(imageBuffer.imageInfo);
+        const bitDepth = imageInfoToBitDepth(imageBuffer.imageInfo);
+        const bpp = colorTypeToBpp(colorType, bitDepth);
         const filteredScanlines = filteredStreamIntoFilteredScanlineStream(
           decompressedIDATChunksStream,
-          imageBuffer.imageInfo.width * 3
+          imageBuffer.imageInfo.width * bpp,
+          imageBuffer.imageInfo.height
         );
-        const unfilteredBytes =
-          filteredScanlinesIntoUnfilteredByteStream(filteredScanlines);
-        const pixels = byteStreamIntoPixelStream(unfilteredBytes, 3);
+        const unfilteredBytes = filteredScanlinesIntoUnfilteredByteStream(
+          filteredScanlines,
+          imageBuffer.imageInfo.height,
+          bpp
+        );
+        const pixels = byteStreamIntoPixelStream(unfilteredBytes, bpp);
         pixels.pipe(stream);
         this.IDATChunkStream = IDATChunksStream;
       }
