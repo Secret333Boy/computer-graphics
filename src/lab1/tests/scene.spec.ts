@@ -1,3 +1,4 @@
+import { transformations } from '../../lab3/structures/matrix/transformation-factories';
 import Camera from '../structures/camera/Camera';
 import Disk from '../structures/disk/Disk';
 import { DirectionalLight } from '../structures/light/directional-light/DirectionalLight';
@@ -20,26 +21,29 @@ describe('Scene', () => {
   const scene = new Scene([sphere, disk], camera, light);
 
   it('should translate every object in the scene', () => {
-    const sphereTranslateSpy = jest.spyOn(sphere, 'translate');
-    const diskTranslateSpy = jest.spyOn(disk, 'translate');
-    scene.translate(1, 1, 1);
-    expect(sphereTranslateSpy).toHaveBeenCalledWith(1, 1, 1);
-    expect(diskTranslateSpy).toHaveBeenCalledWith(1, 1, 1);
+    const sphereTranslateSpy = jest.spyOn(sphere, 'transform');
+    const diskTranslateSpy = jest.spyOn(disk, 'transform');
+    const transformation = transformations.translate3d(1, 1, 1);
+    scene.transform(transformation);
+    expect(sphereTranslateSpy).toHaveBeenCalledWith(transformation);
+    expect(diskTranslateSpy).toHaveBeenCalledWith(transformation);
   });
 
   it('should rotate every object in the scene', () => {
-    const sphereRotateSpy = jest.spyOn(sphere, 'rotate');
-    const diskRotateSpy = jest.spyOn(disk, 'rotate');
-    scene.rotate(1, 1, 1);
-    expect(sphereRotateSpy).toHaveBeenCalledWith(1, 1, 1);
-    expect(diskRotateSpy).toHaveBeenCalledWith(1, 1, 1);
+    const sphereRotateSpy = jest.spyOn(sphere, 'transform');
+    const diskRotateSpy = jest.spyOn(disk, 'transform');
+    const transformation = transformations.rotate3d(1, 1, 1);
+    scene.transform(transformation);
+    expect(sphereRotateSpy).toHaveBeenCalledWith(transformation);
+    expect(diskRotateSpy).toHaveBeenCalledWith(transformation);
   });
 
   it('should scale every object in the scene', () => {
-    const sphereScaleSpy = jest.spyOn(sphere, 'scale');
-    const diskScaleSpy = jest.spyOn(disk, 'scale');
-    scene.scale(1, 1, 1);
-    expect(sphereScaleSpy).toHaveBeenCalledWith(1, 1, 1);
-    expect(diskScaleSpy).toHaveBeenCalledWith(1, 1, 1);
+    const sphereScaleSpy = jest.spyOn(sphere, 'transform');
+    const diskScaleSpy = jest.spyOn(disk, 'transform');
+    const transformation = transformations.scale3d(1, 1, 1);
+    scene.transform(transformation);
+    expect(sphereScaleSpy).toHaveBeenCalledWith(transformation);
+    expect(diskScaleSpy).toHaveBeenCalledWith(transformation);
   });
 });
