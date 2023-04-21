@@ -1,10 +1,13 @@
 import { Matrix } from '../../../lab3/structures/matrix/matrix';
-import { transformVector } from '../../../lab3/structures/matrix/transformation-factories';
-import { Rotatable, Translatable } from '../../../lab3/types/Transformable';
+import {
+  transformVector,
+  transformVertex,
+} from '../../../lab3/structures/matrix/transformation-factories';
+import { Transformable } from '../../../lab3/types/Transformable';
 import Vector3D from '../vector/Vector3D';
 import Vertex3D from '../vertex/Vertex3D';
 
-export default class Camera implements Translatable, Rotatable {
+export default class Camera implements Transformable {
   public rightVector: Vector3D;
   public upVector: Vector3D;
 
@@ -26,16 +29,11 @@ export default class Camera implements Translatable, Rotatable {
     }
     this.upVector = this.viewVector.crossProduct(this.rightVector).normalize();
   }
-
-  public translate(x: number, y: number, z: number): void {
-    this.focalPoint = this.focalPoint.getTranslated(x, y, z);
-  }
-
-  public rotate(angleX: number, angleY: number, angleZ: number): void {
-    this.viewVector = this.viewVector.getRotated(angleX, angleY, angleZ);
-    this.rightVector = this.rightVector.getRotated(angleX, angleY, angleZ);
-    this.upVector = this.upVector.getRotated(angleX, angleY, angleZ);
-    this.focalPoint = this.focalPoint.getRotated(angleX, angleY, angleZ);
+  public transform(matrix: Matrix): void {
+    this.focalPoint = transformVertex(this.focalPoint, matrix);
+    this.viewVector = transformVector(this.viewVector, matrix);
+    this.rightVector = transformVector(this.rightVector, matrix);
+    this.upVector = transformVector(this.upVector, matrix);
   }
 
   // like 16:9

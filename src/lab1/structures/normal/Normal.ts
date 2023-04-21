@@ -1,3 +1,5 @@
+import { Matrix } from '../../../lab3/structures/matrix/matrix';
+import { transformVector } from '../../../lab3/structures/matrix/transformation-factories';
 import Vector3D from '../vector/Vector3D';
 
 export default class Normal3D {
@@ -6,11 +8,7 @@ export default class Normal3D {
     this.vector = vector.normalize();
   }
 
-  public rotate(angleX: number, angleY: number, angleZ: number): Normal3D {
-    return new Normal3D(this.vector.getRotated(angleX, angleY, angleZ));
-  }
-
-  public scale(x: number, y: number, z: number): Normal3D {
-    return new Normal3D(this.vector.getScaled(x, y, z));
+  public getTranformed(matrix: Matrix): Normal3D {
+    return new Normal3D(transformVector(this.vector, matrix));
   }
 }

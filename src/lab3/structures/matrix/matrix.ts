@@ -1,9 +1,14 @@
 import Vector3D from '../../../lab1/structures/vector/Vector3D';
+import Vertex3D from '../../../lab1/structures/vertex/Vertex3D';
 
 export class Matrix {
   private arr: number[][];
   constructor(arr: number[][]) {
     this.arr = arr;
+  }
+
+  public at(row: number, col: number): number {
+    return this.arr[row][col];
   }
 
   public multiply(other: Matrix): Matrix {
@@ -31,5 +36,9 @@ export class Matrix {
 
   public toVector(): Vector3D {
     return new Vector3D(this.arr[0][0], this.arr[1][0], this.arr[2][0]);
+  }
+
+  public toVertex3D(): Vertex3D {
+    return new Vertex3D(this.arr[0][0], this.arr[1][0], this.arr[2][0]);
   }
 }
