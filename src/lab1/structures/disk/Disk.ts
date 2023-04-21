@@ -4,6 +4,8 @@ import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 import { Hit } from '../../types/Hit';
 import { TraceableTransformable } from '../../../lab3/types/Transformable';
+import { Matrix } from '../../../lab3/structures/matrix/matrix';
+import { transformVertex } from '../../../lab3/structures/matrix/transformation-factories';
 
 export default class Disk implements TraceableTransformable {
   public center: Vertex3D;
@@ -16,18 +18,9 @@ export default class Disk implements TraceableTransformable {
     this.radius = radius;
   }
 
-  public rotate(angleX: number, angleY: number, angleZ: number): void {
-    this.center = this.center.getRotated(angleX, angleY, angleZ);
-    this.normal = this.normal.rotate(angleX, angleY, angleZ);
-  }
-
-  public translate(x: number, y: number, z: number): void {
-    this.center = this.center.getTranslated(x, y, z);
-  }
-
-  public scale(x: number, y: number, z: number): void {
-    this.center = this.center.getScaled(x, y, z);
-    this.radius *= Math.abs(x);
+  public transform(matrix: Matrix): void {
+    this.center = transformVertex(this.center, matrix);
+    this.normal = this.normal.getTranformed(matrix);
   }
 
   public getIntersection(ray: Ray): Hit | null {
