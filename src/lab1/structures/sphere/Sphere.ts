@@ -3,6 +3,11 @@ import Ray from '../ray/Ray';
 import Normal3D from '../normal/Normal';
 import { Hit } from '../../types/Hit';
 import { TraceableTransformable } from '../../../lab3/types/Transformable';
+import { Matrix } from '../../../lab3/structures/matrix/matrix';
+import {
+  transformScalar,
+  transformVertex,
+} from '../../../lab3/structures/matrix/transformation-factories';
 
 export class Sphere implements TraceableTransformable {
   public center: Vertex3D;
@@ -13,17 +18,9 @@ export class Sphere implements TraceableTransformable {
     this.radius = radius;
   }
 
-  public translate(x: number, y: number, z: number): void {
-    this.center = this.center.getTranslated(x, y, z);
-  }
-
-  public rotate(angleX: number, angleY: number, angleZ: number): void {
-    this.center = this.center.getRotated(angleX, angleY, angleZ);
-  }
-
-  public scale(x: number, y: number, z: number): void {
-    this.center = this.center.getScaled(x, y, z);
-    this.radius *= Math.max(x, y, z);
+  public transform(matrix: Matrix): void {
+    this.center = transformVertex(this.center, matrix);
+    this.radius = transformScalar(this.radius, matrix);
   }
 
   public getIntersection(ray: Ray): Hit | null {
