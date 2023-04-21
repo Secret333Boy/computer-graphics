@@ -1,3 +1,4 @@
+import { transformations } from '../../lab3/structures/matrix/transformation-factories';
 import Camera from '../structures/camera/Camera';
 import Vector3D from '../structures/vector/Vector3D';
 import Vertex3D from '../structures/vertex/Vertex3D';
@@ -75,12 +76,12 @@ describe('Camera', () => {
     });
 
     it('should translate camera', () => {
-      mutableCamera.translate(1, 1, 1);
+      mutableCamera.transform(transformations.translate3d(1, 1, 1));
       expect(mutableCamera.focalPoint).toEqual(new Vertex3D(2, 2, 2));
     });
 
     it('should rotate camera', () => {
-      mutableCamera.rotate(Math.PI / 2, 0, 0);
+      mutableCamera.transform(transformations.rotate3dX(Math.PI / 2));
       expectVector3DCloseTo(mutableCamera.viewVector, new Vector3D(1, 1, -1));
       expectVertex3DCloseTo(mutableCamera.focalPoint, new Vertex3D(1, 1, -1));
     });

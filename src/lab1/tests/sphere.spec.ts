@@ -2,6 +2,7 @@ import Vertex3D from '../structures/vertex/Vertex3D';
 import { Sphere } from '../structures/sphere/Sphere';
 import Ray from '../structures/ray/Ray';
 import Vector3D from '../structures/vector/Vector3D';
+import { transformations } from '../../lab3/structures/matrix/transformation-factories';
 
 describe('Sphere', () => {
   const center = new Vertex3D(0, 0, 0);
@@ -15,10 +16,10 @@ describe('Sphere', () => {
     });
   });
 
-  describe('translating a sphere', () => {
-    it('df', () => {
+  describe('transforms', () => {
+    it('should translate a sphere', () => {
       // Translate the sphere
-      sphere.translate(1, 2, 3);
+      sphere.transform(transformations.translate3d(1, 2, 3));
 
       // Assertions
       expect(sphere.center.x).toEqual(1);
