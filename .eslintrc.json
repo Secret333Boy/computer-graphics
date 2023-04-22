@@ -20,6 +20,7 @@
   "rules": {
     "indent": ["error", 2],
     "quotes": ["error", "single"],
-    "semi": ["error", "always"]
+    "semi": ["error", "always"],
+    "sonarjs/cognitive-complexity": ["warn", 20]
   }
 }

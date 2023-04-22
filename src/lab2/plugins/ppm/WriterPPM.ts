@@ -2,9 +2,10 @@ import { ImageBuffer } from '../../ImageBuffer';
 import { PassThrough, Transform } from 'stream';
 import { Pixel } from '../../interfaces/Pixel';
 import { ImageWriter } from '../../interfaces/ImageWriter';
+import { ImageFormat } from '../../interfaces/ImageFormat';
 
 export class WriterPPM implements ImageWriter {
-  public readonly format = 'ppm';
+  public readonly format = ImageFormat.PPM;
 
   write(imageBuffer: ImageBuffer) {
     const stream = new PassThrough();
