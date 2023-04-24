@@ -5,13 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./build",
-<<<<<<< HEAD
     "start:dev": "ts-node ./src/lab1",
-    "start:dev:2": "ts-node ./src/lab2",
-=======
-    "start:dev": "ts-node ./src",
+    "start:dev:2": "ts-node ./src/lab2 --loadPath build/lab2/plugins",
     "start:dev:3": "ts-node ./src/lab3/index.ts --source ./src/lab3/cow.obj --output ./src/lab3/cow.ppm",
->>>>>>> lab2
     "prestart": "npm run build",
     "build": "tsc",
     "test": "jest --passWithNoTests",
@@ -37,13 +33,9 @@
     "prettier": "^2.8.7",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
-<<<<<<< HEAD
-    "typescript": "^4.9.5"
+    "typescript": "^5.0.4"
   },
   "dependencies": {
     "zlib": "^1.0.5"
-=======
-    "typescript": "^5.0.4"
->>>>>>> lab2
   }
 }

@@ -21,6 +21,7 @@ export default class WriterPNG implements ImageWriter {
     this.writeIHDR(stream, imageBuffer);
     this.writeIDATs(stream, imageBuffer).then(() => {
       this.writeIEND(stream);
+      stream.end();
     });
     return stream;
   }

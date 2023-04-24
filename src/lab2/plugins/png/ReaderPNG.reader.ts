@@ -1,7 +1,7 @@
 import { PassThrough, Readable, Transform, Writable } from 'stream';
 import { ImageBuffer } from '../../ImageBuffer';
 import { ImageReader } from '../../interfaces/ImageReader';
-import { logPassthrough, readNBytes } from '../helpers';
+import { readNBytes } from '../helpers';
 import { magic } from './lib/chunks/Magic';
 import { Chunk } from './lib/chunks/Chunk';
 import {
