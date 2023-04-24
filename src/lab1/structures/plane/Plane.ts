@@ -1,17 +1,24 @@
+import { Matrix } from '../../../lab3/structures/matrix/matrix';
+import { transformVertex } from '../../../lab3/structures/matrix/transformation-factories';
+import { TraceableTransformable } from '../../../lab3/types/Transformable';
 import { Hit } from '../../types/Hit';
-import { Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 import Vertex3D from '../vertex/Vertex3D';
 
-export default class Plane implements Traceable {
-  public readonly normal: Normal3D;
-  public readonly vertex: Vertex3D;
+export default class Plane implements TraceableTransformable {
+  public normal: Normal3D;
+  public vertex: Vertex3D;
 
   constructor(vertex: Vertex3D, normalVector: Vector3D) {
     this.normal = new Normal3D(normalVector);
     this.vertex = vertex;
+  }
+
+  public transform(matrix: Matrix): void {
+    this.normal = this.normal.getTranformed(matrix);
+    this.vertex = transformVertex(this.vertex, matrix);
   }
 
   public getIntersection(ray: Ray): Hit | null {
@@ -25,7 +32,7 @@ export default class Plane implements Traceable {
         .subtract(ray.position.toVector())
         .dotProduct(this.normal.vector) / denominator;
 
-    if (t < 0) return null;
+    if (t <= 0) return null;
 
     const pHit = ray.position
       .toVector()
@@ -34,10 +41,11 @@ export default class Plane implements Traceable {
 
     return {
       normal: new Normal3D(
-        denominator < 0 ? this.normal.vector : this.normal.vector.multiply(-1)
+        denominator < 0 ? this.normal.vector.multiply(-1) : this.normal.vector
       ),
       vertex: pHit,
       t,
+      object: this,
     };
   }
 }

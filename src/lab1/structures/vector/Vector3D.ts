@@ -1,9 +1,10 @@
+import { Transformable } from '../../../lab3/types/Transformable';
 import Vertex3D from '../vertex/Vertex3D';
 
 export default class Vector3D {
-  public readonly x: number;
-  public readonly y: number;
-  public readonly z: number;
+  public x: number;
+  public y: number;
+  public z: number;
 
   constructor(x: number, y: number, z: number) {
     this.x = x;
@@ -47,7 +48,7 @@ export default class Vector3D {
     );
   }
 
-  get length() {
+  public get length() {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
   }
 
@@ -57,5 +58,9 @@ export default class Vector3D {
 
   public normalize(): Vector3D {
     return this.multiply(1 / this.length);
+  }
+
+  public negate(): Vector3D {
+    return new Vector3D(-this.x, -this.y, -this.z);
   }
 }

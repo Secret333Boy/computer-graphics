@@ -1,7 +1,5 @@
 import { ImageBuffer } from './ImageBuffer';
 import { ImageProcessorsMap } from './ImageProcessorsMap';
-import { ImageReader } from './interfaces/ImageReader';
-import { ImageWriter } from './interfaces/ImageWriter';
 import { Readable } from 'stream';
 
 export class ImageConvertor {
