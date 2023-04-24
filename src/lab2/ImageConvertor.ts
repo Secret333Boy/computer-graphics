@@ -1,21 +1,18 @@
 import { ImageBuffer } from './ImageBuffer';
+import { ImageProcessorsMap } from './ImageProcessorsMap';
 import { ImageReader } from './interfaces/ImageReader';
 import { ImageWriter } from './interfaces/ImageWriter';
 import { Readable } from 'stream';
 
 export class ImageConvertor {
-  private readonly imageReaders: ImageReader[] = [];
-
-  private readonly writersMap: Record<string, ImageWriter> = {
-    // "png": ...
-  };
+  public constructor(private readonly processorsMap: ImageProcessorsMap) {}
 
   public async convert(stream: Readable, imageType: string): Promise<Readable> {
-    const writer = this.writersMap[imageType];
+    const writer = this.processorsMap.writersMap[imageType];
     if (!writer) throw new Error('This output format is not supported');
 
     let imageBuffer: ImageBuffer | null = null;
-    for (const reader of this.imageReaders) {
+    for (const reader of this.processorsMap.imageReaders) {
       imageBuffer = await reader.read(stream);
       if (imageBuffer) break;
     }
