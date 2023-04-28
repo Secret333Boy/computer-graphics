@@ -26,6 +26,6 @@ import ReaderBMP from './plugins/bmp/ReaderBMP';
 //bmp
 const readerBMP = new ReaderBMP();
 
-const stream = createReadStream(path.resolve(__dirname, './three-colors.bmp'));
+const stream = createReadStream(path.resolve(__dirname, './b.bmp'));
 
 readerBMP.read(stream);
