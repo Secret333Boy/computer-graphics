@@ -25,7 +25,20 @@ import ReaderBMP from './plugins/bmp/ReaderBMP';
 
 //bmp
 const readerBMP = new ReaderBMP();
+const writerPPM = new WriterPPM();
 
-const stream = createReadStream(path.resolve(__dirname, './b.bmp'));
+const stream = createReadStream(path.resolve(__dirname, './b.bmp'), {
+  highWaterMark: 192,
+});
 
-readerBMP.read(stream);
+(async () => {
+  const imageBuffer = await readerBMP.read(stream);
+
+  if (!imageBuffer) throw new Error('No error buffer');
+
+  const writeStream = createWriteStream(
+    path.resolve(__dirname, './result.ppm')
+  );
+
+  writerPPM.write(imageBuffer).pipe(writeStream);
+})();

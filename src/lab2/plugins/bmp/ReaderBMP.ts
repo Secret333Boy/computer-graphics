@@ -1,92 +1,19 @@
 import { ReadStream } from 'fs';
-import { Readable } from 'stream';
+import { PassThrough } from 'stream';
 import { ImageBuffer } from '../../ImageBuffer';
 import { ImageReader } from '../../interfaces/ImageReader';
 import { ImageFormat } from '../../interfaces/ImageFormat';
-
-export interface BitmapFileHeader {
-  bfType: string;
-  bfSize: number;
-  bfReserved1: string;
-  bfReserved2: string;
-  bfOffBits: number;
-}
-
-export enum BitmapFileInfoSize {
-  CORE = 12,
-  V3 = 40,
-  V4 = 108,
-  V5 = 124,
-}
-
-export enum Compression {
-  BI_RGB,
-  BI_RLE8,
-  BI_RLE4,
-  BI_BITFIELDS,
-  BI_JPEG,
-  BI_PNG,
-  BI_ALPHABITFIELDS,
-}
-
-export type BMPBit = 1 | 2 | 4 | 8 | 16 | 24 | 32 | 48 | 64;
-
-export interface CommonBitmapFileInfoCore {
-  bcWidth: number;
-  bcHeight: number;
-  bcPlanes: 1;
-  bcBitCount: BMPBit;
-}
-
-export interface CommonBitmapFileInfoV3 extends CommonBitmapFileInfoCore {
-  biCompression: Compression;
-  biSizeImage: string;
-  biXPelsPerMeter: string;
-  biYPelsPerMeter: string;
-  biClrUsed: number;
-  biClrImportant: number;
-}
-
-export interface CommonBitmapFileInfoV4 extends CommonBitmapFileInfoV3 {
-  bV4RedMask: string;
-  bV4GreenMask: string;
-  bV4BlueMask: string;
-  bV4AlphaMask: string;
-  bV4CSType: string;
-  bV4Endpoints: string;
-  bV4GammaRed: string;
-  bV4GammaGreen: string;
-  bV4GammaBlue: string;
-}
-
-export interface CommonBitmapFileInfoV5 extends CommonBitmapFileInfoV4 {
-  bV5Intent: string;
-  bV5ProfileData: string;
-  bV5ProfileSize: string;
-  bV5Reserved: string;
-}
-
-export interface BitmapFileInfoCore extends CommonBitmapFileInfoCore {
-  bcSize: BitmapFileInfoSize.CORE;
-}
-
-export interface BitmapFileInfoV3 extends CommonBitmapFileInfoV3 {
-  bcSize: BitmapFileInfoSize.V3;
-}
-
-export interface BitmapFileInfoV4 extends CommonBitmapFileInfoV4 {
-  bcSize: BitmapFileInfoSize.V4;
-}
-
-export interface BitmapFileInfoV5 extends CommonBitmapFileInfoV5 {
-  bcSize: BitmapFileInfoSize.V5;
-}
-
-export type BitmapFileInfo =
-  | BitmapFileInfoCore
-  | BitmapFileInfoV3
-  | BitmapFileInfoV4
-  | BitmapFileInfoV5;
+import { Pixel } from '../../interfaces/Pixel';
+import {
+  BMPBit,
+  BitmapFileInfoSize,
+  BitmapFileHeader,
+  BitmapFileInfo,
+  CommonBitmapFileInfoCore,
+  Compression,
+  CommonBitmapFileInfoV3,
+  CommonBitmapFileInfoV4,
+} from './types';
 
 export default class ReaderBMP implements ImageReader {
   public readonly format = ImageFormat.BMP;
@@ -94,6 +21,18 @@ export default class ReaderBMP implements ImageReader {
   public static readonly possibleBits: BMPBit[] = [
     1, 2, 4, 8, 16, 24, 32, 48, 64,
   ];
+
+  public static readonly maxColorMap: Record<BMPBit, number> = {
+    1: 255,
+    2: 255,
+    4: 255,
+    8: 255,
+    16: 31,
+    24: 255,
+    32: 255,
+    48: 65535,
+    64: 65535,
+  };
 
   public async read(stream: ReadStream): Promise<ImageBuffer | null> {
     try {
@@ -105,18 +44,138 @@ export default class ReaderBMP implements ImageReader {
       console.log(BITMAPFILEHEADER);
       console.log(BITMAPINFO);
 
+      // TODO: handle color table
+
       const bytesRead = 14 + BITMAPINFO.bcSize;
-      // const
 
       stream.read(bytesRead - BITMAPFILEHEADER.bfOffBits);
+      stream.resume();
+
+      const pixelBytes: number[] = [];
+      const bytesToSplice = Math.ceil(BITMAPINFO.bcBitCount / 8);
+
+      const pixelChunkStream = new PassThrough({
+        transform(chunk: Buffer, _encoding, callback) {
+          for (const byte of chunk) {
+            pixelBytes.push(byte);
+
+            if (pixelBytes.length === bytesToSplice) {
+              this.push(Buffer.from(pixelBytes.splice(0, bytesToSplice)));
+            }
+          }
+          callback();
+        },
+
+        flush(callback) {
+          if (pixelBytes.length === 0) {
+            callback();
+          } else {
+            callback(
+              pixelBytes.length === bytesToSplice
+                ? null
+                : new Error('Invalid last chunk length: ' + pixelBytes.length),
+              Buffer.from(pixelBytes)
+            );
+          }
+        },
+      });
+
+      const pixelStream = new PassThrough({
+        transform(chunk: Buffer, _encoding, callback) {
+          switch (BITMAPINFO.bcBitCount) {
+            case 1:
+              break;
+            case 2:
+              break;
+            case 4:
+              break;
+            case 8:
+              break;
+            case 16:
+              break;
+            case 24:
+              this.push({
+                r: chunk.readUInt8(2),
+                g: chunk.readUInt8(1),
+                b: chunk.readUInt8(),
+              } as Pixel);
+              break;
+            case 32:
+              this.push({
+                r: chunk.readUInt8(3),
+                g: chunk.readUInt8(2),
+                b: chunk.readUInt8(1),
+              } as Pixel);
+              break;
+            case 48:
+              this.push({
+                r: chunk.readUInt16LE(3),
+                g: chunk.readUInt16LE(2),
+                b: chunk.readUInt16LE(1),
+              } as Pixel);
+              break;
+            case 64:
+              this.push({
+                r: chunk.readUInt16LE(3),
+                g: chunk.readUInt16LE(2),
+                b: chunk.readUInt16LE(1),
+                a: chunk.readUInt16LE(),
+              } as Pixel);
+              break;
+          }
+
+          callback();
+        },
+        objectMode: true,
+      });
+
+      const lines: Pixel[][] = [];
+      let currentLine: Pixel[] = [];
+
+      const realHeight =
+        BITMAPINFO.bcSize === BitmapFileInfoSize.CORE
+          ? BITMAPINFO.bcHeight
+          : BITMAPINFO.biSizeImage === 0
+          ? BITMAPINFO.bcHeight
+          : BITMAPINFO.biSizeImage /
+            ((BITMAPINFO.bcWidth * BITMAPINFO.bcBitCount) / 8);
+
+      const inverseStream = new PassThrough({
+        transform(chunk: Pixel, _encoding, callback) {
+          currentLine.push(chunk);
+          if (currentLine.length === BITMAPINFO.bcWidth) {
+            lines.push(currentLine);
+            currentLine = [];
+          }
+          callback();
+        },
+        flush(callback) {
+          for (let i = lines.length - 1; i >= 0; i--) {
+            for (const pixel of lines[i]) {
+              this.push(pixel);
+            }
+          }
+
+          for (let i = 0; i < realHeight - lines.length; i++) {
+            for (let i = 0; i < BITMAPINFO.bcWidth; i++) {
+              this.push({ r: 0, g: 0, b: 0 } as Pixel);
+            }
+          }
+
+          callback();
+        },
+        objectMode: true,
+      });
+
+      stream.pipe(pixelChunkStream).pipe(pixelStream).pipe(inverseStream);
 
       return new ImageBuffer(
         {
           width: BITMAPINFO.bcWidth,
-          height: BITMAPINFO.bcHeight,
-          maxColor: 2 ** BITMAPINFO.bcBitCount - 1,
+          height: realHeight,
+          maxColor: ReaderBMP.maxColorMap[BITMAPINFO.bcBitCount],
         },
-        new Readable()
+        inverseStream
       );
     } catch (e) {
       console.error('Unable to read BMP: ' + e);
@@ -287,7 +346,7 @@ export default class ReaderBMP implements ImageReader {
           reject('No biSizeImage read');
           return;
         }
-        const biSizeImage = biSizeImageBuffer.toString('hex');
+        const biSizeImage = biSizeImageBuffer.readUInt32LE();
 
         const biXPelsPerMeterBuffer: Buffer | null = stream.read(4);
         if (!biXPelsPerMeterBuffer) {
