@@ -1,8 +1,8 @@
 export interface BitmapFileHeader {
-  bfType: string;
+  bfType: 'BM';
   bfSize: number;
-  bfReserved1: string;
-  bfReserved2: string;
+  bfReserved1: 0;
+  bfReserved2: 0;
   bfOffBits: number;
 }
 
@@ -35,8 +35,8 @@ export interface CommonBitmapFileInfoCore {
 export interface CommonBitmapFileInfoV3 extends CommonBitmapFileInfoCore {
   biCompression: Compression;
   biSizeImage: number;
-  biXPelsPerMeter: string;
-  biYPelsPerMeter: string;
+  biXPelsPerMeter: number;
+  biYPelsPerMeter: number;
   biClrUsed: number;
   biClrImportant: number;
 }

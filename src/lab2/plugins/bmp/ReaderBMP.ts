@@ -194,8 +194,8 @@ export default class ReaderBMP implements ImageReader {
           return;
         }
 
-        const bfType = bfTypeBuffer.toString('hex');
-        if (bfType !== '424d') {
+        const bfType = bfTypeBuffer.toString();
+        if (bfType !== 'BM') {
           reject('BMP file signature is invalid');
           return;
         }
@@ -214,8 +214,8 @@ export default class ReaderBMP implements ImageReader {
           return;
         }
 
-        const bfReserved1 = bfReserved1Buffer.toString('hex');
-        if (bfReserved1 !== '0000') {
+        const bfReserved1 = bfReserved1Buffer.readUInt16LE();
+        if (bfReserved1 !== 0) {
           reject('bfReserved1 has invalid value');
           return;
         }
@@ -226,8 +226,8 @@ export default class ReaderBMP implements ImageReader {
           return;
         }
 
-        const bfReserved2 = bfReserved2Buffer.toString('hex');
-        if (bfReserved2 !== '0000') {
+        const bfReserved2 = bfReserved2Buffer.readUInt16LE();
+        if (bfReserved2 !== 0) {
           reject('bfReserved1 has invalid value');
           return;
         }
@@ -353,14 +353,14 @@ export default class ReaderBMP implements ImageReader {
           reject('No biXPelsPerMeter read');
           return;
         }
-        const biXPelsPerMeter = biXPelsPerMeterBuffer.toString('hex');
+        const biXPelsPerMeter = biXPelsPerMeterBuffer.readUInt32LE();
 
         const biYPelsPerMeterBuffer: Buffer | null = stream.read(4);
         if (!biYPelsPerMeterBuffer) {
           reject('No biYPelsPerMeter read');
           return;
         }
-        const biYPelsPerMeter = biYPelsPerMeterBuffer.toString('hex');
+        const biYPelsPerMeter = biYPelsPerMeterBuffer.readUInt32LE();
 
         const biClrUsedBuffer: Buffer | null = stream.read(4);
         if (!biClrUsedBuffer) {
