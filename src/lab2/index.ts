@@ -32,32 +32,39 @@ const writerPPM = new WriterPPM();
 const stream = createReadStream(path.resolve(__dirname, './file.bmp'), {
   highWaterMark: 192,
 });
+(async () => {
+  const imageBuffer = await readerBMP.read(stream);
 
-// (async () => {
-//   const imageBuffer = await readerBMP.read(stream);
+  if (!imageBuffer) throw new Error('No imageBuffer');
 
-//   if (!imageBuffer) throw new Error('No buffer');
+  const writeStream = createWriteStream(
+    path.resolve(__dirname, './result.ppm')
+  );
 
-//   const writeStream = createWriteStream(
-//     path.resolve(__dirname, './result.ppm')
-//   );
+  writerPPM.write(imageBuffer).pipe(writeStream);
+})();
 
-//   writerPPM.write(imageBuffer).pipe(writeStream);
-// })();
+// const pixels = new PassThrough({ objectMode: true });
+// const width = 200;
+// const height = 200;
 
-const pixels = new PassThrough({ objectMode: true });
-pixels.push({ r: 0, g: 0, b: 0 });
-pixels.push({ r: 255, g: 255, b: 255 });
-pixels.push({ r: 255, g: 255, b: 255 });
-pixels.push({ r: 0, g: 0, b: 0 });
-const imageBuffer = new ImageBuffer(
-  {
-    height: 2,
-    width: 2,
-    maxColor: 255,
-  },
-  pixels
-);
+// for (let i = 0; i < width; i++) {
+//   for (let j = 0; j < height; j++) {
+//     pixels.push(
+//       (i + j) % 2 === 0 ? { r: 0, g: 0, b: 0 } : { r: 255, g: 255, b: 255 }
+//     );
+//   }
+// }
 
-const fileStream = createWriteStream(path.resolve(__dirname, 'file.bmp'));
-writerBMP.write(imageBuffer).pipe(fileStream);
+// pixels.end();
+// const imageBuffer = new ImageBuffer(
+//   {
+//     height,
+//     width,
+//     maxColor: 255,
+//   },
+//   pixels
+// );
+
+// const fileStream = createWriteStream(path.resolve(__dirname, 'file.bmp'));
+// writerBMP.write(imageBuffer).pipe(fileStream);

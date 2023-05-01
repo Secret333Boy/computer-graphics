@@ -14,6 +14,7 @@ import {
   CommonBitmapFileInfoV3,
   CommonBitmapFileInfoV4,
 } from './types';
+import InverseStream from './lib/InverseStream';
 
 export default class ReaderBMP implements ImageReader {
   public readonly format = ImageFormat.BMP;
@@ -129,9 +130,6 @@ export default class ReaderBMP implements ImageReader {
         objectMode: true,
       });
 
-      const lines: Pixel[][] = [];
-      let currentLine: Pixel[] = [];
-
       const realHeight =
         BITMAPINFO.bcSize === BitmapFileInfoSize.CORE
           ? BITMAPINFO.bcHeight
@@ -140,32 +138,7 @@ export default class ReaderBMP implements ImageReader {
           : BITMAPINFO.biSizeImage /
             ((BITMAPINFO.bcWidth * BITMAPINFO.bcBitCount) / 8);
 
-      const inverseStream = new PassThrough({
-        transform(chunk: Pixel, _encoding, callback) {
-          currentLine.push(chunk);
-          if (currentLine.length === BITMAPINFO.bcWidth) {
-            lines.push(currentLine);
-            currentLine = [];
-          }
-          callback();
-        },
-        flush(callback) {
-          for (let i = lines.length - 1; i >= 0; i--) {
-            for (const pixel of lines[i]) {
-              this.push(pixel);
-            }
-          }
-
-          for (let i = 0; i < realHeight - lines.length; i++) {
-            for (let i = 0; i < BITMAPINFO.bcWidth; i++) {
-              this.push({ r: 0, g: 0, b: 0 } as Pixel);
-            }
-          }
-
-          callback();
-        },
-        objectMode: true,
-      });
+      const inverseStream = new InverseStream(BITMAPINFO.bcWidth, realHeight);
 
       stream.pipe(pixelChunkStream).pipe(pixelStream).pipe(inverseStream);
 
