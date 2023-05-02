@@ -43,12 +43,12 @@ import { ImageBuffer } from './ImageBuffer';
 //   writerPng.write(imageBuffer).pipe(writeStream);
 // });
 
-const main = async () => {
-  const loadingPath = argv[3];
-  const imageProcessorLoader = new ImageProcessorLoader();
-  const processors = await imageProcessorLoader.dynamicallyLoad(loadingPath);
-  const imageMap = new ImageProcessorsMap();
-  console.log(processors);
-  imageMap.fillMaps(processors.readers, processors.writers);
-};
-main();
+// const main = async () => {
+//   const loadingPath = argv[3];
+//   const imageProcessorLoader = new ImageProcessorLoader();
+//   const processors = await imageProcessorLoader.dynamicallyLoad(loadingPath);
+//   const imageMap = new ImageProcessorsMap();
+//   console.log(processors);
+//   imageMap.fillMaps(processors.readers, processors.writers);
+// };
+// main();

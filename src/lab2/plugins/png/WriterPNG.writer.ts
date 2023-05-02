@@ -19,10 +19,14 @@ export default class WriterPNG implements ImageWriter {
     const stream = new PassThrough();
     this.writeHeader(stream);
     this.writeIHDR(stream, imageBuffer);
-    this.writeIDATs(stream, imageBuffer).then(() => {
-      this.writeIEND(stream);
-      stream.end();
-    });
+    this.writeIDATs(stream, imageBuffer)
+      .then(() => {
+        this.writeIEND(stream);
+        stream.end();
+      })
+      .catch((err) => {
+        throw err;
+      });
     return stream;
   }
 
