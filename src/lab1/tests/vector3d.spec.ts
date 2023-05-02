@@ -65,4 +65,15 @@ describe('Vector3D', () => {
       expect(v1.length).toBeCloseTo(3);
     });
   });
+
+  describe('negate', () => {
+    it('negate() should return a vector with negated components', () => {
+      const vector = new Vector3D(1, 2, 3);
+      const negatedVector = vector.negate();
+
+      expect(negatedVector.x).toEqual(-1);
+      expect(negatedVector.y).toEqual(-2);
+      expect(negatedVector.z).toEqual(-3);
+    });
+  });
 });

@@ -1,19 +1,26 @@
-import { Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
 import Vertex3D from '../vertex/Vertex3D';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 import { Hit } from '../../types/Hit';
+import { TraceableTransformable } from '../../../lab3/types/Transformable';
+import { Matrix } from '../../../lab3/structures/matrix/matrix';
+import { transformVertex } from '../../../lab3/structures/matrix/transformation-factories';
 
-export default class Disk implements Traceable {
-  public readonly center: Vertex3D;
-  public readonly normal: Normal3D;
-  public readonly radius: number;
+export default class Disk implements TraceableTransformable {
+  public center: Vertex3D;
+  public normal: Normal3D;
+  public radius: number;
 
   constructor(center: Vertex3D, normalVector: Vector3D, radius: number) {
     this.center = center;
     this.normal = new Normal3D(normalVector);
     this.radius = radius;
+  }
+
+  public transform(matrix: Matrix): void {
+    this.center = transformVertex(this.center, matrix);
+    this.normal = this.normal.getTranformed(matrix);
   }
 
   public getIntersection(ray: Ray): Hit | null {
@@ -26,7 +33,7 @@ export default class Disk implements Traceable {
         .subtract(ray.position.toVector())
         .dotProduct(this.normal.vector) / denominator;
 
-    if (t < 0) return null;
+    if (t <= 0) return null;
 
     const pHit = ray.position
       .toVector()
@@ -41,10 +48,11 @@ export default class Disk implements Traceable {
     return {
       // flip this.normal if it's pointing in the opposite direction of the ray
       normal: new Normal3D(
-        denominator < 0 ? this.normal.vector : this.normal.vector.multiply(-1)
+        denominator < 0 ? this.normal.vector.multiply(-1) : this.normal.vector
       ),
       vertex: pHit,
       t,
+      object: this,
     };
   }
 }

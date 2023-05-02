@@ -1,10 +1,21 @@
+import { Matrix } from '../../lab3/structures/matrix/matrix';
+import {
+  TraceableTransformable,
+  Transformable,
+} from '../../lab3/types/Transformable';
 import Camera from '../structures/camera/Camera';
 import { DirectionalLight } from '../structures/light/directional-light/DirectionalLight';
-import { Traceable } from './Traceable';
 
-export interface Scene {
-  objects: Traceable[];
-  camera: Camera;
-  // to add an ability for many sources in the future
-  light: DirectionalLight;
+export class Scene implements Transformable {
+  constructor(
+    public objects: TraceableTransformable[],
+    public camera: Camera,
+    public light: DirectionalLight
+  ) {}
+
+  public transform(matrix: Matrix): void {
+    for (const object of this.objects) {
+      object.transform(matrix);
+    }
+  }
 }

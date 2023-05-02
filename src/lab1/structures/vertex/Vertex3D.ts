@@ -1,3 +1,8 @@
+import { Matrix } from '../../../lab3/structures/matrix/matrix';
+import {
+  transformVertex,
+  transformations,
+} from '../../../lab3/structures/matrix/transformation-factories';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 
