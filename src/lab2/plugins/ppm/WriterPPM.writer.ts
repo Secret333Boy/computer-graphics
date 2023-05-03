@@ -4,7 +4,7 @@ import { Pixel } from '../../interfaces/Pixel';
 import { ImageWriter } from '../../interfaces/ImageWriter';
 import { ImageFormat } from '../../interfaces/ImageFormat';
 
-export class WriterPPM implements ImageWriter {
+export default class WriterPPM implements ImageWriter {
   public readonly format = ImageFormat.PPM;
 
   write(imageBuffer: ImageBuffer) {

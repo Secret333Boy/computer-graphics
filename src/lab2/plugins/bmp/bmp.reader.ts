@@ -1,5 +1,5 @@
 import { ReadStream } from 'fs';
-import { PassThrough } from 'stream';
+import { PassThrough, Readable } from 'stream';
 import { ImageBuffer } from '../../ImageBuffer';
 import { ImageReader } from '../../interfaces/ImageReader';
 import { ImageFormat } from '../../interfaces/ImageFormat';
@@ -35,7 +35,7 @@ export default class ReaderBMP implements ImageReader {
     64: 65535,
   };
 
-  public async read(stream: ReadStream): Promise<ImageBuffer | null> {
+  public async read(stream: Readable): Promise<ImageBuffer | null> {
     try {
       stream.pause();
 
@@ -156,9 +156,7 @@ export default class ReaderBMP implements ImageReader {
     }
   }
 
-  public retrieveBitmapFileHeader(
-    stream: ReadStream
-  ): Promise<BitmapFileHeader> {
+  public retrieveBitmapFileHeader(stream: Readable): Promise<BitmapFileHeader> {
     return new Promise((resolve, reject) => {
       stream.once('readable', () => {
         const bfTypeBuffer: Buffer | null = stream.read(2);
@@ -218,7 +216,7 @@ export default class ReaderBMP implements ImageReader {
     });
   }
 
-  public retrieveBitmapInfo(stream: ReadStream): Promise<BitmapFileInfo> {
+  public retrieveBitmapInfo(stream: Readable): Promise<BitmapFileInfo> {
     return new Promise((resolve, reject) => {
       stream.once('readable', () => {
         const bcSizeBuffer: Buffer | null = stream.read(4);
