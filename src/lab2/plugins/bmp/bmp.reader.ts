@@ -262,8 +262,8 @@ class ReaderBMP implements ImageReader {
         }
         const bcHeight =
           bcSize === BitmapFileInfoSize.CORE
-            ? bcWidthBuffer.readUInt16LE()
-            : bcWidthBuffer.readInt32LE();
+            ? bcHeightBuffer.readUInt16LE()
+            : bcHeightBuffer.readInt32LE();
 
         const bcPlanesBuffer: Buffer | null = stream.read(2);
         if (!bcPlanesBuffer) {
