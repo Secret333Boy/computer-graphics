@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./build",
     "start:dev": "ts-node ./src/lab1",
-    "start:dev:2": "ts-node ./src/lab2 --loadPath build/lab2/plugins",
+    "start:dev:2": "ts-node ./src/lab2 --loadPath build/lab2/plugins --input cow.bmp --output ppm",
     "start:dev:3": "ts-node ./src/lab3/index.ts --source ./src/lab3/cow.obj --output ./src/lab3/cow.ppm",
     "prestart": "npm run build",
     "build": "tsc",

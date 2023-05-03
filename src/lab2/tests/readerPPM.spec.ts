@@ -1,5 +1,5 @@
 import path from 'path';
-import { ReaderPPM } from '../../lab2/plugins/ppm/ReaderPPM';
+import { ReaderPPM } from '../../lab2/plugins/ppm/ReaderPPM.reader';
 import { ReadStream, createReadStream } from 'fs';
 
 describe('Reader PPM', () => {

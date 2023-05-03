@@ -22,9 +22,10 @@ import {
 } from './lib/chunks/IDAT';
 import { ImageFormat } from '../../interfaces/ImageFormat';
 
-export default class ReaderPNG implements ImageReader {
+export class ReaderPNG implements ImageReader {
   async read(stream: Readable): Promise<ImageBuffer | null> {
     if (!(await this.isPng(stream))) {
+      console.log('Not png');
       return null;
     }
     const pixelStream = new PassThrough({
@@ -52,6 +53,7 @@ export default class ReaderPNG implements ImageReader {
   }
   private async isPng(stream: Readable): Promise<boolean> {
     const buffer = await readNBytes(magic.length, stream);
+    console.log(buffer);
     return buffer.equals(magic);
   }
   public readonly format = ImageFormat.PNG;
@@ -121,3 +123,5 @@ export default class ReaderPNG implements ImageReader {
     },
   };
 }
+
+export default new ReaderPNG();

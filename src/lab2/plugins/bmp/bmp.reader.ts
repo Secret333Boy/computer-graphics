@@ -16,7 +16,7 @@ import {
 } from './types';
 import InverseStream from './lib/InverseStream';
 
-export default class ReaderBMP implements ImageReader {
+class ReaderBMP implements ImageReader {
   public readonly format = ImageFormat.BMP;
 
   public static readonly possibleBits: BMPBit[] = [
@@ -262,8 +262,8 @@ export default class ReaderBMP implements ImageReader {
         }
         const bcHeight =
           bcSize === BitmapFileInfoSize.CORE
-            ? bcWidthBuffer.readUInt16LE()
-            : bcWidthBuffer.readInt32LE();
+            ? bcHeightBuffer.readUInt16LE()
+            : bcHeightBuffer.readInt32LE();
 
         const bcPlanesBuffer: Buffer | null = stream.read(2);
         if (!bcPlanesBuffer) {
@@ -483,3 +483,5 @@ export default class ReaderBMP implements ImageReader {
     });
   }
 }
+
+export default new ReaderBMP();

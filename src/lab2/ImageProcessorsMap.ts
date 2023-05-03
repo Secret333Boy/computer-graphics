@@ -12,6 +12,7 @@ export class ImageProcessorsMap {
     this.imageReaders = imageReaders;
     this.writersMap = imageWrites.reduce<Record<string, ImageWriter>>(
       (acc, writer) => {
+        console.log(writer.format, writer);
         acc[writer.format] = writer;
         return acc;
       },

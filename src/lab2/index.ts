@@ -3,6 +3,9 @@ import path from 'path';
 import WriterPPM from './plugins/ppm/WriterPPM.writer';
 import ReaderBMP from './plugins/bmp/bmp.reader';
 import WriterBMP from './plugins/bmp/bmp.writer';
+import { ImageProcessorLoader } from './ImageProcessorLoader';
+import { ImageProcessorsMap } from './ImageProcessorsMap';
+import { ImageConvertor } from './ImageConvertor';
 
 // PPM
 
@@ -41,24 +44,24 @@ import WriterBMP from './plugins/bmp/bmp.writer';
 //   });
 
 //bmp
-const readerBMP = new ReaderBMP();
-const writerBMP = new WriterBMP();
-const writerPPM = new WriterPPM();
+// const readerBMP = new ReaderBMP();
+// const writerBMP = new WriterBMP();
+// const writerPPM = new WriterPPM();
 
-const stream = createReadStream(path.resolve(__dirname, './file.bmp'), {
-  highWaterMark: 192,
-});
-(async () => {
-  const imageBuffer = await readerBMP.read(stream);
+// const stream = createReadStream(path.resolve(__dirname, './file.bmp'), {
+//   highWaterMark: 192,
+// });
+// (async () => {
+//   const imageBuffer = await readerBMP.read(stream);
 
-  if (!imageBuffer) throw new Error('No imageBuffer');
+//   if (!imageBuffer) throw new Error('No imageBuffer');
 
-  const writeStream = createWriteStream(
-    path.resolve(__dirname, './result.ppm')
-  );
+//   const writeStream = createWriteStream(
+//     path.resolve(__dirname, './result.ppm')
+//   );
 
-  writerPPM.write(imageBuffer).pipe(writeStream);
-})();
+//   writerPPM.write(imageBuffer).pipe(writeStream);
+// })();
 
 // const pixels = new PassThrough({ objectMode: true });
 // const width = 200;
@@ -124,12 +127,30 @@ const stream = createReadStream(path.resolve(__dirname, './file.bmp'), {
 //   writerPng.write(imageBuffer).pipe(writeStream);
 // });
 
-// const main = async () => {
-//   const loadingPath = argv[3];
-//   const imageProcessorLoader = new ImageProcessorLoader();
-//   const processors = await imageProcessorLoader.dynamicallyLoad(loadingPath);
-//   const imageMap = new ImageProcessorsMap();
-//   console.log(processors);
-//   imageMap.fillMaps(processors.readers, processors.writers);
-// };
-// main();
+const main = async () => {
+  const loadingPath = process.argv[3];
+  const imageProcessorLoader = new ImageProcessorLoader();
+  const processors = await imageProcessorLoader.dynamicallyLoad(loadingPath);
+  const imageMap = new ImageProcessorsMap();
+  imageMap.fillMaps(processors.readers, processors.writers);
+  const imageConverter = new ImageConvertor(imageMap);
+  imageConverter
+    .convert(
+      {
+        getStream() {
+          return createReadStream(path.resolve(__dirname, process.argv[5]));
+        },
+        disposeStream(stream) {
+          stream.destroy();
+        },
+      },
+      process.argv[7]
+    )
+    .then(({ stream }) => {
+      const writeStream = createWriteStream(
+        path.resolve(__dirname, `file.${process.argv[7]}`)
+      );
+      stream.pipe(writeStream);
+    });
+};
+main();

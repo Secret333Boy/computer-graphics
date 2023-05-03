@@ -1,5 +1,5 @@
 import { PassThrough } from 'stream';
-import ReaderPNG from '../plugins/png/ReaderPNG.reader';
+import { ReaderPNG } from '../plugins/png/ReaderPNG.reader';
 import { Pixel } from '../interfaces/Pixel';
 import { ImageInfo } from '../interfaces/ImageInfo';
 
