@@ -3,8 +3,8 @@ import { ImageBuffer } from './ImageBuffer';
 import { WriterPPM } from './plugins/ppm/WriterPPM';
 import { createReadStream, createWriteStream } from 'fs';
 import path from 'path';
-import ReaderBMP from './plugins/bmp/ReaderBMP';
-import WriterBMP from './plugins/bmp/WriterBMP';
+import ReaderBMP from './plugins/bmp/bmp.reader';
+import WriterBMP from './plugins/bmp/bmp.writer';
 
 //ppm
 // const pixels = new PassThrough({ objectMode: true });
