@@ -9,6 +9,7 @@ import ReaderOBJ from './ReaderOBJ';
 import { createReadStream, createWriteStream } from 'fs';
 import Disk from '../lab1/structures/disk/Disk';
 import { transformations } from './structures/matrix/transformation-factories';
+import BMPRenderer from './structures/renderers/BMPRenderer';
 
 let objFilePath = '';
 let outputPath = '';
@@ -35,8 +36,8 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    50,
-    50
+    1920,
+    1080
   );
 
   const directionalLight = new DirectionalLight(new Vector3D(-1, -1, 1));
@@ -70,9 +71,10 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   // camera.rotate(0, Math.PI, 0);
 
   const outputWriteStream = createWriteStream(outputPath);
-  const ppmRenderer = new PPMRenderer(scene, outputWriteStream);
+  // const renderer = new PPMRenderer(scene, outputWriteStream);
+  const renderer = new BMPRenderer(scene, outputWriteStream);
   // transforms relative to the camera
   // await ppmRenderer.render();
   // look behind
-  await ppmRenderer.render();
+  await renderer.render();
 })();

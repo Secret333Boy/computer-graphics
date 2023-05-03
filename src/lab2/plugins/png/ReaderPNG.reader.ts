@@ -20,6 +20,7 @@ import {
   filteredStreamIntoFilteredScanlineStream,
   unwrapIDATChunks,
 } from './lib/chunks/IDAT';
+import { ImageFormat } from '../../interfaces/ImageFormat';
 
 export default class ReaderPNG implements ImageReader {
   async read(stream: Readable): Promise<ImageBuffer | null> {
@@ -53,7 +54,7 @@ export default class ReaderPNG implements ImageReader {
     const buffer = await readNBytes(magic.length, stream);
     return buffer.equals(magic);
   }
-  public readonly format = 'png';
+  public readonly format = ImageFormat.PNG;
 
   private IDATChunkStream: Writable | null = null;
 

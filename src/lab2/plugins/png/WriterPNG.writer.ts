@@ -12,9 +12,10 @@ import { generateIDATChunks } from './lib/chunks/IDAT';
 import { FilterType } from './lib/chunks/Filter';
 import { IENDChunk } from './lib/chunks/IEND';
 import { magic } from './lib/chunks/Magic';
+import { ImageFormat } from '../../interfaces/ImageFormat';
 
 export default class WriterPNG implements ImageWriter {
-  public readonly format = 'png';
+  public readonly format = ImageFormat.PNG;
   write(imageBuffer: ImageBuffer) {
     const stream = new PassThrough();
     this.writeHeader(stream);
