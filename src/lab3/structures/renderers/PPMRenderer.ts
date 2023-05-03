@@ -1,6 +1,6 @@
 import { WriteStream } from 'fs';
 import { Scene } from '../../../lab1/types/Scene';
-import { WriterPPM } from '../../../lab2/plugins/ppm/WriterPPM';
+import { WriterPPM } from '../../../lab2/plugins/ppm/WriterPPM.writer';
 import ImageRenderer from './ImageRenderer';
 
 export default class PPMRenderer extends ImageRenderer {

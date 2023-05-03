@@ -27,8 +27,8 @@ export default abstract class ImageRenderer extends CommonRenderer {
       pixelsStream
     );
 
-    const PPMStream = imageWriter.write(imageBuffer);
-    PPMStream.pipe(writeStream);
+    const stream = imageWriter.write(imageBuffer);
+    stream.pipe(writeStream);
 
     super({
       scene,
@@ -55,6 +55,9 @@ export default abstract class ImageRenderer extends CommonRenderer {
         if (this.linesRendered % 10 === 0) {
           console.log(`Rendered ${this.linesRendered} lines`);
         }
+      },
+      onRenderEnd: () => {
+        pixelsStream.end();
       },
     });
   }
