@@ -1,17 +1,9 @@
 import { createReadStream, createWriteStream } from 'fs';
 import path from 'path';
-import ReaderPNG from './plugins/png/ReaderPNG.reader';
-import { logPassthrough } from './plugins/helpers';
-import WriterPNG from './plugins/png/WriterPNG.writer';
-import { ImageProcessorLoader } from './ImageProcessorLoader';
-import { ImageProcessorsMap } from './ImageProcessorsMap';
-import { argv } from 'process';
 import { PassThrough } from 'stream';
 import { ImageBuffer } from './ImageBuffer';
-import { WriterPPM } from './plugins/ppm/WriterPPM';
-import { createReadStream, createWriteStream } from 'fs';
-import path from 'path';
 import { ReaderPPM } from './plugins/ppm/ReaderPPM';
+import WriterPPM from './plugins/ppm/WriterPPM.writer';
 
 const pixels = new PassThrough({ objectMode: true });
 pixels.push({ r: 0, g: 0, b: 0 });
