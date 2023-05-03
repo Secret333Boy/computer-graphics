@@ -3,7 +3,7 @@ import { ImageFormat } from '../../interfaces/ImageFormat';
 import { ImageReader } from '../../interfaces/ImageReader';
 import { PassThrough, Readable } from 'stream';
 
-class ReaderPPM implements ImageReader {
+export class ReaderPPM implements ImageReader {
   public readonly format = ImageFormat.PPM;
 
   public async read(stream: Readable): Promise<ImageBuffer | null> {

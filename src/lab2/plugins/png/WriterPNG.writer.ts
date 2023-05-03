@@ -14,7 +14,7 @@ import { IENDChunk } from './lib/chunks/IEND';
 import { magic } from './lib/chunks/Magic';
 import { ImageFormat } from '../../interfaces/ImageFormat';
 
-class WriterPNG implements ImageWriter {
+export class WriterPNG implements ImageWriter {
   public readonly format = ImageFormat.PNG;
   write(imageBuffer: ImageBuffer) {
     const stream = new PassThrough();

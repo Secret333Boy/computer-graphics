@@ -22,7 +22,7 @@ import {
 } from './lib/chunks/IDAT';
 import { ImageFormat } from '../../interfaces/ImageFormat';
 
-class ReaderPNG implements ImageReader {
+export class ReaderPNG implements ImageReader {
   async read(stream: Readable): Promise<ImageBuffer | null> {
     if (!(await this.isPng(stream))) {
       console.log('Not png');

@@ -1,6 +1,6 @@
 import { PassThrough } from 'stream';
 import { ImageBuffer } from '../ImageBuffer';
-import WriterPNG from '../plugins/png/WriterPNG.writer';
+import { WriterPNG } from '../plugins/png/WriterPNG.writer';
 
 describe('WriterPNG', () => {
   it('should write the image buffer to a PNG stream', () => {
