@@ -16,7 +16,7 @@ import {
 } from './types';
 import InverseStream from './lib/InverseStream';
 
-export default class ReaderBMP implements ImageReader {
+class ReaderBMP implements ImageReader {
   public readonly format = ImageFormat.BMP;
 
   public static readonly possibleBits: BMPBit[] = [
@@ -483,3 +483,5 @@ export default class ReaderBMP implements ImageReader {
     });
   }
 }
+
+export default new ReaderBMP();

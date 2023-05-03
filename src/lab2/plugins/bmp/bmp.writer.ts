@@ -10,7 +10,7 @@ import {
 import { Pixel } from '../../interfaces/Pixel';
 import InverseStream from './lib/InverseStream';
 
-export default class WriterBMP implements ImageWriter {
+export class WriterBMP implements ImageWriter {
   public readonly format = ImageFormat.BMP;
   public write(imageBuffer: ImageBuffer): Readable {
     const {
@@ -104,3 +104,5 @@ export default class WriterBMP implements ImageWriter {
     stream.push(buffer);
   }
 }
+
+export default new WriterBMP();
