@@ -1,12 +1,11 @@
-import { ReadStream } from 'fs';
 import { ImageBuffer } from '../../ImageBuffer';
 import { ImageReader } from '../../interfaces/ImageReader';
-import { PassThrough } from 'stream';
+import { PassThrough, Readable } from 'stream';
 
 export class ReaderPPM implements ImageReader {
   public readonly format = 'ppm';
 
-  public async read(stream: ReadStream): Promise<ImageBuffer | null> {
+  public async read(stream: Readable): Promise<ImageBuffer | null> {
     try {
       const data = await new Promise<string>((resolve, reject) => {
         let buffer = '';
