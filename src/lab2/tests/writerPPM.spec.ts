@@ -1,6 +1,6 @@
 import { PassThrough } from 'stream';
 import { ImageBuffer } from '../ImageBuffer';
-import { WriterPPM } from '../plugins/ppm/WriterPPM';
+import WriterPPM from '../plugins/ppm/WriterPPM.writer';
 import { Pixel } from '../interfaces/Pixel';
 
 describe('WriterPPM', () => {

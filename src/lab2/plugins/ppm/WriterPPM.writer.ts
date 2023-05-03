@@ -3,7 +3,7 @@ import { PassThrough, Transform } from 'stream';
 import { Pixel } from '../../interfaces/Pixel';
 import { ImageWriter } from '../../interfaces/ImageWriter';
 
-export class WriterPPM implements ImageWriter {
+export default class WriterPPM implements ImageWriter {
   public readonly format = 'ppm';
 
   write(imageBuffer: ImageBuffer) {
