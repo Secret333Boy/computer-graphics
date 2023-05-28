@@ -3,6 +3,7 @@ import Mesh from './structures/mesh/Mesh';
 import readline from 'readline';
 import Vertex3D from '../lab1/structures/vertex/Vertex3D';
 import Triangle from './structures/triangle/Triangle';
+import { DumbTraceableGroup } from './structures/traceable-group/TraceableGroup';
 
 export default class ReaderOBJ {
   public static async readStream(stream: ReadStream): Promise<Mesh> {
@@ -40,6 +41,6 @@ export default class ReaderOBJ {
 
     lines.close();
 
-    return new Mesh(triangles);
+    return new Mesh(new DumbTraceableGroup(triangles));
   }
 }
