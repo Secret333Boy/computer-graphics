@@ -3,7 +3,7 @@ import Vector3D from '../../lab1/structures/vector/Vector3D';
 import Vertex3D from '../../lab1/structures/vertex/Vertex3D';
 import { Hit } from '../../lab1/types/Hit';
 import { Traceable } from '../../lab1/types/Traceable';
-import TraceableGroup from '../structures/traceable-group/TraceableGroup';
+import { DumbTraceableGroup } from '../structures/traceable-group/TraceableGroup';
 
 class MockObject implements Traceable {
   public getIntersection(): Hit | null {
@@ -11,17 +11,20 @@ class MockObject implements Traceable {
   }
 }
 
-describe('TraceableGroup', () => {
+describe('DumbTraceableGroup', () => {
   describe('getIntersection', () => {
     it('should return null for an empty group', () => {
-      const group = new TraceableGroup();
+      const group = new DumbTraceableGroup();
       const ray = new Ray(new Vertex3D(0, 0, 0), new Vector3D(0, 0, 1));
 
       expect(group.getIntersection(ray)).toBeNull();
     });
 
     it('should return null if no objects intersect the ray', () => {
-      const group = new TraceableGroup([new MockObject(), new MockObject()]);
+      const group = new DumbTraceableGroup([
+        new MockObject(),
+        new MockObject(),
+      ]);
       const ray = new Ray(new Vertex3D(0, 0, 0), new Vector3D(0, 0, 1));
 
       expect(group.getIntersection(ray)).toBeNull();
@@ -41,7 +44,7 @@ describe('TraceableGroup', () => {
         getIntersection: jest.fn().mockReturnValueOnce({ t: 1 }),
       };
 
-      const traceableGroup = new TraceableGroup([object1, object2]);
+      const traceableGroup = new DumbTraceableGroup([object1, object2]);
       const hit = traceableGroup.getIntersection(ray);
 
       expect(object1.getIntersection).toHaveBeenCalledWith(ray);
@@ -62,7 +65,7 @@ describe('TraceableGroup', () => {
         getIntersection: jest.fn().mockReturnValueOnce(null),
       };
 
-      const traceableGroup = new TraceableGroup([object1, object2]);
+      const traceableGroup = new DumbTraceableGroup([object1, object2]);
       const hit = traceableGroup.getIntersection(ray);
 
       expect(object1.getIntersection).toHaveBeenCalledWith(ray);
