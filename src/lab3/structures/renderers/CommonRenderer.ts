@@ -2,7 +2,6 @@ import Ray from '../../../lab1/structures/ray/Ray';
 import { Hit } from '../../../lab1/types/Hit';
 import { Renderer } from '../../../lab1/types/Renderer';
 import { Scene } from '../../../lab1/types/Scene';
-import { findCloserHit } from '../../../lab1/utils/findCloserHit';
 
 export interface CommonRendererProps {
   scene: Scene;
@@ -35,7 +34,7 @@ export default abstract class CommonRenderer implements Renderer {
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
   public async render() {
-    const { camera, objects } = this.scene;
+    const { camera } = this.scene;
 
     await this.onRenderStart?.();
 
@@ -44,19 +43,9 @@ export default abstract class CommonRenderer implements Renderer {
       for (let x = 0; x < camera.horizontalResolution; x++) {
         const screenPixelVector = camera.getScreenPixelVector(x, y);
         const ray = new Ray(camera.focalPoint, screenPixelVector);
-        let closestHit: Hit | null = null;
-
-        for (const object of objects) {
-          const hit = object.getIntersection(ray);
-
-          if (!hit) continue;
-
-          closestHit = closestHit ? findCloserHit(hit, closestHit) : hit;
-        }
-
-        if (this.checkShadow(closestHit)) closestHit = null;
-
-        await this.onHit(closestHit);
+        let hit = this.scene.getIntersection(ray);
+        if (this.checkShadow(hit)) hit = null;
+        await this.onHit(hit);
       }
       await this.onRowEnd?.();
     }
@@ -71,11 +60,7 @@ export default abstract class CommonRenderer implements Renderer {
       closestHit.vertex,
       this.scene.light.vector.multiply(-1)
     );
-    for (const object of this.scene.objects) {
-      if (object === closestHit.object) continue;
-      const shadowHit = object.getIntersection(shadowRay);
-      if (shadowHit) return true;
-    }
-    return false;
+    const shadowHit = this.scene.getIntersection(shadowRay);
+    return Boolean(shadowHit);
   }
 }

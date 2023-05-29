@@ -24,4 +24,8 @@ export default class Ray {
   public angleBetweenRads(ray: Ray): number {
     return this.vector.angleBetweenRads(ray.vector);
   }
+
+  public followThrough(t: number): Vertex3D {
+    return this.position.toVector().add(this.vector.multiply(t)).toVertex3D();
+  }
 }

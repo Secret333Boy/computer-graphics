@@ -4,9 +4,10 @@ import Ray from '../../lab1/structures/ray/Ray';
 import Vector3D from '../../lab1/structures/vector/Vector3D';
 import { Hit } from '../../lab1/types/Hit';
 import { Traceable } from '../../lab1/types/Traceable';
+import { DumbTraceableGroup } from '../../lab3/structures/traceable-groups/DumbTraceableGroup';
 import { Axis } from '../types/Axis';
 import { Boundable } from '../types/Boundable';
-import { AxisBounds, Bounds3D, unionAllBounds3D } from './Bounds';
+import { Bounds3D, unionAllBounds3D, unionBounds3D } from './Bounds';
 
 export type KDTreeInitParams<T extends Traceable & Boundable> = {
   objects: T[];
@@ -293,37 +294,50 @@ class BoundEdge<T extends Traceable & Boundable> {
   ) {}
 }
 
-export type KDNode = Traceable & {
-  toString: () => string;
-};
+export type KDNode = Traceable;
 
 export class KDLeaf<T extends Traceable> implements KDNode {
-  private objects: T[];
+  private readonly traceableGroup: DumbTraceableGroup<T>;
+  private readonly bounds: Bounds3D;
 
   constructor({ objects }: { objects: T[] }) {
-    this.objects = objects;
+    this.traceableGroup = new DumbTraceableGroup(objects);
+    this.bounds = this.traceableGroup.getWorldBounds();
+  }
+  public getWorldBounds(): Bounds3D {
+    return this.bounds;
   }
 
   public getIntersection(ray: Ray): Hit | null {
-    throw new Error('Method not implemented.');
+    return this.traceableGroup.getIntersection(ray);
   }
 
   public get count(): number {
-    return this.objects.length;
+    return this.traceableGroup.getTraceableObjects().length;
   }
 }
 
 export class KDInternal implements KDNode {
   public readonly left: KDNode;
   public readonly right: KDNode;
+  private readonly bounds: Bounds3D;
 
   constructor({ left, right }: { left: KDNode; right: KDNode }) {
     this.left = left;
     this.right = right;
+    this.bounds = unionBounds3D(left.getWorldBounds(), right.getWorldBounds());
+  }
+
+  public getWorldBounds(): Bounds3D {
+    return this.bounds;
   }
 
   public getIntersection(ray: Ray): Hit | null {
-    throw new Error('Method not implemented.');
+    const intersection = this.bounds.pierceWith(ray);
+    if (intersection === null) {
+      return null;
+    }
+    return null;
   }
 }
 

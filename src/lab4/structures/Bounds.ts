@@ -1,4 +1,6 @@
+import Ray from '../../lab1/structures/ray/Ray';
 import Vector3D from '../../lab1/structures/vector/Vector3D';
+import Vertex3D from '../../lab1/structures/vertex/Vertex3D';
 import { Axis } from '../types/Axis';
 import { Boundable } from '../types/Boundable';
 
@@ -59,6 +61,34 @@ export class Bounds3D implements Record<Axis, AxisBounds> {
       return Axis.Y;
     }
     return Axis.Z;
+  }
+
+  // note, it doesn't implement the Traceable interface, because
+  // a) it will not benefit from this abstraction, as callers currently always know that Bounds3D are Bounds3D
+  // b) it has to return another data item: tExit
+  public pierceWith(ray: Ray): {
+    tEnter: Vertex3D;
+    tExit: Vertex3D;
+  } | null {
+    let t0 = 0,
+      t1 = Infinity;
+    for (let i: Axis = 0; i < 3; ++i) {
+      // Update interval for ith bounding box slab
+      let tNear = (this[i].min - ray.position[i]) / ray.vector[i];
+      let tFar = (this[i].max - ray.position[i]) / ray.vector[i];
+      // Update parametric interval from slab intersection values
+      if (tNear > tFar) {
+        [tNear, tFar] = [tFar, tNear];
+      }
+      // Update tFar to ensure robust ray–bounds intersection
+      t0 = tNear > t0 ? tNear : t0;
+      t1 = tFar < t1 ? tFar : t1;
+      if (t0 > t1) return null;
+    }
+    return {
+      tEnter: ray.followThrough(t0),
+      tExit: ray.followThrough(t1),
+    };
   }
 }
 

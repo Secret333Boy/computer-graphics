@@ -3,14 +3,15 @@ import Vertex3D from '../vertex/Vertex3D';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 import { Hit } from '../../types/Hit';
-import { TraceableTransformable } from '../../../lab3/types/Transformable';
 import { Matrix } from '../../../lab3/structures/matrix/matrix';
 import { transformVertex } from '../../../lab3/structures/matrix/transformation-factories';
 import { Boundable } from '../../../lab4/types/Boundable';
 import { Bounds3D } from '../../../lab4/structures/Bounds';
 import { Axis } from '../../../lab4/types/Axis';
+import { Traceable } from '../../types/Traceable';
+import { Transformable } from '../../../lab3/types/Transformable';
 
-export default class Disk implements TraceableTransformable, Boundable {
+export default class Disk implements Traceable, Transformable, Boundable {
   public center: Vertex3D;
   public normal: Normal3D;
   public radius: number;
