@@ -54,7 +54,7 @@ export default abstract class CommonRenderer implements Renderer {
           closestHit = closestHit ? findCloserHit(hit, closestHit) : hit;
         }
 
-        if (this.checkShadow(closestHit)) closestHit = null;
+        if (this.checkGlobalShadow(closestHit)) closestHit = null;
 
         await this.onHit(closestHit);
       }
@@ -64,18 +64,11 @@ export default abstract class CommonRenderer implements Renderer {
     await this.onRenderEnd?.();
   }
 
-  public checkShadow(closestHit: Hit | null) {
+  public checkGlobalShadow(closestHit: Hit | null) {
     if (!closestHit) return false;
 
-    const shadowRay = new Ray(
-      closestHit.vertex,
-      this.scene.light.vector.multiply(-1)
+    return this.scene.lights.every((light) =>
+      light.checkShadow(closestHit, this.scene.objects)
     );
-    for (const object of this.scene.objects) {
-      if (object === closestHit.object) continue;
-      const shadowHit = object.getIntersection(shadowRay);
-      if (shadowHit) return true;
-    }
-    return false;
   }
 }

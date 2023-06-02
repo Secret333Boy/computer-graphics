@@ -53,6 +53,7 @@ export default class Disk implements TraceableTransformable {
       vertex: pHit,
       t,
       object: this,
+      color: { r: 255, g: 255, b: 255 },
     };
   }
 }

@@ -38,13 +38,13 @@ export default abstract class ImageRenderer extends CommonRenderer {
           return;
         }
 
-        const dotProduct = hit.normal.vector.dotProduct(
-          this.scene.light.vector
-        );
+        for (const light of scene.lights) {
+          if (light.checkShadow(hit, scene.objects)) continue;
 
-        const color = dotProduct < 0 ? 0 : Math.round(dotProduct * 255);
+          light.applyColor(hit);
+        }
 
-        pixelsStream.push({ r: color, g: color, b: color });
+        pixelsStream.push(hit.color);
       },
       onRenderStart: () => {
         console.log('Rendering started');

@@ -37,7 +37,14 @@ export default class ConsoleRenderer extends CommonRenderer {
   private getChar(hit: Hit | null) {
     if (!hit) return ' ';
 
-    const dotProduct = this.scene.light.vector.dotProduct(hit.normal.vector);
+    for (const light of this.scene.lights) {
+      if (light.checkShadow(hit, this.scene.objects)) continue;
+
+      light.applyColor(hit);
+    }
+
+    const dotProduct =
+      (hit.color.r / 255 + hit.color.g / 255 + hit.color.b / 255) / 3;
     return ConsoleRenderer.dotProductSymbolMap(dotProduct);
   }
 }

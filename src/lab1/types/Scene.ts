@@ -3,14 +3,14 @@ import {
   TraceableTransformable,
   Transformable,
 } from '../../lab3/types/Transformable';
+import { Light } from '../../lab4/light/Light';
 import Camera from '../structures/camera/Camera';
-import { DirectionalLight } from '../structures/light/directional-light/DirectionalLight';
 
 export class Scene implements Transformable {
   constructor(
     public objects: TraceableTransformable[],
     public camera: Camera,
-    public light: DirectionalLight
+    public lights: Light[]
   ) {}
 
   public transform(matrix: Matrix): void {

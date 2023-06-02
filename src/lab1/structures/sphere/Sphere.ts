@@ -50,6 +50,7 @@ export class Sphere implements TraceableTransformable {
       vertex: pHit.toVertex3D(),
       t,
       object: this,
+      color: { r: 255, g: 255, b: 255 },
     };
   }
 }
