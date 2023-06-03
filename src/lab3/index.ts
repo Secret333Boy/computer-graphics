@@ -9,6 +9,7 @@ import { createReadStream, createWriteStream } from 'fs';
 import Disk from '../lab1/structures/disk/Disk';
 import { transformations } from './structures/matrix/transformation-factories';
 import BMPRenderer from './structures/renderers/BMPRenderer';
+import VertexLight from '../lab4/light/VertexLight';
 
 let objFilePath = '';
 let outputPath = '';
@@ -35,15 +36,26 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    100,
-    100
+    500,
+    500
   );
 
-  const directionalLight = new DirectionalLight(new Vector3D(-1, -1, 1), {
-    r: 255,
-    g: 255,
-    b: 255,
-  });
+  const directionalLight = new DirectionalLight(
+    new Vector3D(-1, -1, 1),
+    {
+      r: 1,
+      g: 0,
+      b: 1,
+    },
+    1
+  );
+
+  const vertexLight = new VertexLight(
+    new Vertex3D(0, 1100, 4450),
+    { r: 0, g: 0, b: 1 },
+    5000
+  );
+
   const scene: Scene = new Scene(
     [
       new Sphere(new Vertex3D(0, 1100, 8000), 3500),
@@ -51,7 +63,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
       new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
     ],
     camera,
-    [directionalLight]
+    [directionalLight, vertexLight]
   );
   scene.transform(transformations.translate3d(-400, -500, 2000));
   mesh.transform(transformations.translate3d(900, 100, 700));

@@ -9,6 +9,7 @@ export abstract class GenericTraceableGroup<T extends Traceable>
   constructor(protected traceableObjects: T[] = []) {}
 
   public abstract getIntersection(ray: Ray): Hit | null;
+
   public getTraceableObjects(): T[] {
     return this.traceableObjects;
   }
