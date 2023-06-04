@@ -44,6 +44,9 @@ export default abstract class CommonRenderer implements Renderer {
         const screenPixelVector = camera.getScreenPixelVector(x, y);
         const ray = new Ray(camera.focalPoint, screenPixelVector);
         let hit = this.scene.getIntersection(ray);
+        if (y === 7 && x === 4) {
+          console.log('AHA' + JSON.stringify(hit));
+        }
         if (this.checkShadow(hit)) hit = null;
         await this.onHit(hit);
       }
@@ -57,7 +60,10 @@ export default abstract class CommonRenderer implements Renderer {
     if (!closestHit) return false;
 
     const shadowRay = new Ray(
-      closestHit.vertex,
+      closestHit.vertex
+        .toVector()
+        .add(this.scene.light.vector.multiply(-1 * 0.00001))
+        .toVertex3D(),
       this.scene.light.vector.multiply(-1)
     );
     const shadowHit = this.scene.getIntersection(shadowRay);

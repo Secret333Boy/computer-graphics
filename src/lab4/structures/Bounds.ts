@@ -64,11 +64,10 @@ export class Bounds3D implements Record<Axis, AxisBounds> {
   }
 
   // note, it doesn't implement the Traceable interface, because
-  // a) it will not benefit from this abstraction, as callers currently always know that Bounds3D are Bounds3D
-  // b) it has to return another data item: tExit
+  // it will not benefit from this abstraction, as callers currently always know that Bounds3D are Bounds3D
   public pierceWith(ray: Ray): {
-    tEnter: Vertex3D;
-    tExit: Vertex3D;
+    tMin: number;
+    tMax: number;
   } | null {
     let t0 = 0,
       t1 = Infinity;
@@ -86,8 +85,8 @@ export class Bounds3D implements Record<Axis, AxisBounds> {
       if (t0 > t1) return null;
     }
     return {
-      tEnter: ray.followThrough(t0),
-      tExit: ray.followThrough(t1),
+      tMin: t0,
+      tMax: t1,
     };
   }
 }
@@ -110,6 +109,16 @@ export const unionBounds3D = (bounds1: Bounds3D, bounds2: Bounds3D): Bounds3D =>
 export const unionAllBounds3D = (
   boundables: Boundable[]
 ): { union: Bounds3D; primitiveBounds: Bounds3D[] } => {
+  if (boundables.length === 0) {
+    return {
+      union: new Bounds3D({
+        [Axis.X]: { min: 0, max: 0 },
+        [Axis.Y]: { min: 0, max: 0 },
+        [Axis.Z]: { min: 0, max: 0 },
+      }),
+      primitiveBounds: [],
+    };
+  }
   let unionBounds = boundables[0].getWorldBounds();
   const primitiveBounds = [unionBounds];
   for (let i = 1; i < boundables.length; i++) {

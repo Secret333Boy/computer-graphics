@@ -10,9 +10,11 @@ import Disk from '../lab1/structures/disk/Disk';
 import { transformations } from './structures/matrix/transformation-factories';
 import BMPRenderer from './structures/renderers/BMPRenderer';
 import { TraceableGroupFactory } from './structures/traceable-groups/GenericTraceableGroup';
-import { DumbTraceableGroup } from './structures/traceable-groups/DumbTraceableGroup';
 import { TransformableGroupFactory } from './structures/transformable-groups/GenericTransformableGroup';
 import { DumbTransformableGroup } from './structures/transformable-groups/DumbTransformableGroup';
+import { KDTraceableGroup } from './structures/traceable-groups/KDTraceableGroup';
+import { KDTreeBuilder } from '../lab4/structures/KDTree';
+import { DumbTraceableGroup } from './structures/traceable-groups/DumbTraceableGroup';
 
 let objFilePath = '';
 let outputPath = '';
@@ -30,15 +32,19 @@ if (!objFilePath) throw new Error('Invalid input: no obj path');
 if (!outputPath) throw new Error('Invalid input: no output path');
 
 (async () => {
+  // uncomment to return to the old rendering flow
+  // const traceableGroupFactory: TraceableGroupFactory = (objects) =>
+  //   new DumbTraceableGroup(objects);
+  const kdTreeBuilder = new KDTreeBuilder({
+    // max primitives in a leaf
+    maxPrimitives: 4,
+  });
   const traceableGroupFactory: TraceableGroupFactory = (objects) =>
-    new DumbTraceableGroup(objects);
+    new KDTraceableGroup(objects, kdTreeBuilder);
   const transformableGroupFactory: TransformableGroupFactory = (objects) =>
     new DumbTransformableGroup(objects);
   const inputReadStream = createReadStream(objFilePath);
-  const readerObj = new ReaderOBJ(
-    traceableGroupFactory,
-    transformableGroupFactory
-  );
+  const readerObj = new ReaderOBJ(transformableGroupFactory);
   const mesh = await readerObj.readStream(inputReadStream);
   console.log('Mesh loaded');
   const camera = new Camera(
@@ -47,15 +53,31 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    1920,
-    1080
+    16,
+    16
   );
+  const spheres: Sphere[] = [];
+  // make a 2d grid of spheres
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      spheres.push(
+        new Sphere(new Vertex3D(-750 + i * 500, -750 + j * 500, -1500), 100)
+      );
+    }
+  }
   const directionalLight = new DirectionalLight(new Vector3D(-1, -1, 1));
   const scene: Scene = new Scene({
     objects: [
-      new Sphere(new Vertex3D(0, 1100, 8000), 3500),
-      mesh,
-      new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
+      //new Sphere(new Vertex3D(0, 1100, 8000), 100),
+      // to avoid nested kdtrees, meshes now DO NOT implement Traceable, instead only the top-level scene creates
+      // a top-level traceable group. Meshes still implement Transformable though
+      // (imagine a situation, where there is a mesh inside a mesh, inside a mesh and so on. because the KDTrees
+      // are built from the bottom to the top level (with a final one being the scene kdtree), you will end up
+      // with an uncontrollable max depth of the tree, which might be bad. To avoid this, and keep the scene oblivious
+      // of the existence of Mesh class, we just inline the primitives)
+      ...mesh.primitives,
+      //new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
+      //...spheres,
     ],
     camera,
     light: directionalLight,
