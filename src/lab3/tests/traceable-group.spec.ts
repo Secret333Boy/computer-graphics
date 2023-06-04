@@ -3,11 +3,20 @@ import Vector3D from '../../lab1/structures/vector/Vector3D';
 import Vertex3D from '../../lab1/structures/vertex/Vertex3D';
 import { Hit } from '../../lab1/types/Hit';
 import { Traceable } from '../../lab1/types/Traceable';
-import { DumbTraceableGroup } from '../structures/traceable-group/TraceableGroup';
+import { DumbTraceableGroup } from '../../lab3/structures/traceable-groups/DumbTraceableGroup';
+import { Bounds3D } from '../../lab4/structures/Bounds';
+import { Axis } from '../../lab4/types/Axis';
 
 class MockObject implements Traceable {
   public getIntersection(): Hit | null {
     return null;
+  }
+  public getWorldBounds() {
+    return new Bounds3D({
+      [Axis.X]: { min: 0, max: 0 },
+      [Axis.Y]: { min: 0, max: 0 },
+      [Axis.Z]: { min: 0, max: 0 },
+    });
   }
 }
 
@@ -38,10 +47,21 @@ describe('DumbTraceableGroup', () => {
           .fn()
           .mockReturnValueOnce(null)
           .mockReturnValueOnce({ t: 2 }),
+
+        getWorldBounds: jest.fn().mockReturnValue({
+          [Axis.X]: { min: 0, max: 0 },
+          [Axis.Y]: { min: 0, max: 0 },
+          [Axis.Z]: { min: 0, max: 0 },
+        }),
       };
 
       const object2 = {
         getIntersection: jest.fn().mockReturnValueOnce({ t: 1 }),
+        getWorldBounds: jest.fn().mockReturnValue({
+          [Axis.X]: { min: 0, max: 0 },
+          [Axis.Y]: { min: 0, max: 0 },
+          [Axis.Z]: { min: 0, max: 0 },
+        }),
       };
 
       const traceableGroup = new DumbTraceableGroup([object1, object2]);
@@ -59,10 +79,20 @@ describe('DumbTraceableGroup', () => {
 
       const object1 = {
         getIntersection: jest.fn().mockReturnValueOnce(null),
+        getWorldBounds: jest.fn().mockReturnValue({
+          [Axis.X]: { min: 0, max: 0 },
+          [Axis.Y]: { min: 0, max: 0 },
+          [Axis.Z]: { min: 0, max: 0 },
+        }),
       };
 
       const object2 = {
         getIntersection: jest.fn().mockReturnValueOnce(null),
+        getWorldBounds: jest.fn().mockReturnValue({
+          [Axis.X]: { min: 0, max: 0 },
+          [Axis.Y]: { min: 0, max: 0 },
+          [Axis.Z]: { min: 0, max: 0 },
+        }),
       };
 
       const traceableGroup = new DumbTraceableGroup([object1, object2]);

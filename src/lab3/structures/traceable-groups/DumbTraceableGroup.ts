@@ -3,6 +3,7 @@ import { Hit } from '../../../lab1/types/Hit';
 import { Traceable } from '../../../lab1/types/Traceable';
 import { findCloserHit } from '../../../lab1/utils/findCloserHit';
 import { Bounds3D, unionAllBounds3D } from '../../../lab4/structures/Bounds';
+import Triangle from '../triangle/Triangle';
 import { GenericTraceableGroup } from './GenericTraceableGroup';
 
 export class DumbTraceableGroup<
@@ -23,7 +24,6 @@ export class DumbTraceableGroup<
       const currentHit = traceableObject.getIntersection(ray);
 
       if (!currentHit) continue;
-
       closestHit = closestHit
         ? findCloserHit(currentHit, closestHit)
         : currentHit;

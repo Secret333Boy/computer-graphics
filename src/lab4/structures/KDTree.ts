@@ -35,8 +35,7 @@ export class KDTreeBuilder<T extends Traceable & Boundable>
   }
   public build({
     objects,
-    //maxDepth = 8 + 1.3 * Math.log2(objects.length),
-    maxDepth = 1,
+    maxDepth = 8 + 1.3 * Math.log2(objects.length),
   }: KDTreeInitParams<T>): KDNode {
     const { primitiveBounds, union } = unionAllBounds3D(objects);
     console.log(`------BUILDING KDTREE WITH ${objects.length} OBJECTS------`);
@@ -63,25 +62,8 @@ export class KDTreeBuilder<T extends Traceable & Boundable>
     badRefineCount: number;
   }): KDNode {
     if (objects.length <= this.maxPrimitives || maxDepth <= 0) {
-      console.log(
-        `[MAX DEPTH: ${maxDepth}, LEAF] Building node with ${
-          objects.length
-        } objects,
-        bounds: X: [${bounds[Axis.X].min}, ${bounds[Axis.X].max}],
-        Y: [${bounds[Axis.Y].min}, ${bounds[Axis.Y].max}],
-        Z: [${bounds[Axis.Z].min}, ${bounds[Axis.Z].max}]`
-      );
       return new KDLeaf({ objects });
     }
-    console.log(
-      `[MAX DEPTH: ${maxDepth}, INTERNAL] Building node with ${
-        objects.length
-      } objects, bounds: X: [${bounds[Axis.X].min}, ${
-        bounds[Axis.X].max
-      }], Y: [${bounds[Axis.Y].min}, ${bounds[Axis.Y].max}], Z: [${
-        bounds[Axis.Z].min
-      }, ${bounds[Axis.Z].max}]`
-    );
     const splitResult = this.axisSplitter.split({
       allBounds,
       bounds,
@@ -89,12 +71,7 @@ export class KDTreeBuilder<T extends Traceable & Boundable>
       prevBadRefine: badRefineCount,
     });
     if (!splitResult) {
-      console.log(`[MAX DEPTH: ${maxDepth}, INTERNAL] No split found!`);
       return new KDLeaf({ objects });
-    } else {
-      console.log(
-        `[MAX DEPTH: ${maxDepth}, INTERNAL] Split with ${splitResult.leftSplitMembers.length} left split members, ${splitResult.rightSplitMembers.length} right split members!`
-      );
     }
     const {
       newBadRefine,
@@ -119,24 +96,6 @@ export class KDTreeBuilder<T extends Traceable & Boundable>
       allBounds: allRightBounds,
       badRefineCount: newBadRefine,
     });
-    console.log(
-      `[RES, MAX DEPTH: ${maxDepth}] Left bounds X: [${
-        leftBounds[Axis.X].min
-      }, ${leftBounds[Axis.X].max}], Y: [${leftBounds[Axis.Y].min}, ${
-        leftBounds[Axis.Y].max
-      }], Z: [${leftBounds[Axis.Z].min}, ${leftBounds[Axis.Z].max}] (count ${
-        leftSplitMembers.length
-      }),
-      Right bounds X: [${rightBounds[Axis.X].min}, ${
-        rightBounds[Axis.X].max
-      }], Y: [${rightBounds[Axis.Y].min}, ${rightBounds[Axis.Y].max}], Z: [${
-        rightBounds[Axis.Z].min
-      }, ${rightBounds[Axis.Z].max}], (count ${
-        rightSplitMembers.length
-      }) split type ${splitResult.splitType}, split pos ${
-        splitResult.splitPosition
-      }`
-    );
     return new KDInternal({
       left: leftChild,
       right: rightChild,
@@ -210,11 +169,9 @@ export class KDAxisSplitter<T extends Traceable & Boundable>
     let bestCost = Infinity;
     const oldCost = this.intersectCost * primitives.length;
     const totalSurfaceArea = bounds.surfaceArea;
-    console.log(`[SPLIT] Total SA: ${totalSurfaceArea}, Old cost: ${oldCost}`);
     const invTotalSurfaceArea = 1 / totalSurfaceArea;
     const diagonal: Vector3D = bounds.diagonal;
     let axis = bounds.maximumExtentAxis;
-    console.log(`[SPLIT] Max extend Axis: ${axis}`);
     let retries = 0;
     const edges: BoundEdge<T>[][] = Array.from({ length: 3 }, () =>
       Array.from({ length: 2 * primitives.length })
@@ -252,16 +209,9 @@ export class KDAxisSplitter<T extends Traceable & Boundable>
             this.intersectCost * (1 - eb) * (pBelow * nBelow + pAbove * nAbove);
           // Update best split if this is lowest cost so far
           if (cost < bestCost) {
-            // console.log(
-            //   `[SPLIT] New best cost: ${cost}, axis: ${axis}, nBelow: ${nBelow}, nAbove: ${nAbove}, belowSA: ${belowSA}, aboveSA: ${aboveSA}, edgeT: ${edgeT}`
-            // );
             bestCost = cost;
             bestAxis = axis;
             bestOffset = i;
-          } else {
-            // console.log(
-            //   `[SPLIT, MISS] Cost: ${cost}, axis: ${axis}, nBelow: ${nBelow}, nAbove: ${nAbove}, belowSA: ${belowSA}, aboveSA: ${aboveSA}, edgeT: ${edgeT}`
-            // );
           }
         }
         if (edges[axis][i].type == EdgeType.Start) ++nBelow;
@@ -289,7 +239,6 @@ export class KDAxisSplitter<T extends Traceable & Boundable>
     }
     const rightSplitMembers: T[] = [];
     const allRightBounds: Bounds3D[] = [];
-    console.log(`[SPLIT] Best offset: ${bestOffset}`);
     for (let i = bestOffset + 1; i < 2 * primitives.length; i++) {
       if (edges[bestAxis][i].type == EdgeType.End) {
         rightSplitMembers.push(edges[bestAxis][i].primitive);
@@ -388,13 +337,6 @@ export class KDLeaf<T extends Traceable> implements KDNode {
   }
 
   public getIntersection(ray: Ray): Hit | null {
-    // console.log(
-    //   `[KDLeaf, INTERSECT] Bounds: X: ${this.bounds[Axis.X].min}, ${
-    //     this.bounds[Axis.X].max
-    //   }, Y: ${this.bounds[Axis.Y].min}, ${this.bounds[Axis.Y].max}, Z: ${
-    //     this.bounds[Axis.Z].min
-    //   }, ${this.bounds[Axis.Z].max}`
-    // );
     return this.traceableGroup.getIntersection(ray);
   }
 
@@ -433,17 +375,6 @@ export class KDInternal implements KDNode {
   }
 
   public getIntersection(ray: Ray): Hit | null {
-    if (!ray.vector.z.toString().startsWith('0.9584676')) {
-      return null;
-    }
-    // console.log(
-    //   `[KDInternal, INTERSECT] Bounds: X: ${this.bounds[Axis.X].min}, ${
-    //     this.bounds[Axis.X].max
-    //   }, Y: ${this.bounds[Axis.Y].min}, ${this.bounds[Axis.Y].max}, Z: ${
-    //     this.bounds[Axis.Z].min
-    //   }, ${this.bounds[Axis.Z].max}`
-    // );
-    console.log('meh');
     // intersection with the *bounds* of current node, initially self
     const intersection = this.bounds.pierceWith(ray);
     if (intersection === null) {
@@ -451,7 +382,7 @@ export class KDInternal implements KDNode {
     }
     // the distance to the current node, and to its exit
     let { tMax, tMin } = intersection;
-    // console.log(`[KDInternal, INTERSECT] tMin: ${tMin}, tMax: ${tMax}`);
+
     // just to precompute division, and use multiplication later instead
     const invDir = new Vector3D(
       1 / ray.vector.x,
@@ -475,13 +406,11 @@ export class KDInternal implements KDNode {
     let result: Hit | null = null;
     while (node != null) {
       if (rayTMax < tMin) {
-        console.log('break')
         break;
       }
       // to avoid using recursion, we have to be able to determine the type of kd node, at least for other nodes;
       // otherwise, we'll get a ton of props that can be null of KDNode
       if (node instanceof KDLeaf) {
-        console.log('leaf');
         const intersection = node.getIntersection(ray);
         if (intersection !== null && intersection.t < rayTMax) {
           rayTMax = intersection.t;
@@ -510,7 +439,7 @@ export class KDInternal implements KDNode {
         const belowFirst =
           ray.position[axis] < node.splitPos ||
           (ray.position[axis] === node.splitPos && ray.vector[axis] <= 0);
-        //console.log(`[KDInternal, INTERSECT] belowFirst: ${belowFirst}`);
+
         let firstChild: KDNode;
         let secondChild: KDNode;
         if (belowFirst) {

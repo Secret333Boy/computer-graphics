@@ -14,7 +14,6 @@ import { TransformableGroupFactory } from './structures/transformable-groups/Gen
 import { DumbTransformableGroup } from './structures/transformable-groups/DumbTransformableGroup';
 import { KDTraceableGroup } from './structures/traceable-groups/KDTraceableGroup';
 import { KDTreeBuilder } from '../lab4/structures/KDTree';
-import { DumbTraceableGroup } from './structures/traceable-groups/DumbTraceableGroup';
 
 let objFilePath = '';
 let outputPath = '';
@@ -35,9 +34,11 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   // uncomment to return to the old rendering flow
   // const traceableGroupFactory: TraceableGroupFactory = (objects) =>
   //   new DumbTraceableGroup(objects);
+  // const transformableGroupFactory: TransformableGroupFactory = (objects) =>
+  //   new DumbTransformableGroup(objects);
   const kdTreeBuilder = new KDTreeBuilder({
     // max primitives in a leaf
-    maxPrimitives: 4,
+    maxPrimitives: 10,
   });
   const traceableGroupFactory: TraceableGroupFactory = (objects) =>
     new KDTraceableGroup(objects, kdTreeBuilder);
@@ -53,22 +54,13 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    16,
-    16
+    2000,
+    2000
   );
-  const spheres: Sphere[] = [];
-  // make a 2d grid of spheres
-  for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) {
-      spheres.push(
-        new Sphere(new Vertex3D(-750 + i * 500, -750 + j * 500, -1500), 100)
-      );
-    }
-  }
   const directionalLight = new DirectionalLight(new Vector3D(-1, -1, 1));
   const scene: Scene = new Scene({
     objects: [
-      //new Sphere(new Vertex3D(0, 1100, 8000), 100),
+      new Sphere(new Vertex3D(0, 1100, 8000), 100),
       // to avoid nested kdtrees, meshes now DO NOT implement Traceable, instead only the top-level scene creates
       // a top-level traceable group. Meshes still implement Transformable though
       // (imagine a situation, where there is a mesh inside a mesh, inside a mesh and so on. because the KDTrees
@@ -76,18 +68,15 @@ if (!outputPath) throw new Error('Invalid input: no output path');
       // with an uncontrollable max depth of the tree, which might be bad. To avoid this, and keep the scene oblivious
       // of the existence of Mesh class, we just inline the primitives)
       ...mesh.primitives,
-      //new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
-      //...spheres,
+      new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
     ],
     camera,
     light: directionalLight,
-    traceableGroupFactory,
     transformableGroupFactory,
   });
   scene.transform(transformations.translate3d(-400, -500, 2000));
   mesh.transform(transformations.translate3d(900, 100, 700));
   mesh.transform(transformations.scale3d(2, 2, 2));
-  // mesh.translate(0, 0, 1000);
 
   // transforms relative to (0, 0, 0)
   // look from below
@@ -106,7 +95,11 @@ if (!outputPath) throw new Error('Invalid input: no output path');
 
   const outputWriteStream = createWriteStream(outputPath);
   // const renderer = new PPMRenderer(scene, outputWriteStream);
-  const renderer = new BMPRenderer(scene, outputWriteStream);
+  const renderer = new BMPRenderer(
+    scene,
+    outputWriteStream,
+    traceableGroupFactory
+  );
   // transforms relative to the camera
   // await ppmRenderer.render();
   // look behind

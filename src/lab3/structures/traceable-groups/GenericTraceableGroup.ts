@@ -15,6 +15,6 @@ export abstract class GenericTraceableGroup<T extends Traceable = Traceable>
   }
 }
 
-export type TraceableGroupFactory<T extends Traceable = Traceable> = (
-  traceableObjects: T[]
-) => GenericTraceableGroup<T>;
+export type TraceableGroupFactory<
+  TFactory extends GenericTraceableGroup = GenericTraceableGroup
+> = (traceableObjects: Traceable[]) => TFactory;
