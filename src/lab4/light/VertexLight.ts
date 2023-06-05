@@ -1,7 +1,7 @@
 import Ray from '../../lab1/structures/ray/Ray';
 import Vertex3D from '../../lab1/structures/vertex/Vertex3D';
 import { Hit } from '../../lab1/types/Hit';
-import { Traceable } from '../../lab1/types/Traceable';
+import { GenericTraceableGroup } from '../../lab3/structures/traceable-groups/GenericTraceableGroup';
 import { Color } from '../types/Color';
 import { Light } from './Light';
 
@@ -40,19 +40,17 @@ export default class VertexLight implements Light {
     };
   }
 
-  public checkShadow(hit: Hit, objects: Traceable[]) {
+  public checkShadow(hit: Hit, traceableGroup: GenericTraceableGroup) {
     if (!hit) return false;
-
+    const baseVector = this.vertex.toVector().subtract(hit.vertex.toVector());
     const shadowRay = new Ray(
-      hit.vertex,
-      this.vertex.toVector().subtract(hit.vertex.toVector())
+      hit.vertex
+        .toVector()
+        .add(baseVector.normalize().multiply(0.0000000001))
+        .toVertex3D(),
+      baseVector
     );
-
-    for (const object of objects) {
-      if (object === hit.object) continue;
-      const shadowHit = object.getIntersection(shadowRay);
-      if (shadowHit) return true;
-    }
-    return false;
+    const shadowHit = traceableGroup.getIntersection(shadowRay);
+    return Boolean(shadowHit);
   }
 }

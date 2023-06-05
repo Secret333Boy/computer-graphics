@@ -9,10 +9,16 @@ import { createReadStream, createWriteStream } from 'fs';
 import Disk from '../lab1/structures/disk/Disk';
 import { transformations } from './structures/matrix/transformation-factories';
 import BMPRenderer from './structures/renderers/BMPRenderer';
-import { TraceableGroupFactory } from './structures/traceable-groups/GenericTraceableGroup';
+import {
+  ShadowTraceableGroupFactory,
+  TraceableGroupFactory,
+} from './structures/traceable-groups/GenericTraceableGroup';
 import { TransformableGroupFactory } from './structures/transformable-groups/GenericTransformableGroup';
 import { DumbTransformableGroup } from './structures/transformable-groups/DumbTransformableGroup';
-import { KDTraceableGroup } from './structures/traceable-groups/KDTraceableGroup';
+import {
+  KDTraceableGroup,
+  closestKdTraceableGroupFactory,
+} from './structures/traceable-groups/KDTraceableGroup';
 import { KDTreeBuilder } from '../lab4/structures/KDTree';
 import EnvironmentLight from '../lab4/light/EnvironmentLight';
 import VertexLight from '../lab4/light/VertexLight';
@@ -42,8 +48,9 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     // max primitives in a leaf
     maxPrimitives: 10,
   });
-  const traceableGroupFactory: TraceableGroupFactory = (objects) =>
-    new KDTraceableGroup(objects, kdTreeBuilder);
+  const traceableGroupFactory: TraceableGroupFactory<KDTraceableGroup> = (
+    objects
+  ) => new KDTraceableGroup(objects, kdTreeBuilder);
   const transformableGroupFactory: TransformableGroupFactory = (objects) =>
     new DumbTransformableGroup(objects);
   const inputReadStream = createReadStream(objFilePath);
@@ -76,7 +83,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     5000
   );
 
-  const environmentLight = new EnvironmentLight({ r: 1, g: 1, b: 1 }, 1, 10000);
+  const environmentLight = new EnvironmentLight({ r: 1, g: 1, b: 1 }, 1, 100);
 
   const scene: Scene = new Scene({
     objects: [
@@ -116,7 +123,8 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const renderer = new BMPRenderer(
     scene,
     outputWriteStream,
-    traceableGroupFactory
+    traceableGroupFactory,
+    closestKdTraceableGroupFactory
   );
   // transforms relative to the camera
   // await ppmRenderer.render();

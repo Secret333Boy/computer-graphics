@@ -10,7 +10,10 @@ import Disk from '../lab1/structures/disk/Disk';
 import ReaderOBJ from '../lab3/ReaderOBJ';
 import { KDTreeBuilder } from './structures/KDTree';
 import { DumbTransformableGroup } from '../lab3/structures/transformable-groups/DumbTransformableGroup';
-import { KDTraceableGroup } from '../lab3/structures/traceable-groups/KDTraceableGroup';
+import {
+  KDTraceableGroup,
+  closestKdTraceableGroupFactory,
+} from '../lab3/structures/traceable-groups/KDTraceableGroup';
 
 let inputPath = '';
 let outputPath = '';
@@ -28,7 +31,7 @@ if (!inputPath) throw new Error('Invalid input: no input path');
 if (!outputPath) throw new Error('Invalid input: no output path');
 
 (async () => {
-  const cowOBJ = 'cow.obj';
+  const cowOBJ = `${__dirname}/cow.obj`;
   const inputReadStream = createReadStream(cowOBJ);
   const readerObj = new ReaderOBJ((obj) => new DumbTransformableGroup(obj));
   const mesh = await readerObj.readStream(inputReadStream);
@@ -39,8 +42,8 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    60,
-    60
+    1920,
+    1080
   );
 
   const directionalLight = new DirectionalLight(
@@ -102,7 +105,8 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const renderer = new BMPRenderer(
     scene,
     outputWriteStream,
-    (obj) => new KDTraceableGroup(obj, builder)
+    (obj) => new KDTraceableGroup(obj, builder),
+    closestKdTraceableGroupFactory
   );
   await renderer.render();
 })();

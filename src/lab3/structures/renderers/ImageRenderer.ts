@@ -7,23 +7,38 @@ import CommonRenderer from './CommonRenderer';
 import { Color } from '../../../lab4/types/Color';
 import {
   GenericTraceableGroup,
+  ShadowTraceableGroupFactory,
   TraceableGroupFactory,
 } from '../traceable-groups/GenericTraceableGroup';
 import { PreRenderHookable } from '../../../lab4/types/PreRenderHookable';
 
-export interface ImageRendererProps {
+export interface ImageRendererProps<
+  TRendererGroup extends GenericTraceableGroup
+> {
   scene: Scene;
   writeStream: WriteStream;
   imageWriter: ImageWriter;
   traceableGroupFactory: TraceableGroupFactory<
-    GenericTraceableGroup & PreRenderHookable
+    TRendererGroup & PreRenderHookable
+  >;
+  shadowTraceableGroupFactory: ShadowTraceableGroupFactory<
+    GenericTraceableGroup & PreRenderHookable,
+    TRendererGroup
   >;
 }
 
-export default abstract class ImageRenderer extends CommonRenderer {
+export default abstract class ImageRenderer<
+  TRendererGroup extends GenericTraceableGroup
+> extends CommonRenderer<TRendererGroup> {
   private linesRendered = 0;
-  constructor(props: ImageRendererProps) {
-    const { scene, writeStream, imageWriter, traceableGroupFactory } = props;
+  constructor(props: ImageRendererProps<TRendererGroup>) {
+    const {
+      scene,
+      writeStream,
+      imageWriter,
+      traceableGroupFactory,
+      shadowTraceableGroupFactory,
+    } = props;
 
     const pixelsStream = new PassThrough({ objectMode: true });
 
@@ -38,7 +53,7 @@ export default abstract class ImageRenderer extends CommonRenderer {
 
     const stream = imageWriter.write(imageBuffer);
     stream.pipe(writeStream);
-
+    let shadowTraceableGroup: GenericTraceableGroup & PreRenderHookable;
     super({
       scene,
       onHit: (hit) => {
@@ -49,7 +64,13 @@ export default abstract class ImageRenderer extends CommonRenderer {
 
         const appliedColors: Color[] = [];
         for (const light of scene.lights) {
-          if (light.checkShadow(hit, scene.objects)) continue;
+          if (
+            light.checkShadow(
+              hit,
+              shadowTraceableGroup as GenericTraceableGroup
+            )
+          )
+            continue;
 
           appliedColors.push(light.getAppliedColor(hit));
         }
@@ -70,8 +91,13 @@ export default abstract class ImageRenderer extends CommonRenderer {
           b: hit.color.b > 1 ? 255 : Math.round(hit.color.b * 255),
         });
       },
-      onRenderStart: () => {
+      onRenderStart: (baseTraceableGroup) => {
         console.log('Rendering started');
+        shadowTraceableGroup = shadowTraceableGroupFactory(
+          scene.objects,
+          baseTraceableGroup
+        );
+        shadowTraceableGroup.onPreRender?.();
         this.linesRendered = 0;
       },
       onRowEnd: () => {

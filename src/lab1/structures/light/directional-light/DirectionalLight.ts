@@ -1,3 +1,4 @@
+import { GenericTraceableGroup } from '../../../../lab3/structures/traceable-groups/GenericTraceableGroup';
 import { Light } from '../../../../lab4/light/Light';
 import { Color } from '../../../../lab4/types/Color';
 import { Hit } from '../../../types/Hit';
@@ -30,15 +31,17 @@ export class DirectionalLight implements Light {
     };
   }
 
-  public checkShadow(hit: Hit, objects: Traceable[]) {
+  public checkShadow(hit: Hit, traceableGroup: GenericTraceableGroup) {
     if (!hit) return false;
-
-    const shadowRay = new Ray(hit.vertex, this.vector.multiply(-1));
-    for (const object of objects) {
-      if (object === hit.object) continue;
-      const shadowHit = object.getIntersection(shadowRay);
-      if (shadowHit) return true;
-    }
-    return false;
+    const baseVector = this.vector.multiply(-1);
+    const shadowRay = new Ray(
+      hit.vertex
+        .toVector()
+        .add(baseVector.normalize().multiply(0.0000000001))
+        .toVertex3D(),
+      baseVector
+    );
+    const shadowHit = traceableGroup.getIntersection(shadowRay);
+    return Boolean(shadowHit);
   }
 }

@@ -322,7 +322,10 @@ class BoundEdge<T extends Traceable & Boundable> {
   ) {}
 }
 
-export type KDNode = Traceable;
+export type KDNode = {
+  getIntersection(ray: Ray, lookForClosest: boolean): Hit | null;
+  getWorldBounds(): Bounds3D;
+};
 
 export class KDLeaf<T extends Traceable> implements KDNode {
   private readonly traceableGroup: DumbTraceableGroup<T>;
@@ -374,7 +377,7 @@ export class KDInternal implements KDNode {
     return this.bounds;
   }
 
-  public getIntersection(ray: Ray): Hit | null {
+  public getIntersection(ray: Ray, lookForClosest: boolean): Hit | null {
     // intersection with the *bounds* of current node, initially self
     const intersection = this.bounds.pierceWith(ray);
     if (intersection === null) {
@@ -411,7 +414,11 @@ export class KDInternal implements KDNode {
       // to avoid using recursion, we have to be able to determine the type of kd node, at least for other nodes;
       // otherwise, we'll get a ton of props that can be null of KDNode
       if (node instanceof KDLeaf) {
+        // hit!
         const intersection = node.getIntersection(ray);
+        if (intersection !== null && lookForClosest) {
+          return intersection;
+        }
         if (intersection !== null && intersection.t < rayTMax) {
           rayTMax = intersection.t;
           result = intersection;
