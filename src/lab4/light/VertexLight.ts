@@ -1,7 +1,7 @@
 import Ray from '../../lab1/structures/ray/Ray';
 import Vertex3D from '../../lab1/structures/vertex/Vertex3D';
 import { Hit } from '../../lab1/types/Hit';
-import { TraceableTransformable } from '../../lab3/types/Transformable';
+import { Traceable } from '../../lab1/types/Traceable';
 import { Color } from '../types/Color';
 import { Light } from './Light';
 
@@ -40,7 +40,7 @@ export default class VertexLight implements Light {
     };
   }
 
-  public checkShadow(hit: Hit, objects: TraceableTransformable[]) {
+  public checkShadow(hit: Hit, objects: Traceable[]) {
     if (!hit) return false;
 
     const shadowRay = new Ray(

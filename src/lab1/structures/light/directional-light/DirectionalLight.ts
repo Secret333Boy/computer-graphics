@@ -1,7 +1,7 @@
-import { TraceableTransformable } from '../../../../lab3/types/Transformable';
 import { Light } from '../../../../lab4/light/Light';
 import { Color } from '../../../../lab4/types/Color';
 import { Hit } from '../../../types/Hit';
+import { Traceable } from '../../../types/Traceable';
 import Ray from '../../ray/Ray';
 import Vector3D from '../../vector/Vector3D';
 
@@ -30,7 +30,7 @@ export class DirectionalLight implements Light {
     };
   }
 
-  public checkShadow(hit: Hit, objects: TraceableTransformable[]) {
+  public checkShadow(hit: Hit, objects: Traceable[]) {
     if (!hit) return false;
 
     const shadowRay = new Ray(hit.vertex, this.vector.multiply(-1));

@@ -1,4 +1,6 @@
 import { transformations } from '../../lab3/structures/matrix/transformation-factories';
+import { DumbTraceableGroup } from '../../lab3/structures/traceable-groups/DumbTraceableGroup';
+import { DumbTransformableGroup } from '../../lab3/structures/transformable-groups/DumbTransformableGroup';
 import Camera from '../structures/camera/Camera';
 import Disk from '../structures/disk/Disk';
 import { DirectionalLight } from '../structures/light/directional-light/DirectionalLight';
@@ -18,7 +20,12 @@ describe('Scene', () => {
     1
   );
   const light = new DirectionalLight(new Vector3D(0, 0, 1));
-  const scene = new Scene([sphere, disk], camera, light);
+  const scene = new Scene({
+    objects: [sphere, disk],
+    camera,
+    light,
+    transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
+  });
 
   it('should translate every object in the scene', () => {
     const sphereTranslateSpy = jest.spyOn(sphere, 'transform');

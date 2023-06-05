@@ -3,11 +3,15 @@ import Vertex3D from '../vertex/Vertex3D';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 import { Hit } from '../../types/Hit';
-import { TraceableTransformable } from '../../../lab3/types/Transformable';
 import { Matrix } from '../../../lab3/structures/matrix/matrix';
 import { transformVertex } from '../../../lab3/structures/matrix/transformation-factories';
+import { Boundable } from '../../../lab4/types/Boundable';
+import { Bounds3D } from '../../../lab4/structures/Bounds';
+import { Axis } from '../../../lab4/types/Axis';
+import { Traceable } from '../../types/Traceable';
+import { Transformable } from '../../../lab3/types/Transformable';
 
-export default class Disk implements TraceableTransformable {
+export default class Disk implements Traceable, Transformable, Boundable {
   public center: Vertex3D;
   public normal: Normal3D;
   public radius: number;
@@ -16,6 +20,38 @@ export default class Disk implements TraceableTransformable {
     this.center = center;
     this.normal = new Normal3D(normalVector);
     this.radius = radius;
+  }
+
+  // courtesy of https://gist.github.com/fahickman/8b05e7e43bf0798b3709
+  public getWorldBounds(): Bounds3D {
+    const normal = this.normal.vector;
+    const x2 = normal.x * normal.x;
+    const y2 = normal.y * normal.y;
+    const z2 = normal.z * normal.z;
+
+    const half = new Vector3D(
+      this.radius * Math.sqrt(y2 + z2),
+      this.radius * Math.sqrt(z2 + x2),
+      this.radius * Math.sqrt(x2 + y2)
+    );
+
+    const min = this.center.toVector().subtract(half);
+    const max = this.center.toVector().add(half);
+
+    return new Bounds3D({
+      [Axis.X]: {
+        min: min.x,
+        max: max.x,
+      },
+      [Axis.Y]: {
+        min: min.y,
+        max: max.y,
+      },
+      [Axis.Z]: {
+        min: min.z,
+        max: max.z,
+      },
+    });
   }
 
   public transform(matrix: Matrix): void {

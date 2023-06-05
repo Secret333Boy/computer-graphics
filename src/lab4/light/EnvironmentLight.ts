@@ -1,7 +1,6 @@
 import Vector3D from '../../lab1/structures/vector/Vector3D';
 import Vertex3D from '../../lab1/structures/vertex/Vertex3D';
 import { Hit } from '../../lab1/types/Hit';
-import { TraceableTransformable } from '../../lab3/types/Transformable';
 import { Color } from '../types/Color';
 import { Light } from './Light';
 

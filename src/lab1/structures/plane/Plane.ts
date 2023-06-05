@@ -1,19 +1,41 @@
 import { Matrix } from '../../../lab3/structures/matrix/matrix';
 import { transformVertex } from '../../../lab3/structures/matrix/transformation-factories';
-import { TraceableTransformable } from '../../../lab3/types/Transformable';
+import { Transformable } from '../../../lab3/types/Transformable';
+import { Bounds3D } from '../../../lab4/structures/Bounds';
+import { Axis } from '../../../lab4/types/Axis';
+import { Boundable } from '../../../lab4/types/Boundable';
 import { Hit } from '../../types/Hit';
+import { Traceable } from '../../types/Traceable';
 import Normal3D from '../normal/Normal';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 import Vertex3D from '../vertex/Vertex3D';
 
-export default class Plane implements TraceableTransformable {
+export default class Plane implements Traceable, Transformable, Boundable {
   public normal: Normal3D;
   public vertex: Vertex3D;
 
   constructor(vertex: Vertex3D, normalVector: Vector3D) {
     this.normal = new Normal3D(normalVector);
     this.vertex = vertex;
+  }
+
+  public getWorldBounds(): Bounds3D {
+    const extents = {
+      [Axis.X]: {
+        min: -Infinity,
+        max: Infinity,
+      },
+      [Axis.Y]: {
+        min: -Infinity,
+        max: Infinity,
+      },
+      [Axis.Z]: {
+        min: -Infinity,
+        max: Infinity,
+      },
+    };
+    return new Bounds3D(extents);
   }
 
   public transform(matrix: Matrix): void {

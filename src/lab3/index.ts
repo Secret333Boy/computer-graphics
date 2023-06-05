@@ -9,8 +9,13 @@ import { createReadStream, createWriteStream } from 'fs';
 import Disk from '../lab1/structures/disk/Disk';
 import { transformations } from './structures/matrix/transformation-factories';
 import BMPRenderer from './structures/renderers/BMPRenderer';
-import VertexLight from '../lab4/light/VertexLight';
+import { TraceableGroupFactory } from './structures/traceable-groups/GenericTraceableGroup';
+import { TransformableGroupFactory } from './structures/transformable-groups/GenericTransformableGroup';
+import { DumbTransformableGroup } from './structures/transformable-groups/DumbTransformableGroup';
+import { KDTraceableGroup } from './structures/traceable-groups/KDTraceableGroup';
+import { KDTreeBuilder } from '../lab4/structures/KDTree';
 import EnvironmentLight from '../lab4/light/EnvironmentLight';
+import VertexLight from '../lab4/light/VertexLight';
 
 let objFilePath = '';
 let outputPath = '';
@@ -28,8 +33,22 @@ if (!objFilePath) throw new Error('Invalid input: no obj path');
 if (!outputPath) throw new Error('Invalid input: no output path');
 
 (async () => {
+  // uncomment to return to the old rendering flow
+  // const traceableGroupFactory: TraceableGroupFactory = (objects) =>
+  //   new DumbTraceableGroup(objects);
+  // const transformableGroupFactory: TransformableGroupFactory = (objects) =>
+  //   new DumbTransformableGroup(objects);
+  const kdTreeBuilder = new KDTreeBuilder({
+    // max primitives in a leaf
+    maxPrimitives: 10,
+  });
+  const traceableGroupFactory: TraceableGroupFactory = (objects) =>
+    new KDTraceableGroup(objects, kdTreeBuilder);
+  const transformableGroupFactory: TransformableGroupFactory = (objects) =>
+    new DumbTransformableGroup(objects);
   const inputReadStream = createReadStream(objFilePath);
-  const mesh = await ReaderOBJ.readStream(inputReadStream);
+  const readerObj = new ReaderOBJ(transformableGroupFactory);
+  const mesh = await readerObj.readStream(inputReadStream);
   console.log('Mesh loaded');
   const camera = new Camera(
     // use for relative to (0, 0, 0)
@@ -59,23 +78,23 @@ if (!outputPath) throw new Error('Invalid input: no output path');
 
   const environmentLight = new EnvironmentLight({ r: 1, g: 1, b: 1 }, 1, 10000);
 
-  const scene: Scene = new Scene(
-    [
+  const scene: Scene = new Scene({
+    objects: [
       new Sphere(new Vertex3D(0, 1100, 8000), 3500),
-      mesh,
+      ...mesh.primitives,
       new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
     ],
     camera,
-    [
+    lights: [
       directionalLight,
       // vertexLight,
       environmentLight,
-    ]
-  );
+    ],
+    transformableGroupFactory: (objects) => new DumbTransformableGroup(objects),
+  });
   scene.transform(transformations.translate3d(-400, -500, 2000));
   mesh.transform(transformations.translate3d(900, 100, 700));
   mesh.transform(transformations.scale3d(2, 2, 2));
-  // mesh.translate(0, 0, 1000);
 
   // transforms relative to (0, 0, 0)
   // look from below
@@ -94,7 +113,11 @@ if (!outputPath) throw new Error('Invalid input: no output path');
 
   const outputWriteStream = createWriteStream(outputPath);
   // const renderer = new PPMRenderer(scene, outputWriteStream);
-  const renderer = new BMPRenderer(scene, outputWriteStream);
+  const renderer = new BMPRenderer(
+    scene,
+    outputWriteStream,
+    traceableGroupFactory
+  );
   // transforms relative to the camera
   // await ppmRenderer.render();
   // look behind
