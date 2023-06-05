@@ -36,8 +36,8 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const treeMesh = await ReaderOBJ.readStream(treeReadStream);
   //const chairMesh = await ReaderOBJ.readStream(chairReadStream);
   treeMesh.transform(transformations.scale3d(80, 80, 80));
-  treeMesh.transform(transformations.translate3d(-600, -500, 0));
-  cowMesh.transform(transformations.translate3d(-400, 100, 300));
+  treeMesh.transform(transformations.translate3d(600, -900, 0));
+  cowMesh.transform(transformations.translate3d(-400, -1000, 0));
   console.log('Mesh loaded');
   const camera = new Camera(
     // use for relative to (0, 0, 0)
@@ -45,11 +45,11 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    300,
+    200,
     200
   );
 
-  const directionalLight = new DirectionalLight(new Vector3D(1, -1, 1));
+  const directionalLight = new DirectionalLight(new Vector3D(-0.25, -1, 1));
 
   let scene;
   if (inputPath === 'cow.obj') {
