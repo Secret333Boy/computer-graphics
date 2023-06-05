@@ -1,4 +1,9 @@
 import CommonRenderer from '../lab3/structures/renderers/CommonRenderer';
+import {
+  GenericTraceableGroup,
+  TraceableGroupFactory,
+} from '../lab3/structures/traceable-groups/GenericTraceableGroup';
+import { PreRenderHookable } from '../lab4/types/PreRenderHookable';
 import { Hit } from './types/Hit';
 import { Scene } from './types/Scene';
 
@@ -21,7 +26,12 @@ export default class ConsoleRenderer extends CommonRenderer {
     return ' ';
   }
 
-  constructor(scene: Scene) {
+  constructor(
+    scene: Scene,
+    traceableGroupFactory: TraceableGroupFactory<
+      GenericTraceableGroup & PreRenderHookable
+    >
+  ) {
     super({
       scene,
       onHit: (hit) => {
@@ -31,6 +41,7 @@ export default class ConsoleRenderer extends CommonRenderer {
         this.line = '';
       },
       onRowEnd: () => console.log(this.line),
+      traceableGroupFactory,
     });
   }
 

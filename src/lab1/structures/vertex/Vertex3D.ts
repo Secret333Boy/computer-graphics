@@ -3,6 +3,7 @@ import {
   transformVertex,
   transformations,
 } from '../../../lab3/structures/matrix/transformation-factories';
+import { Axis } from '../../../lab4/types/Axis';
 import Ray from '../ray/Ray';
 import Vector3D from '../vector/Vector3D';
 
@@ -10,6 +11,18 @@ export default class Vertex3D {
   public readonly x: number;
   public readonly y: number;
   public readonly z: number;
+
+  public get [Axis.X](): number {
+    return this.x;
+  }
+
+  public get [Axis.Y](): number {
+    return this.y;
+  }
+
+  public get [Axis.Z](): number {
+    return this.z;
+  }
 
   constructor(x: number, y: number, z: number) {
     this.x = x;

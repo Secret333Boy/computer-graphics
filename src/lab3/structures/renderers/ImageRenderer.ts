@@ -4,17 +4,25 @@ import { Scene } from '../../../lab1/types/Scene';
 import { ImageBuffer } from '../../../lab2/ImageBuffer';
 import { ImageWriter } from '../../../lab2/interfaces/ImageWriter';
 import CommonRenderer from './CommonRenderer';
+import {
+  GenericTraceableGroup,
+  TraceableGroupFactory,
+} from '../traceable-groups/GenericTraceableGroup';
+import { PreRenderHookable } from '../../../lab4/types/PreRenderHookable';
 
 export interface ImageRendererProps {
   scene: Scene;
   writeStream: WriteStream;
   imageWriter: ImageWriter;
+  traceableGroupFactory: TraceableGroupFactory<
+    GenericTraceableGroup & PreRenderHookable
+  >;
 }
 
 export default abstract class ImageRenderer extends CommonRenderer {
   private linesRendered = 0;
   constructor(props: ImageRendererProps) {
-    const { scene, writeStream, imageWriter } = props;
+    const { scene, writeStream, imageWriter, traceableGroupFactory } = props;
 
     const pixelsStream = new PassThrough({ objectMode: true });
 
@@ -59,6 +67,7 @@ export default abstract class ImageRenderer extends CommonRenderer {
       onRenderEnd: () => {
         pixelsStream.end();
       },
+      traceableGroupFactory,
     });
   }
 }

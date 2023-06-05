@@ -4,8 +4,9 @@ import Camera from '../structures/camera/Camera';
 import Vertex3D from '../structures/vertex/Vertex3D';
 import Vector3D from '../structures/vector/Vector3D';
 import { DirectionalLight } from '../structures/light/directional-light/DirectionalLight';
+import { DumbTraceableGroup } from '../../lab3/structures/traceable-groups/DumbTraceableGroup';
+import { DumbTransformableGroup } from '../../lab3/structures/transformable-groups/DumbTransformableGroup';
 import { Sphere } from '../structures/sphere/Sphere';
-import { TraceableTransformable } from '../../lab3/types/Transformable';
 
 describe('ConsoleRenderer', () => {
   let scene: Scene;
@@ -13,9 +14,7 @@ describe('ConsoleRenderer', () => {
   let camera: Camera;
 
   beforeEach(() => {
-    const objects: TraceableTransformable[] = [
-      new Sphere(new Vertex3D(0, 0, 0), 1),
-    ];
+    const objects = [new Sphere(new Vertex3D(0, 0, 0), 1)];
     camera = new Camera(
       new Vertex3D(0, 0, -2),
       new Vector3D(0, 0, 1),
@@ -24,8 +23,13 @@ describe('ConsoleRenderer', () => {
       50
     );
     const light = new DirectionalLight(new Vector3D(1, 0, 0));
-    scene = new Scene(objects, camera, light);
-    renderer = new ConsoleRenderer(scene);
+    scene = new Scene({
+      objects,
+      camera,
+      light,
+      transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
+    });
+    renderer = new ConsoleRenderer(scene, (obj) => new DumbTraceableGroup(obj));
   });
 
   it('should render the scene to the console', async () => {
