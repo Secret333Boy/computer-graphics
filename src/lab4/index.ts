@@ -9,6 +9,9 @@ import { Sphere } from '../lab1/structures/sphere/Sphere';
 import Disk from '../lab1/structures/disk/Disk';
 import { transformations } from '../lab3/structures/matrix/transformation-factories';
 import ReaderOBJ from '../lab3/ReaderOBJ';
+import { DumbTransformableGroup } from '../lab3/structures/transformable-groups/DumbTransformableGroup';
+import { KDTraceableGroup } from '../lab3/structures/traceable-groups/KDTraceableGroup';
+import { KDTreeBuilder } from './structures/KDTree';
 
 let inputPath = '';
 let outputPath = '';
@@ -28,7 +31,8 @@ if (!outputPath) throw new Error('Invalid input: no output path');
 (async () => {
   const cowOBJ = 'cow.obj';
   const inputReadStream = createReadStream(cowOBJ);
-  const mesh = await ReaderOBJ.readStream(inputReadStream);
+  const readerObj = new ReaderOBJ((obj) => new DumbTransformableGroup(obj));
+  const mesh = await readerObj.readStream(inputReadStream);
   console.log('Mesh loaded');
   const camera = new Camera(
     // use for relative to (0, 0, 0)
@@ -45,18 +49,24 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   let scene;
   if (inputPath === 'cow.obj') {
     const inputReadStream = createReadStream(inputPath);
-    const mesh = await ReaderOBJ.readStream(inputReadStream);
-    scene = new Scene([mesh], camera, directionalLight);
+    const mesh = await readerObj.readStream(inputReadStream);
+    scene = new Scene({
+      objects: mesh.primitives,
+      camera,
+      light: directionalLight,
+      transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
+    });
   } else if (inputPath === 'cow-scene') {
-    scene = new Scene(
-      [
+    scene = new Scene({
+      objects: [
         new Sphere(new Vertex3D(0, 1100, 8000), 3500),
-        mesh,
+        ...mesh.primitives,
         new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
       ],
       camera,
-      directionalLight
-    );
+      light: directionalLight,
+      transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
+    });
   } else {
     throw new Error('Invalid input: unknown scene');
   }
@@ -85,6 +95,11 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   // camera.rotate(0, Math.PI, 0);
 
   const outputWriteStream = createWriteStream(outputPath);
-  const renderer = new BMPRenderer(scene, outputWriteStream);
+  const builder = new KDTreeBuilder({ maxPrimitives: 10 });
+  const renderer = new BMPRenderer(
+    scene,
+    outputWriteStream,
+    (obj) => new KDTraceableGroup(obj, builder)
+  );
   await renderer.render();
 })();
