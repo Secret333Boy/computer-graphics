@@ -23,6 +23,10 @@ for (let i = 0; i < process.argv.length; i++) {
   if (process.argv[i] === '--output') {
     outputPath = process.argv[i + 1];
   }
+
+  if (process.argv[i] === '--scene') {
+    inputPath = process.argv[i + 1];
+  }
 }
 
 if (!inputPath) throw new Error('Invalid input: no input path');
@@ -32,18 +36,27 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const cowOBJ = './src/lab4/cow.obj';
   const treeOBJ = './src/lab4/tree3.obj';
   const grassOBJ = './src/lab4/grass.obj';
+  const lartenOBJ = './src/lab4/larten.obj';
   const cowReadStream = createReadStream(cowOBJ);
   const treeReadStream = createReadStream(treeOBJ);
   const grassReadStream = createReadStream(grassOBJ);
+  const lartenReadStream = createReadStream(lartenOBJ);
   const readerObj = new ReaderOBJ((obj) => new DumbTransformableGroup(obj));
   const cowMesh = await readerObj.readStream(cowReadStream);
   const treeMesh = await readerObj.readStream(treeReadStream);
   const grassMesh = await readerObj.readStream(grassReadStream);
+  const lartenMesh = await readerObj.readStream(lartenReadStream);
+
   treeMesh.transform(transformations.scale3d(80, 80, 80));
   treeMesh.transform(transformations.translate3d(600, -900, 0));
+
   cowMesh.transform(transformations.translate3d(-400, -1000, 0));
+
   grassMesh.transform(transformations.scale3d(400, 400, 400));
-  grassMesh.transform(transformations.translate3d(0, -1000, -400));
+  grassMesh.transform(transformations.translate3d(-600, -1000, -400));
+
+  lartenMesh.transform(transformations.scale3d(250, 250, 250));
+  lartenMesh.transform(transformations.translate3d(400, -500, -900));
   console.log('Mesh loaded');
   const camera = new Camera(
     // use for relative to (0, 0, 0)
@@ -51,11 +64,12 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    200,
-    200
+    600,
+    600
   );
 
   const directionalLight = new DirectionalLight(new Vector3D(-0.25, -1, 1));
+  const directionalLightUp = new DirectionalLight(new Vector3D(-1, -1, 1));
 
   let scene;
   if (inputPath === 'cow.obj') {
@@ -66,42 +80,44 @@ if (!outputPath) throw new Error('Invalid input: no output path');
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
   } else if (inputPath === 'cow-scene') {
+    cowMesh.transform(transformations.translate3d(-40, 0, 70));
+    cowMesh.transform(transformations.rotate3dY(-0.65));
     scene = new Scene({
       objects: [
-        new Sphere(new Vertex3D(0, 1100, 8000), 3500),
+        ...cowMesh.primitives,
         ...treeMesh.primitives,
-        new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
+        ...grassMesh.primitives,
       ],
       camera,
       light: directionalLight,
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
+  } else if (inputPath === 'spheres') {
+    const sphere1 = new Sphere(new Vertex3D(550, -1800, 2700), 1000);
+    const sphere2 = new Sphere(new Vertex3D(-300, 1100, 1000), 500);
+    const sphere3 = new Sphere(new Vertex3D(0, 200, 8000), 1500);
+    scene = new Scene({
+      objects: [sphere1, sphere2, sphere3],
+      camera,
+      light: directionalLightUp,
+      transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
+    });
+  } else if (inputPath === 'night_with_larten') {
+    const moon = new Sphere(new Vertex3D(-900, 1500, 2500), 500);
+    scene = new Scene({
+      objects: [
+        ...lartenMesh.primitives,
+        ...cowMesh.primitives,
+        ...grassMesh.primitives,
+        moon,
+      ],
+      camera,
+      light: directionalLightUp,
+      transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
+    });
   } else {
     throw new Error('Invalid input: unknown scene');
   }
-
-  //   scene.transform(transformations.translate3d(-400, -500, 2000));
-  //   mesh.transform(transformations.translate3d(900, 100, 700));
-  //   mesh.transform(transformations.scale3d(2, 2, 2));
-
-  //
-
-  // mesh.translate(0, 0, 1000);
-
-  // transforms relative to (0, 0, 0)
-  // look from below
-  // camera.translate(0, -1000, 0);
-  // camera.rotate(Math.PI / 6, 0, 0);
-
-  // look from the side
-  // camera.translate(-1000, 0, 0);
-  // camera.rotate(0, -Math.PI / 6, 0);
-
-  // look upside down
-  // camera.rotate(0, 0, Math.PI);
-
-  // look behind
-  // camera.rotate(0, Math.PI, 0);
 
   const outputWriteStream = createWriteStream(outputPath);
   const builder = new KDTreeBuilder({ maxPrimitives: 10 });
