@@ -33,15 +33,11 @@ export class DirectionalLight implements Light {
 
   public checkShadow(hit: Hit, traceableGroup: GenericTraceableGroup) {
     if (!hit) return false;
-    const baseVector = this.vector.multiply(-1);
-    const shadowRay = new Ray(
-      hit.vertex
-        .toVector()
-        .add(baseVector.normalize().multiply(0.0000000001))
-        .toVertex3D(),
-      baseVector
-    );
-    const shadowHit = traceableGroup.getIntersection(shadowRay);
+    const shadowRay = new Ray(hit.vertex, this.vector.multiply(-1));
+    const shadowHit = traceableGroup.getIntersection(shadowRay, {
+      lookForClosest: false,
+      avoidPrimitives: [hit.object],
+    });
     return Boolean(shadowHit);
   }
 }

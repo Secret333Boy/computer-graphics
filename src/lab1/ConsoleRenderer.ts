@@ -65,23 +65,21 @@ export default class ConsoleRenderer<
 
   private getChar(hit: Hit | null, traceableGroup: GenericTraceableGroup) {
     if (!hit) return ' ';
-
-    const appliedColors: Color[] = [];
+    const colorSum: Color = {
+      r: 0,
+      g: 0,
+      b: 0,
+    };
     for (const light of this.scene.lights) {
-      if (light.checkShadow(hit, traceableGroup)) continue;
-
-      appliedColors.push(light.getAppliedColor(hit));
+      if (light.checkShadow(hit, traceableGroup as GenericTraceableGroup))
+        continue;
+      const appliedColor = light.getAppliedColor(hit);
+      colorSum.r += appliedColor.r;
+      colorSum.g += appliedColor.g;
+      colorSum.b += appliedColor.b;
     }
 
-    if (appliedColors.length === 0) {
-      hit.color = { r: 0, g: 0, b: 0 };
-    } else {
-      hit.color = appliedColors.reduce((acc, color) => ({
-        r: acc.r + color.r,
-        g: acc.g + color.g,
-        b: acc.b + color.b,
-      }));
-    }
+    hit.color = colorSum;
     const dotProduct = (hit.color.r + hit.color.g + hit.color.b) / 3;
     return ConsoleRenderer.dotProductSymbolMap(dotProduct);
   }

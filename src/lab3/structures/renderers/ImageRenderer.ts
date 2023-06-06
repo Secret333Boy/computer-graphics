@@ -62,7 +62,11 @@ export default abstract class ImageRenderer<
           return;
         }
 
-        const appliedColors: Color[] = [];
+        const colorSum: Color = {
+          r: 0,
+          g: 0,
+          b: 0,
+        };
         for (const light of scene.lights) {
           if (
             light.checkShadow(
@@ -71,19 +75,13 @@ export default abstract class ImageRenderer<
             )
           )
             continue;
-
-          appliedColors.push(light.getAppliedColor(hit));
+          const appliedColor = light.getAppliedColor(hit);
+          colorSum.r += appliedColor.r;
+          colorSum.g += appliedColor.g;
+          colorSum.b += appliedColor.b;
         }
 
-        if (appliedColors.length === 0) {
-          hit.color = { r: 0, g: 0, b: 0 };
-        } else {
-          hit.color = appliedColors.reduce((acc, color) => ({
-            r: acc.r + color.r,
-            g: acc.g + color.g,
-            b: acc.b + color.b,
-          }));
-        }
+        hit.color = colorSum;
 
         pixelsStream.push({
           r: hit.color.r > 1 ? 255 : Math.round(hit.color.r * 255),

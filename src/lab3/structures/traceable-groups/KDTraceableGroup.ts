@@ -5,9 +5,9 @@ import { Bounds3D } from '../../../lab4/structures/Bounds';
 import { IKDTreeBuilder, KDNode } from '../../../lab4/structures/KDTree';
 import { PreRenderHookable } from '../../../lab4/types/PreRenderHookable';
 import {
+  AdditionalIntersectionParams,
   GenericTraceableGroup,
   ShadowTraceableGroupFactory,
-  TraceableGroupFactory,
 } from './GenericTraceableGroup';
 
 export class KDTraceableGroup<T extends Traceable = Traceable>
@@ -38,13 +38,15 @@ export class KDTraceableGroup<T extends Traceable = Traceable>
     }
   }
 
-  public getIntersection(ray: Ray): Hit | null {
-    return this.genericGetIntersection(ray, false);
-  }
-
-  public genericGetIntersection(ray: Ray, lookForClosest: boolean): Hit | null {
+  public getIntersection(
+    ray: Ray,
+    options: AdditionalIntersectionParams<T>
+  ): Hit | null {
     if (!this.root) throw new Error('KDTree not built');
-    return this.root.getIntersection(ray, lookForClosest);
+    return this.root.getIntersection(ray, {
+      lookForClosest: true,
+      ...options,
+    });
   }
 }
 
@@ -59,8 +61,14 @@ export class ShadowKDTraceableGroup<
     return this.baseGroup.getWorldBounds();
   }
 
-  public getIntersection(ray: Ray): Hit | null {
-    return this.baseGroup.genericGetIntersection(ray, true);
+  public getIntersection(
+    ray: Ray,
+    options: AdditionalIntersectionParams<T>
+  ): Hit | null {
+    return this.baseGroup.getIntersection(ray, {
+      lookForClosest: false,
+      ...options,
+    });
   }
 }
 

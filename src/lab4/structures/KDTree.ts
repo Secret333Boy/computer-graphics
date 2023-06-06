@@ -8,6 +8,7 @@ import { DumbTraceableGroup } from '../../lab3/structures/traceable-groups/DumbT
 import { Axis } from '../types/Axis';
 import { Boundable } from '../types/Boundable';
 import { Bounds3D, unionAllBounds3D, unionBounds3D } from './Bounds';
+import { AdditionalIntersectionParams } from '../../lab3/structures/traceable-groups/GenericTraceableGroup';
 
 export interface IKDTreeBuilder<T extends Traceable & Boundable> {
   build(params: KDTreeInitParams<T>): KDNode;
@@ -323,7 +324,7 @@ class BoundEdge<T extends Traceable & Boundable> {
 }
 
 export type KDNode = {
-  getIntersection(ray: Ray, lookForClosest: boolean): Hit | null;
+  getIntersection(ray: Ray, options?: AdditionalIntersectionParams): Hit | null;
   getWorldBounds(): Bounds3D;
 };
 
@@ -339,8 +340,11 @@ export class KDLeaf<T extends Traceable> implements KDNode {
     return this.bounds;
   }
 
-  public getIntersection(ray: Ray): Hit | null {
-    return this.traceableGroup.getIntersection(ray);
+  public getIntersection(
+    ray: Ray,
+    options?: AdditionalIntersectionParams<T>
+  ): Hit | null {
+    return this.traceableGroup.getIntersection(ray, options);
   }
 
   public get count(): number {
@@ -377,7 +381,10 @@ export class KDInternal implements KDNode {
     return this.bounds;
   }
 
-  public getIntersection(ray: Ray, lookForClosest: boolean): Hit | null {
+  public getIntersection(
+    ray: Ray,
+    options: AdditionalIntersectionParams
+  ): Hit | null {
     // intersection with the *bounds* of current node, initially self
     const intersection = this.bounds.pierceWith(ray);
     if (intersection === null) {
@@ -415,8 +422,8 @@ export class KDInternal implements KDNode {
       // otherwise, we'll get a ton of props that can be null of KDNode
       if (node instanceof KDLeaf) {
         // hit!
-        const intersection = node.getIntersection(ray);
-        if (intersection !== null && lookForClosest) {
+        const intersection = node.getIntersection(ray, options);
+        if (intersection !== null && options.lookForClosest) {
           return intersection;
         }
         if (intersection !== null && intersection.t < rayTMax) {

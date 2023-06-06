@@ -42,15 +42,14 @@ export default class VertexLight implements Light {
 
   public checkShadow(hit: Hit, traceableGroup: GenericTraceableGroup) {
     if (!hit) return false;
-    const baseVector = this.vertex.toVector().subtract(hit.vertex.toVector());
     const shadowRay = new Ray(
-      hit.vertex
-        .toVector()
-        .add(baseVector.normalize().multiply(0.0000000001))
-        .toVertex3D(),
-      baseVector
+      hit.vertex,
+      this.vertex.toVector().subtract(hit.vertex.toVector())
     );
-    const shadowHit = traceableGroup.getIntersection(shadowRay);
+    const shadowHit = traceableGroup.getIntersection(shadowRay, {
+      avoidPrimitives: [hit.object],
+      lookForClosest: false,
+    });
     return Boolean(shadowHit);
   }
 }

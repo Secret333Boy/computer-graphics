@@ -83,7 +83,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     5000
   );
 
-  const environmentLight = new EnvironmentLight({ r: 1, g: 1, b: 1 }, 1, 100);
+  const environmentLight = new EnvironmentLight({ r: 1, g: 1, b: 1 }, 1, 64);
 
   const scene: Scene = new Scene({
     objects: [
@@ -94,7 +94,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     camera,
     lights: [
       directionalLight,
-      // vertexLight,
+      //vertexLight,
       environmentLight,
     ],
     transformableGroupFactory: (objects) => new DumbTransformableGroup(objects),
