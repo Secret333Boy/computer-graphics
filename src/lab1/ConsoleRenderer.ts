@@ -9,7 +9,9 @@ import { PreRenderHookable } from '../lab4/types/PreRenderHookable';
 import { Hit } from './types/Hit';
 import { Scene } from './types/Scene';
 
-export default class ConsoleRenderer extends CommonRenderer {
+export default class ConsoleRenderer<
+  TRendererGroup extends GenericTraceableGroup
+> extends CommonRenderer<TRendererGroup> {
   private line = '';
 
   private static dotProductSymbolMap(dotProduct: number): string {
@@ -31,7 +33,7 @@ export default class ConsoleRenderer extends CommonRenderer {
   constructor(
     scene: Scene,
     traceableGroupFactory: TraceableGroupFactory<
-      GenericTraceableGroup & PreRenderHookable
+      TRendererGroup & PreRenderHookable
     >,
     shadowTraceableGroupFactory: ShadowTraceableGroupFactory<
       GenericTraceableGroup & PreRenderHookable
