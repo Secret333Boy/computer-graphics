@@ -29,10 +29,21 @@ if (!inputPath) throw new Error('Invalid input: no input path');
 if (!outputPath) throw new Error('Invalid input: no output path');
 
 (async () => {
-  const cowOBJ = 'cow.obj';
-  const inputReadStream = createReadStream(cowOBJ);
+  const cowOBJ = './src/lab4/cow.obj';
+  const treeOBJ = './src/lab4/tree3.obj';
+  const grassOBJ = './src/lab4/grass.obj';
+  const cowReadStream = createReadStream(cowOBJ);
+  const treeReadStream = createReadStream(treeOBJ);
+  const grassReadStream = createReadStream(grassOBJ);
   const readerObj = new ReaderOBJ((obj) => new DumbTransformableGroup(obj));
-  const mesh = await readerObj.readStream(inputReadStream);
+  const cowMesh = await readerObj.readStream(cowReadStream);
+  const treeMesh = await readerObj.readStream(treeReadStream);
+  const grassMesh = await readerObj.readStream(grassReadStream);
+  treeMesh.transform(transformations.scale3d(80, 80, 80));
+  treeMesh.transform(transformations.translate3d(600, -900, 0));
+  cowMesh.transform(transformations.translate3d(-400, -1000, 0));
+  grassMesh.transform(transformations.scale3d(400, 400, 400));
+  grassMesh.transform(transformations.translate3d(0, -1000, -400));
   console.log('Mesh loaded');
   const camera = new Camera(
     // use for relative to (0, 0, 0)
@@ -40,18 +51,16 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    60,
-    60
+    200,
+    200
   );
 
-  const directionalLight = new DirectionalLight(new Vector3D(-1, -1, 1));
+  const directionalLight = new DirectionalLight(new Vector3D(-0.25, -1, 1));
 
   let scene;
   if (inputPath === 'cow.obj') {
-    const inputReadStream = createReadStream(inputPath);
-    const mesh = await readerObj.readStream(inputReadStream);
     scene = new Scene({
-      objects: mesh.primitives,
+      objects: cowMesh.primitives,
       camera,
       light: directionalLight,
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
@@ -60,7 +69,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     scene = new Scene({
       objects: [
         new Sphere(new Vertex3D(0, 1100, 8000), 3500),
-        ...mesh.primitives,
+        ...treeMesh.primitives,
         new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
       ],
       camera,
