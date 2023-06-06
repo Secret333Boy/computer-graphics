@@ -4,16 +4,23 @@ import ImageRenderer from './ImageRenderer';
 import { WriterBMP } from '../../../lab2/plugins/bmp/bmp.writer';
 import {
   GenericTraceableGroup,
+  ShadowTraceableGroupFactory,
   TraceableGroupFactory,
 } from '../traceable-groups/GenericTraceableGroup';
 import { PreRenderHookable } from '../../../lab4/types/PreRenderHookable';
 
-export default class BMPRenderer extends ImageRenderer {
+export default class BMPRenderer<
+  TRendererGroup extends GenericTraceableGroup
+> extends ImageRenderer<TRendererGroup> {
   constructor(
     scene: Scene,
     writeStream: WriteStream,
     traceableGroupFactory: TraceableGroupFactory<
-      GenericTraceableGroup & PreRenderHookable
+      TRendererGroup & PreRenderHookable
+    >,
+    shadowTraceableGroupFactory: ShadowTraceableGroupFactory<
+      GenericTraceableGroup & PreRenderHookable,
+      TRendererGroup
     >
   ) {
     const writerBMP = new WriterBMP();
@@ -22,6 +29,7 @@ export default class BMPRenderer extends ImageRenderer {
       writeStream,
       imageWriter: writerBMP,
       traceableGroupFactory,
+      shadowTraceableGroupFactory,
     });
   }
 }

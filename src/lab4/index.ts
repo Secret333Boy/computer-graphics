@@ -7,11 +7,13 @@ import Camera from '../lab1/structures/camera/Camera';
 import Vertex3D from '../lab1/structures/vertex/Vertex3D';
 import { Sphere } from '../lab1/structures/sphere/Sphere';
 import Disk from '../lab1/structures/disk/Disk';
-import { transformations } from '../lab3/structures/matrix/transformation-factories';
 import ReaderOBJ from '../lab3/ReaderOBJ';
-import { DumbTransformableGroup } from '../lab3/structures/transformable-groups/DumbTransformableGroup';
-import { KDTraceableGroup } from '../lab3/structures/traceable-groups/KDTraceableGroup';
 import { KDTreeBuilder } from './structures/KDTree';
+import { DumbTransformableGroup } from '../lab3/structures/transformable-groups/DumbTransformableGroup';
+import {
+  KDTraceableGroup,
+  closestKdTraceableGroupFactory,
+} from '../lab3/structures/traceable-groups/KDTraceableGroup';
 
 let inputPath = '';
 let outputPath = '';
@@ -29,7 +31,7 @@ if (!inputPath) throw new Error('Invalid input: no input path');
 if (!outputPath) throw new Error('Invalid input: no output path');
 
 (async () => {
-  const cowOBJ = 'cow.obj';
+  const cowOBJ = `${__dirname}/cow.obj`;
   const inputReadStream = createReadStream(cowOBJ);
   const readerObj = new ReaderOBJ((obj) => new DumbTransformableGroup(obj));
   const mesh = await readerObj.readStream(inputReadStream);
@@ -40,11 +42,15 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    60,
-    60
+    1920,
+    1080
   );
 
-  const directionalLight = new DirectionalLight(new Vector3D(-1, -1, 1));
+  const directionalLight = new DirectionalLight(
+    new Vector3D(-1, -1, 1),
+    { r: 1, g: 1, b: 1 },
+    1
+  );
 
   let scene;
   if (inputPath === 'cow.obj') {
@@ -53,7 +59,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     scene = new Scene({
       objects: mesh.primitives,
       camera,
-      light: directionalLight,
+      lights: [directionalLight],
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
   } else if (inputPath === 'cow-scene') {
@@ -64,7 +70,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
         new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
       ],
       camera,
-      light: directionalLight,
+      lights: [directionalLight],
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
   } else {
@@ -99,7 +105,8 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const renderer = new BMPRenderer(
     scene,
     outputWriteStream,
-    (obj) => new KDTraceableGroup(obj, builder)
+    (obj) => new KDTraceableGroup(obj, builder),
+    closestKdTraceableGroupFactory
   );
   await renderer.render();
 })();

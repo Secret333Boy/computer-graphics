@@ -76,6 +76,7 @@ export default class Triangle implements Traceable, Transformable {
           : possibleNormal
       ),
       object: this,
+      color: { r: 1, g: 1, b: 1 },
     };
   }
 }

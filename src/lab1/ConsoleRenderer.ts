@@ -1,13 +1,17 @@
 import CommonRenderer from '../lab3/structures/renderers/CommonRenderer';
 import {
   GenericTraceableGroup,
+  ShadowTraceableGroupFactory,
   TraceableGroupFactory,
 } from '../lab3/structures/traceable-groups/GenericTraceableGroup';
+import { Color } from '../lab4/types/Color';
 import { PreRenderHookable } from '../lab4/types/PreRenderHookable';
 import { Hit } from './types/Hit';
 import { Scene } from './types/Scene';
 
-export default class ConsoleRenderer extends CommonRenderer {
+export default class ConsoleRenderer<
+  TRendererGroup extends GenericTraceableGroup
+> extends CommonRenderer<TRendererGroup> {
   private line = '';
 
   private static dotProductSymbolMap(dotProduct: number): string {
@@ -29,26 +33,54 @@ export default class ConsoleRenderer extends CommonRenderer {
   constructor(
     scene: Scene,
     traceableGroupFactory: TraceableGroupFactory<
+      TRendererGroup & PreRenderHookable
+    >,
+    shadowTraceableGroupFactory: ShadowTraceableGroupFactory<
       GenericTraceableGroup & PreRenderHookable
     >
   ) {
+    let shadowTraceableGroup: GenericTraceableGroup & PreRenderHookable;
     super({
       scene,
       onHit: (hit) => {
-        this.line += this.getChar(hit);
+        this.line += this.getChar(
+          hit,
+          shadowTraceableGroup as GenericTraceableGroup
+        );
       },
       onRowStart: () => {
         this.line = '';
       },
       onRowEnd: () => console.log(this.line),
+      onRenderStart: (baseGroup) => {
+        shadowTraceableGroup = shadowTraceableGroupFactory(
+          scene.objects,
+          baseGroup
+        );
+        shadowTraceableGroup.onPreRender?.();
+      },
       traceableGroupFactory,
     });
   }
 
-  private getChar(hit: Hit | null) {
+  private getChar(hit: Hit | null, traceableGroup: GenericTraceableGroup) {
     if (!hit) return ' ';
+    const colorSum: Color = {
+      r: 0,
+      g: 0,
+      b: 0,
+    };
+    for (const light of this.scene.lights) {
+      if (light.checkShadow(hit, traceableGroup as GenericTraceableGroup))
+        continue;
+      const appliedColor = light.getAppliedColor(hit);
+      colorSum.r += appliedColor.r;
+      colorSum.g += appliedColor.g;
+      colorSum.b += appliedColor.b;
+    }
 
-    const dotProduct = this.scene.light.vector.dotProduct(hit.normal.vector);
+    hit.color = colorSum;
+    const dotProduct = (hit.color.r + hit.color.g + hit.color.b) / 3;
     return ConsoleRenderer.dotProductSymbolMap(dotProduct);
   }
 }

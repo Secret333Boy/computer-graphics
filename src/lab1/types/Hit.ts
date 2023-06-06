@@ -7,4 +7,5 @@ export interface Hit {
   vertex: Vertex3D;
   t: number;
   object: Traceable;
+  color: { r: number; g: number; b: number };
 }

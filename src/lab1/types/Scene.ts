@@ -1,13 +1,14 @@
 import { Matrix } from '../../lab3/structures/matrix/matrix';
 import { TransformableGroupFactory } from '../../lab3/structures/transformable-groups/GenericTransformableGroup';
 import { Transformable } from '../../lab3/types/Transformable';
+import { Light } from '../../lab4/light/Light';
 import Camera from '../structures/camera/Camera';
-import { DirectionalLight } from '../structures/light/directional-light/DirectionalLight';
 import { Traceable } from './Traceable';
+
 export type SceneParams = {
   objects: (Traceable & Transformable)[];
   camera: Camera;
-  light: DirectionalLight;
+  lights: Light[];
   transformableGroupFactory: TransformableGroupFactory<Transformable>;
 };
 
@@ -15,18 +16,18 @@ export type SceneParams = {
 // otherwise, it will have to implement logic for tracing - the renderer's job
 export class Scene implements Transformable {
   public camera: Camera;
-  public light: DirectionalLight;
+  public lights: Light[];
   public objects: (Traceable & Transformable)[];
   private transformableGroup: Transformable;
 
   constructor({
     camera,
-    light,
+    lights,
     objects,
     transformableGroupFactory,
   }: SceneParams) {
     this.camera = camera;
-    this.light = light;
+    this.lights = lights;
     this.objects = objects;
     this.transformableGroup = transformableGroupFactory(objects);
   }
