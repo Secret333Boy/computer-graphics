@@ -40,7 +40,7 @@ export class KDTraceableGroup<T extends Traceable = Traceable>
 
   public getIntersection(
     ray: Ray,
-    options: AdditionalIntersectionParams<T>
+    options?: AdditionalIntersectionParams<T>
   ): Hit | null {
     if (!this.root) throw new Error('KDTree not built');
     return this.root.getIntersection(ray, {

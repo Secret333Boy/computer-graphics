@@ -344,6 +344,10 @@ export class KDLeaf<T extends Traceable> implements KDNode {
     ray: Ray,
     options?: AdditionalIntersectionParams<T>
   ): Hit | null {
+    options = {
+      lookForClosest: true,
+      ...options,
+    };
     return this.traceableGroup.getIntersection(ray, options);
   }
 
@@ -427,7 +431,7 @@ export class KDInternal implements KDNode {
       if (node instanceof KDLeaf) {
         // hit!
         const intersection = node.getIntersection(ray, options);
-        if (intersection !== null && options.lookForClosest) {
+        if (intersection !== null && !options.lookForClosest) {
           return intersection;
         }
         if (intersection !== null && intersection.t < rayTMax) {

@@ -63,8 +63,8 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    500,
-    500
+    1920,
+    1080
   );
 
   const directionalLight = new DirectionalLight(
@@ -83,7 +83,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     5000
   );
 
-  const environmentLight = new EnvironmentLight({ r: 1, g: 1, b: 1 }, 1, 64);
+  const environmentLight = new EnvironmentLight({ r: 1, g: 1, b: 1 }, 1, 100);
 
   const scene: Scene = new Scene({
     objects: [
@@ -92,11 +92,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
       new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
     ],
     camera,
-    lights: [
-      directionalLight,
-      //vertexLight,
-      environmentLight,
-    ],
+    lights: [directionalLight, vertexLight, environmentLight],
     transformableGroupFactory: (objects) => new DumbTransformableGroup(objects),
   });
   scene.transform(transformations.translate3d(-400, -500, 2000));
