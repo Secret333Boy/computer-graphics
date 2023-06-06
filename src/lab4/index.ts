@@ -28,16 +28,18 @@ if (!outputPath) throw new Error('Invalid input: no output path');
 (async () => {
   const cowOBJ = './src/lab4/cow.obj';
   const treeOBJ = './src/lab4/tree3.obj';
-  //const chairOBJ = './src/lab4/chair.obj';
+  const grassOBJ = './src/lab4/grass.obj';
   const cowReadStream = createReadStream(cowOBJ);
   const treeReadStream = createReadStream(treeOBJ);
-  //const chairReadStream = createReadStream(chairOBJ);
+  const grassReadStream = createReadStream(grassOBJ);
   const cowMesh = await ReaderOBJ.readStream(cowReadStream);
   const treeMesh = await ReaderOBJ.readStream(treeReadStream);
-  //const chairMesh = await ReaderOBJ.readStream(chairReadStream);
+  const grassMesh = await ReaderOBJ.readStream(grassReadStream);
   treeMesh.transform(transformations.scale3d(80, 80, 80));
   treeMesh.transform(transformations.translate3d(600, -900, 0));
   cowMesh.transform(transformations.translate3d(-400, -1000, 0));
+  grassMesh.transform(transformations.scale3d(400, 400, 400));
+  grassMesh.transform(transformations.translate3d(0, -1000, -400));
   console.log('Mesh loaded');
   const camera = new Camera(
     // use for relative to (0, 0, 0)
@@ -57,14 +59,17 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   } else if (inputPath === 'cow-scene') {
     scene = new Scene(
       [
-        new Sphere(new Vertex3D(1000, 3500, 7000), 3500),
+        new Sphere(new Vertex3D(-1000, 3500, 7000), 5000),
         cowMesh,
         treeMesh,
+        grassMesh,
         new Disk(new Vertex3D(-400, -1800, 8000), new Vector3D(0, 1, 0), 8000),
       ],
       camera,
       directionalLight
     );
+  } else if (inputPath === 'human-scene') {
+    scene = new Scene([treeMesh, cowMesh], camera, directionalLight);
   } else {
     throw new Error('Invalid input: unknown scene');
   }
