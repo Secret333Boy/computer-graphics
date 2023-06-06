@@ -385,6 +385,10 @@ export class KDInternal implements KDNode {
     ray: Ray,
     options: AdditionalIntersectionParams
   ): Hit | null {
+    options = {
+      lookForClosest: true,
+      ...options,
+    };
     // intersection with the *bounds* of current node, initially self
     const intersection = this.bounds.pierceWith(ray);
     if (intersection === null) {

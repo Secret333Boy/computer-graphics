@@ -31,7 +31,6 @@ export class DumbTraceableGroup<
     for (const traceableObject of this.traceableObjects) {
       if (avoidPrimitives.includes(traceableObject)) continue;
       const currentHit = traceableObject.getIntersection(ray);
-
       if (!currentHit) continue;
       if (!lookForClosest) return currentHit;
       closestHit = closestHit
