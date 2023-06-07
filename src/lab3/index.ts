@@ -9,14 +9,10 @@ import { createReadStream, createWriteStream } from 'fs';
 import Disk from '../lab1/structures/disk/Disk';
 import { transformations } from './structures/matrix/transformation-factories';
 import BMPRenderer from './structures/renderers/BMPRenderer';
-import {
-  TraceableGroupFactory,
-} from './structures/traceable-groups/GenericTraceableGroup';
+import { TraceableGroupFactory } from './structures/traceable-groups/GenericTraceableGroup';
 import { TransformableGroupFactory } from './structures/transformable-groups/GenericTransformableGroup';
 import { DumbTransformableGroup } from './structures/transformable-groups/DumbTransformableGroup';
-import {
-  KDTraceableGroup,
-} from './structures/traceable-groups/KDTraceableGroup';
+import { KDTraceableGroup } from './structures/traceable-groups/KDTraceableGroup';
 import { KDTreeBuilder } from '../lab4/structures/KDTree';
 import EnvironmentLight from '../lab4/light/EnvironmentLight';
 import VertexLight from '../lab4/light/VertexLight';

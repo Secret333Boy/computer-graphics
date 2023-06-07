@@ -27,12 +27,7 @@ export default abstract class ImageRenderer<
 > extends CommonRenderer<TRendererGroup> {
   private linesRendered = 0;
   constructor(props: ImageRendererProps<TRendererGroup>) {
-    const {
-      scene,
-      writeStream,
-      imageWriter,
-      traceableGroupFactory,
-    } = props;
+    const { scene, writeStream, imageWriter, traceableGroupFactory } = props;
 
     const pixelsStream = new PassThrough({ objectMode: true });
 
@@ -61,13 +56,7 @@ export default abstract class ImageRenderer<
           b: 0,
         };
         for (const light of scene.lights) {
-          if (
-            light.checkShadow(
-              hit,
-              traceableGroup,
-            )
-          )
-            continue;
+          if (light.checkShadow(hit, traceableGroup)) continue;
           const appliedColor = light.getAppliedColor(hit);
           colorSum.r += appliedColor.r;
           colorSum.g += appliedColor.g;

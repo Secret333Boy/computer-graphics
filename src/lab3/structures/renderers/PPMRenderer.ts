@@ -16,7 +16,7 @@ export default class PPMRenderer<
     writeStream: WriteStream,
     traceableGroupFactory: TraceableGroupFactory<
       TRendererGroup & PreRenderHookable
-    >,
+    >
   ) {
     const writerPPM = new WriterPPM();
     super({

@@ -38,10 +38,7 @@ export default class ConsoleRenderer<
     super({
       scene,
       onHit: (hit, group) => {
-        this.line += this.getChar(
-          hit,
-          group
-        );
+        this.line += this.getChar(hit, group);
       },
       onRowStart: () => {
         this.line = '';
