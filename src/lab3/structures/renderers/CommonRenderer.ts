@@ -12,7 +12,10 @@ export interface CommonRendererProps<
   TTraceableGroup extends GenericTraceableGroup
 > {
   scene: Scene;
-  onHit: (hit: Hit | null) => Promise<void> | void;
+  onHit: (
+    hit: Hit | null,
+    traceableGroup: TTraceableGroup
+  ) => Promise<void> | void;
   onRowStart?: () => Promise<void> | void;
   onRowEnd?: () => Promise<void> | void;
   onRenderStart?: (baseTraceableGroup: TTraceableGroup) => Promise<void> | void;
@@ -27,7 +30,10 @@ export default abstract class CommonRenderer<
 > implements Renderer
 {
   public readonly scene: Scene;
-  private readonly onHit: (hit: Hit | null) => Promise<void> | void;
+  private readonly onHit: (
+    hit: Hit | null,
+    traceableGroup: TTraceableGroup
+  ) => Promise<void> | void;
   private readonly onRowStart?: () => Promise<void> | void;
   private readonly onRowEnd?: () => Promise<void> | void;
   private readonly onRenderStart?: (
@@ -71,7 +77,7 @@ export default abstract class CommonRenderer<
         const screenPixelVector = camera.getScreenPixelVector(x, y);
         const ray = new Ray(camera.focalPoint, screenPixelVector);
         const hit = traceableGroup.getIntersection(ray);
-        await this.onHit(hit);
+        await this.onHit(hit, traceableGroup);
       }
       await this.onRowEnd?.();
     }

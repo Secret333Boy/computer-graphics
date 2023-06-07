@@ -9,16 +9,14 @@ import { Sphere } from '../lab1/structures/sphere/Sphere';
 import ReaderOBJ from '../lab3/ReaderOBJ';
 import { KDTreeBuilder } from './structures/KDTree';
 import { DumbTransformableGroup } from '../lab3/structures/transformable-groups/DumbTransformableGroup';
-import {
-  KDTraceableGroup,
-  closestKdTraceableGroupFactory,
-} from '../lab3/structures/traceable-groups/KDTraceableGroup';
+import { traceableGroupMap } from './traceableGroupMap';
 import { transformations } from '../lab3/structures/matrix/transformation-factories';
 import EnvironmentLight from './light/EnvironmentLight';
 import VertexLight from './light/VertexLight';
 
 let inputPath = '';
 let outputPath = '';
+let traceableGroupType = 'kd';
 for (let i = 0; i < process.argv.length; i++) {
   if (process.argv[i] === '--source') {
     inputPath = process.argv[i + 1];
@@ -28,6 +26,9 @@ for (let i = 0; i < process.argv.length; i++) {
     outputPath = process.argv[i + 1];
   }
 
+  if (process.argv[i] === '--traceable-group') {
+    traceableGroupType = process.argv[i + 1];
+  }
   if (process.argv[i] === '--scene') {
     inputPath = process.argv[i + 1];
   }
@@ -35,6 +36,11 @@ for (let i = 0; i < process.argv.length; i++) {
 
 if (!inputPath) throw new Error('Invalid input: no input path');
 if (!outputPath) throw new Error('Invalid input: no output path');
+if (
+  !traceableGroupType ||
+  !Object.keys(traceableGroupMap).includes(traceableGroupType)
+)
+  throw new Error('Invalid input: incorrect traceable group type');
 
 (async () => {
   const cowOBJ = `${__dirname}/cow.obj`;
@@ -172,12 +178,15 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   }
 
   const outputWriteStream = createWriteStream(outputPath);
-  const builder = new KDTreeBuilder({ maxPrimitives: 10 });
-  const renderer = new BMPRenderer(
-    scene,
-    outputWriteStream,
-    (obj) => new KDTraceableGroup(obj, builder),
-    closestKdTraceableGroupFactory
-  );
-  await renderer.render();
+  for (const traceableGroupFactory of traceableGroupMap[traceableGroupType]()) {
+    const renderer = new BMPRenderer(
+      scene,
+      outputWriteStream,
+      traceableGroupFactory
+    );
+    const start = Date.now();
+    await renderer.render();
+    const end = Date.now();
+    console.log(`Rendered in ${end - start}ms`);
+  }
 })();

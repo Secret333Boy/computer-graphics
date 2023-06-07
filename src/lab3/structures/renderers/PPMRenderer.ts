@@ -4,7 +4,6 @@ import { WriterPPM } from '../../../lab2/plugins/ppm/WriterPPM.writer';
 import ImageRenderer from './ImageRenderer';
 import {
   GenericTraceableGroup,
-  ShadowTraceableGroupFactory,
   TraceableGroupFactory,
 } from '../traceable-groups/GenericTraceableGroup';
 import { PreRenderHookable } from '../../../lab4/types/PreRenderHookable';
@@ -17,10 +16,6 @@ export default class PPMRenderer<
     writeStream: WriteStream,
     traceableGroupFactory: TraceableGroupFactory<
       TRendererGroup & PreRenderHookable
-    >,
-    shadowTraceableGroupFactory: ShadowTraceableGroupFactory<
-      GenericTraceableGroup & PreRenderHookable,
-      TRendererGroup
     >
   ) {
     const writerPPM = new WriterPPM();
@@ -29,7 +24,6 @@ export default class PPMRenderer<
       writeStream,
       imageWriter: writerPPM,
       traceableGroupFactory,
-      shadowTraceableGroupFactory,
     });
   }
 }

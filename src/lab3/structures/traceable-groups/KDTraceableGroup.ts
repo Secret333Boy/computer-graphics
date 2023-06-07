@@ -7,7 +7,6 @@ import { PreRenderHookable } from '../../../lab4/types/PreRenderHookable';
 import {
   AdditionalIntersectionParams,
   GenericTraceableGroup,
-  ShadowTraceableGroupFactory,
 } from './GenericTraceableGroup';
 
 export class KDTraceableGroup<T extends Traceable = Traceable>
@@ -71,9 +70,3 @@ export class ShadowKDTraceableGroup<
     });
   }
 }
-
-export const closestKdTraceableGroupFactory: ShadowTraceableGroupFactory<
-  GenericTraceableGroup,
-  KDTraceableGroup
-> = (objects: Traceable[], kdTraceableGroup: KDTraceableGroup<Traceable>) =>
-  new ShadowKDTraceableGroup(kdTraceableGroup);

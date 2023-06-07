@@ -1,7 +1,6 @@
 import CommonRenderer from '../lab3/structures/renderers/CommonRenderer';
 import {
   GenericTraceableGroup,
-  ShadowTraceableGroupFactory,
   TraceableGroupFactory,
 } from '../lab3/structures/traceable-groups/GenericTraceableGroup';
 import { Color } from '../lab4/types/Color';
@@ -34,31 +33,17 @@ export default class ConsoleRenderer<
     scene: Scene,
     traceableGroupFactory: TraceableGroupFactory<
       TRendererGroup & PreRenderHookable
-    >,
-    shadowTraceableGroupFactory: ShadowTraceableGroupFactory<
-      GenericTraceableGroup & PreRenderHookable
     >
   ) {
-    let shadowTraceableGroup: GenericTraceableGroup & PreRenderHookable;
     super({
       scene,
-      onHit: (hit) => {
-        this.line += this.getChar(
-          hit,
-          shadowTraceableGroup as GenericTraceableGroup
-        );
+      onHit: (hit, group) => {
+        this.line += this.getChar(hit, group);
       },
       onRowStart: () => {
         this.line = '';
       },
       onRowEnd: () => console.log(this.line),
-      onRenderStart: (baseGroup) => {
-        shadowTraceableGroup = shadowTraceableGroupFactory(
-          scene.objects,
-          baseGroup
-        );
-        shadowTraceableGroup.onPreRender?.();
-      },
       traceableGroupFactory,
     });
   }

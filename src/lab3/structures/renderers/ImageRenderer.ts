@@ -7,7 +7,6 @@ import CommonRenderer from './CommonRenderer';
 import { Color } from '../../../lab4/types/Color';
 import {
   GenericTraceableGroup,
-  ShadowTraceableGroupFactory,
   TraceableGroupFactory,
 } from '../traceable-groups/GenericTraceableGroup';
 import { PreRenderHookable } from '../../../lab4/types/PreRenderHookable';
@@ -21,10 +20,6 @@ export interface ImageRendererProps<
   traceableGroupFactory: TraceableGroupFactory<
     TRendererGroup & PreRenderHookable
   >;
-  shadowTraceableGroupFactory: ShadowTraceableGroupFactory<
-    GenericTraceableGroup & PreRenderHookable,
-    TRendererGroup
-  >;
 }
 
 export default abstract class ImageRenderer<
@@ -32,13 +27,7 @@ export default abstract class ImageRenderer<
 > extends CommonRenderer<TRendererGroup> {
   private linesRendered = 0;
   constructor(props: ImageRendererProps<TRendererGroup>) {
-    const {
-      scene,
-      writeStream,
-      imageWriter,
-      traceableGroupFactory,
-      shadowTraceableGroupFactory,
-    } = props;
+    const { scene, writeStream, imageWriter, traceableGroupFactory } = props;
 
     const pixelsStream = new PassThrough({ objectMode: true });
 
@@ -53,10 +42,9 @@ export default abstract class ImageRenderer<
 
     const stream = imageWriter.write(imageBuffer);
     stream.pipe(writeStream);
-    let shadowTraceableGroup: GenericTraceableGroup & PreRenderHookable;
     super({
       scene,
-      onHit: (hit) => {
+      onHit: (hit, traceableGroup) => {
         if (!hit) {
           pixelsStream.push({ r: 0, g: 0, b: 0 });
           return;
@@ -68,13 +56,7 @@ export default abstract class ImageRenderer<
           b: 0,
         };
         for (const light of scene.lights) {
-          if (
-            light.checkShadow(
-              hit,
-              shadowTraceableGroup as GenericTraceableGroup
-            )
-          )
-            continue;
+          if (light.checkShadow(hit, traceableGroup)) continue;
           const appliedColor = light.getAppliedColor(hit);
           colorSum.r += appliedColor.r;
           colorSum.g += appliedColor.g;
@@ -91,11 +73,6 @@ export default abstract class ImageRenderer<
       },
       onRenderStart: (baseTraceableGroup) => {
         console.log('Rendering started');
-        shadowTraceableGroup = shadowTraceableGroupFactory(
-          scene.objects,
-          baseTraceableGroup
-        );
-        shadowTraceableGroup.onPreRender?.();
         this.linesRendered = 0;
       },
       onRowEnd: () => {
