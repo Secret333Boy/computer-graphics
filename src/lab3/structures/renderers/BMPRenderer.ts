@@ -16,7 +16,7 @@ export default class BMPRenderer<
     writeStream: WriteStream,
     traceableGroupFactory: TraceableGroupFactory<
       TRendererGroup & PreRenderHookable
-    >,
+    >
   ) {
     const writerBMP = new WriterBMP();
     super({

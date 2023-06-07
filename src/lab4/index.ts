@@ -10,9 +10,7 @@ import Disk from '../lab1/structures/disk/Disk';
 import ReaderOBJ from '../lab3/ReaderOBJ';
 import { KDTreeBuilder } from './structures/KDTree';
 import { DumbTransformableGroup } from '../lab3/structures/transformable-groups/DumbTransformableGroup';
-import {
-  KDTraceableGroup,
-} from '../lab3/structures/traceable-groups/KDTraceableGroup';
+import { KDTraceableGroup } from '../lab3/structures/traceable-groups/KDTraceableGroup';
 import { traceableGroupMap } from './traceableGroupMap';
 
 let inputPath = '';
@@ -26,7 +24,7 @@ for (let i = 0; i < process.argv.length; i++) {
   if (process.argv[i] === '--output') {
     outputPath = process.argv[i + 1];
   }
-  
+
   if (process.argv[i] === '--traceable-group') {
     traceableGroupType = process.argv[i + 1];
   }
@@ -34,7 +32,11 @@ for (let i = 0; i < process.argv.length; i++) {
 
 if (!inputPath) throw new Error('Invalid input: no input path');
 if (!outputPath) throw new Error('Invalid input: no output path');
-if (!traceableGroupType || !Object.keys(traceableGroupMap).includes(traceableGroupType)) throw new Error('Invalid input: incorrect traceable group type');
+if (
+  !traceableGroupType ||
+  !Object.keys(traceableGroupMap).includes(traceableGroupType)
+)
+  throw new Error('Invalid input: incorrect traceable group type');
 
 (async () => {
   const cowOBJ = `${__dirname}/cow.obj`;
