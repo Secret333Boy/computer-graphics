@@ -2,17 +2,37 @@ import Normal3D from '../../../lab1/structures/normal/Normal';
 import Ray from '../../../lab1/structures/ray/Ray';
 import Vertex3D from '../../../lab1/structures/vertex/Vertex3D';
 import { Hit } from '../../../lab1/types/Hit';
-import { TraceableTransformable } from '../../types/Transformable';
+import { Traceable } from '../../../lab1/types/Traceable';
+import { Bounds3D } from '../../../lab4/structures/Bounds';
+import { Axis } from '../../../lab4/types/Axis';
+import { Transformable } from '../../types/Transformable';
 import { Matrix } from '../matrix/matrix';
 import { transformVertex } from '../matrix/transformation-factories';
 
-export default class Triangle implements TraceableTransformable {
+export default class Triangle implements Traceable, Transformable {
   private eps = 0.00000001;
   constructor(
     public vertex1: Vertex3D,
     public vertex2: Vertex3D,
     public vertex3: Vertex3D
   ) {}
+  public getWorldBounds(): Bounds3D {
+    const extents = {
+      [Axis.X]: {
+        min: Math.min(this.vertex1.x, this.vertex2.x, this.vertex3.x),
+        max: Math.max(this.vertex1.x, this.vertex2.x, this.vertex3.x),
+      },
+      [Axis.Y]: {
+        min: Math.min(this.vertex1.y, this.vertex2.y, this.vertex3.y),
+        max: Math.max(this.vertex1.y, this.vertex2.y, this.vertex3.y),
+      },
+      [Axis.Z]: {
+        min: Math.min(this.vertex1.z, this.vertex2.z, this.vertex3.z),
+        max: Math.max(this.vertex1.z, this.vertex2.z, this.vertex3.z),
+      },
+    };
+    return new Bounds3D(extents);
+  }
 
   public transform(matrix: Matrix): void {
     this.vertex1 = transformVertex(this.vertex1, matrix);
@@ -56,6 +76,7 @@ export default class Triangle implements TraceableTransformable {
           : possibleNormal
       ),
       object: this,
+      color: { r: 1, g: 1, b: 1 },
     };
   }
 }

@@ -4,17 +4,30 @@ import { Scene } from '../../../lab1/types/Scene';
 import { ImageBuffer } from '../../../lab2/ImageBuffer';
 import { ImageWriter } from '../../../lab2/interfaces/ImageWriter';
 import CommonRenderer from './CommonRenderer';
+import { Color } from '../../../lab4/types/Color';
+import {
+  GenericTraceableGroup,
+  TraceableGroupFactory,
+} from '../traceable-groups/GenericTraceableGroup';
+import { PreRenderHookable } from '../../../lab4/types/PreRenderHookable';
 
-export interface ImageRendererProps {
+export interface ImageRendererProps<
+  TRendererGroup extends GenericTraceableGroup
+> {
   scene: Scene;
   writeStream: WriteStream;
   imageWriter: ImageWriter;
+  traceableGroupFactory: TraceableGroupFactory<
+    TRendererGroup & PreRenderHookable
+  >;
 }
 
-export default abstract class ImageRenderer extends CommonRenderer {
+export default abstract class ImageRenderer<
+  TRendererGroup extends GenericTraceableGroup
+> extends CommonRenderer<TRendererGroup> {
   private linesRendered = 0;
-  constructor(props: ImageRendererProps) {
-    const { scene, writeStream, imageWriter } = props;
+  constructor(props: ImageRendererProps<TRendererGroup>) {
+    const { scene, writeStream, imageWriter, traceableGroupFactory } = props;
 
     const pixelsStream = new PassThrough({ objectMode: true });
 
@@ -29,24 +42,36 @@ export default abstract class ImageRenderer extends CommonRenderer {
 
     const stream = imageWriter.write(imageBuffer);
     stream.pipe(writeStream);
-
     super({
       scene,
-      onHit: (hit) => {
+      onHit: (hit, traceableGroup) => {
         if (!hit) {
           pixelsStream.push({ r: 0, g: 0, b: 0 });
           return;
         }
 
-        const dotProduct = hit.normal.vector.dotProduct(
-          this.scene.light.vector
-        );
+        const colorSum: Color = {
+          r: 0,
+          g: 0,
+          b: 0,
+        };
+        for (const light of scene.lights) {
+          if (light.checkShadow(hit, traceableGroup)) continue;
+          const appliedColor = light.getAppliedColor(hit);
+          colorSum.r += appliedColor.r;
+          colorSum.g += appliedColor.g;
+          colorSum.b += appliedColor.b;
+        }
 
-        const color = dotProduct < 0 ? 0 : Math.round(dotProduct * 255);
+        hit.color = colorSum;
 
-        pixelsStream.push({ r: color, g: color, b: color });
+        pixelsStream.push({
+          r: hit.color.r > 1 ? 255 : Math.round(hit.color.r * 255),
+          g: hit.color.g > 1 ? 255 : Math.round(hit.color.g * 255),
+          b: hit.color.b > 1 ? 255 : Math.round(hit.color.b * 255),
+        });
       },
-      onRenderStart: () => {
+      onRenderStart: (baseTraceableGroup) => {
         console.log('Rendering started');
         this.linesRendered = 0;
       },
@@ -59,6 +84,7 @@ export default abstract class ImageRenderer extends CommonRenderer {
       onRenderEnd: () => {
         pixelsStream.end();
       },
+      traceableGroupFactory,
     });
   }
 }

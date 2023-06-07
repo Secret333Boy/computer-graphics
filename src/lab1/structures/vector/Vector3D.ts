@@ -1,10 +1,23 @@
 import { Transformable } from '../../../lab3/types/Transformable';
+import { Axis } from '../../../lab4/types/Axis';
 import Vertex3D from '../vertex/Vertex3D';
 
 export default class Vector3D {
   public x: number;
   public y: number;
   public z: number;
+
+  public get [Axis.X](): number {
+    return this.x;
+  }
+
+  public get [Axis.Y](): number {
+    return this.y;
+  }
+
+  public get [Axis.Z](): number {
+    return this.z;
+  }
 
   constructor(x: number, y: number, z: number) {
     this.x = x;

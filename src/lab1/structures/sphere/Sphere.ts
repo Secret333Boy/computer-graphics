@@ -2,14 +2,19 @@ import Vertex3D from '../vertex/Vertex3D';
 import Ray from '../ray/Ray';
 import Normal3D from '../normal/Normal';
 import { Hit } from '../../types/Hit';
-import { TraceableTransformable } from '../../../lab3/types/Transformable';
 import { Matrix } from '../../../lab3/structures/matrix/matrix';
 import {
   transformScalar,
   transformVertex,
 } from '../../../lab3/structures/matrix/transformation-factories';
+import { Boundable } from '../../../lab4/types/Boundable';
+import Vector3D from '../vector/Vector3D';
+import { Bounds3D } from '../../../lab4/structures/Bounds';
+import { Axis } from '../../../lab4/types/Axis';
+import { Traceable } from '../../types/Traceable';
+import { Transformable } from '../../../lab3/types/Transformable';
 
-export class Sphere implements TraceableTransformable {
+export class Sphere implements Traceable, Transformable, Boundable {
   public center: Vertex3D;
   public radius: number;
 
@@ -21,6 +26,30 @@ export class Sphere implements TraceableTransformable {
   public transform(matrix: Matrix): void {
     this.center = transformVertex(this.center, matrix);
     this.radius = transformScalar(this.radius, matrix);
+  }
+
+  public getWorldBounds(): Bounds3D {
+    const min = this.center
+      .toVector()
+      .subtract(new Vector3D(this.radius, this.radius, this.radius));
+    const max = this.center
+      .toVector()
+      .add(new Vector3D(this.radius, this.radius, this.radius));
+
+    return new Bounds3D({
+      [Axis.X]: {
+        min: min.x,
+        max: max.x,
+      },
+      [Axis.Y]: {
+        min: min.y,
+        max: max.y,
+      },
+      [Axis.Z]: {
+        min: min.z,
+        max: max.z,
+      },
+    });
   }
 
   public getIntersection(ray: Ray): Hit | null {
@@ -50,6 +79,7 @@ export class Sphere implements TraceableTransformable {
       vertex: pHit.toVertex3D(),
       t,
       object: this,
+      color: { r: 1, g: 1, b: 1 },
     };
   }
 }

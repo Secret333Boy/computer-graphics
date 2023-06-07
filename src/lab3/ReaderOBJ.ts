@@ -3,9 +3,11 @@ import Mesh from './structures/mesh/Mesh';
 import readline from 'readline';
 import Vertex3D from '../lab1/structures/vertex/Vertex3D';
 import Triangle from './structures/triangle/Triangle';
+import { TransformableGroupFactory } from './structures/transformable-groups/GenericTransformableGroup';
 
 export default class ReaderOBJ {
-  public static async readStream(stream: ReadStream): Promise<Mesh> {
+  constructor(private transformableGroupFactory: TransformableGroupFactory) {}
+  public async readStream(stream: ReadStream): Promise<Mesh> {
     const lines = readline.createInterface({
       input: stream,
       crlfDelay: Infinity,
@@ -40,6 +42,6 @@ export default class ReaderOBJ {
 
     lines.close();
 
-    return new Mesh(triangles);
+    return new Mesh(triangles, this.transformableGroupFactory);
   }
 }

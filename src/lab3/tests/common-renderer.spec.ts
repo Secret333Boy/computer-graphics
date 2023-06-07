@@ -9,32 +9,42 @@ import PPMRenderer from '../structures/renderers/PPMRenderer';
 import { Traceable } from '../../lab1/types/Traceable';
 import { Hit } from '../../lab1/types/Hit';
 import Normal3D from '../../lab1/structures/normal/Normal';
+import { DumbTraceableGroup } from '../structures/traceable-groups/DumbTraceableGroup';
+import { DumbTransformableGroup } from '../structures/transformable-groups/DumbTransformableGroup';
 
 describe('Common Renderer', () => {
-  const scene: Scene = new Scene(
-    [
+  const scene: Scene = new Scene({
+    objects: [
       new Sphere(new Vertex3D(0, 0, 5), 1),
       new Sphere(new Vertex3D(100, 0, 5), 2),
     ],
-    new Camera(
+    camera: new Camera(
       new Vertex3D(0, 0, 0),
       new Vector3D(0, 0, 1),
       Math.PI / 3,
       50,
       50
     ),
-    new DirectionalLight(new Vector3D(0, 0, 1))
-  );
+    light: new DirectionalLight(new Vector3D(0, 0, 1)),
+    transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
+  });
   const outputPath = './test1.ppm';
   const outputWriteStream = createWriteStream(outputPath);
 
-  const renderer = new PPMRenderer(scene, outputWriteStream);
+  const renderer = new PPMRenderer(
+    scene,
+    outputWriteStream,
+    (obj) => new DumbTraceableGroup(obj)
+  );
 
   describe('Check Shadow', () => {
     it('closest hit is null', () => {
       //Arrange
       //Act
-      const result = renderer.checkShadow(null);
+      const result = renderer.checkShadow(
+        null,
+        new DumbTraceableGroup(scene.objects)
+      );
       //Assert
       expect(result).toBe(false);
     });
@@ -48,7 +58,10 @@ describe('Common Renderer', () => {
         object: {} as Traceable,
       };
       //Act
-      const result = renderer.checkShadow(hit);
+      const result = renderer.checkShadow(
+        hit,
+        new DumbTraceableGroup(scene.objects)
+      );
       //Assert
       expect(result).toBe(false);
     });
