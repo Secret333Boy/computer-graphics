@@ -82,8 +82,8 @@ if (
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    1000,
-    1000
+    1920,
+    1080
   );
 
   const directionalLight = new DirectionalLight(
@@ -104,9 +104,10 @@ if (
     1
   );
 
-  const greenEnvironmentalLight = new EnvironmentLight(
-    { r: 0.498, g: 1, b: 0 },
-    0.5
+  const environmentalLight = new EnvironmentLight(
+    { r: 1, g: 1, b: 1 },
+    0.5,
+    2000
   );
 
   const lampLight = new VertexLight(
@@ -130,11 +131,13 @@ if (
   );
 
   let scene;
-  if (inputPath === 'cow.obj') {
+  if (inputPath.endsWith('.obj')) {
+    const meshReadStream = createReadStream(`${__dirname}/${inputPath}`);
+    const mesh = await readerObj.readStream(meshReadStream);
     scene = new Scene({
-      objects: cowMesh.primitives,
+      objects: mesh.primitives,
       camera,
-      lights: [directionalLight],
+      lights: [directionalLight, environmentalLight],
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
   } else if (inputPath === 'cow-scene') {
@@ -147,7 +150,7 @@ if (
         ...grassMesh.primitives,
       ],
       camera,
-      lights: [pinkDirectionalLight],
+      lights: [pinkDirectionalLight, environmentalLight],
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
   } else if (inputPath === 'spheres') {
@@ -157,7 +160,7 @@ if (
     scene = new Scene({
       objects: [sphere1, sphere2, sphere3, ...rhinoMesh.primitives],
       camera,
-      lights: [directionalLight, greenEnvironmentalLight],
+      lights: [directionalLight, environmentalLight],
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
   } else if (inputPath === 'night_with_larten') {
@@ -170,7 +173,7 @@ if (
         moon,
       ],
       camera,
-      lights: [lightDirectionalLight, moonLight],
+      lights: [lightDirectionalLight, moonLight, environmentalLight],
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
   } else {
