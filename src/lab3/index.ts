@@ -20,6 +20,7 @@ import {
 import { KDTreeBuilder } from '../lab4/structures/KDTree';
 import EnvironmentLight from '../lab4/light/EnvironmentLight';
 import VertexLight from '../lab4/light/VertexLight';
+import { DumbTraceableGroup } from './structures/traceable-groups/DumbTraceableGroup';
 
 let objFilePath = '';
 let outputPath = '';
@@ -46,9 +47,9 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     // max primitives in a leaf
     maxPrimitives: 10,
   });
-  const traceableGroupFactory: TraceableGroupFactory<KDTraceableGroup> = (
+  const traceableGroupFactory: TraceableGroupFactory<DumbTraceableGroup> = (
     objects
-  ) => new KDTraceableGroup(objects, kdTreeBuilder);
+  ) => new DumbTraceableGroup(objects);
   const transformableGroupFactory: TransformableGroupFactory = (objects) =>
     new DumbTransformableGroup(objects);
   const inputReadStream = createReadStream(objFilePath);
