@@ -10,14 +10,12 @@ import Disk from '../lab1/structures/disk/Disk';
 import { transformations } from './structures/matrix/transformation-factories';
 import BMPRenderer from './structures/renderers/BMPRenderer';
 import {
-  ShadowTraceableGroupFactory,
   TraceableGroupFactory,
 } from './structures/traceable-groups/GenericTraceableGroup';
 import { TransformableGroupFactory } from './structures/transformable-groups/GenericTransformableGroup';
 import { DumbTransformableGroup } from './structures/transformable-groups/DumbTransformableGroup';
 import {
   KDTraceableGroup,
-  closestKdTraceableGroupFactory,
 } from './structures/traceable-groups/KDTraceableGroup';
 import { KDTreeBuilder } from '../lab4/structures/KDTree';
 import EnvironmentLight from '../lab4/light/EnvironmentLight';
@@ -119,8 +117,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const renderer = new BMPRenderer(
     scene,
     outputWriteStream,
-    traceableGroupFactory,
-    closestKdTraceableGroupFactory
+    traceableGroupFactory
   );
   // transforms relative to the camera
   // await ppmRenderer.render();
