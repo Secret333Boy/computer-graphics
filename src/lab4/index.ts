@@ -7,11 +7,16 @@ import Camera from '../lab1/structures/camera/Camera';
 import Vertex3D from '../lab1/structures/vertex/Vertex3D';
 import { Sphere } from '../lab1/structures/sphere/Sphere';
 import Disk from '../lab1/structures/disk/Disk';
-import { transformations } from '../lab3/structures/matrix/transformation-factories';
 import ReaderOBJ from '../lab3/ReaderOBJ';
-import { DumbTransformableGroup } from '../lab3/structures/transformable-groups/DumbTransformableGroup';
-import { KDTraceableGroup } from '../lab3/structures/traceable-groups/KDTraceableGroup';
 import { KDTreeBuilder } from './structures/KDTree';
+import { DumbTransformableGroup } from '../lab3/structures/transformable-groups/DumbTransformableGroup';
+import {
+  KDTraceableGroup,
+  closestKdTraceableGroupFactory,
+} from '../lab3/structures/traceable-groups/KDTraceableGroup';
+import { transformations } from '../lab3/structures/matrix/transformation-factories';
+import EnvironmentLight from './light/EnvironmentLight';
+import VertexLight from './light/VertexLight';
 
 let inputPath = '';
 let outputPath = '';
@@ -33,10 +38,10 @@ if (!inputPath) throw new Error('Invalid input: no input path');
 if (!outputPath) throw new Error('Invalid input: no output path');
 
 (async () => {
-  const cowOBJ = './src/lab4/cow.obj';
-  const treeOBJ = './src/lab4/tree3.obj';
-  const grassOBJ = './src/lab4/grass.obj';
-  const lartenOBJ = './src/lab4/larten.obj';
+  const cowOBJ = `${__dirname}/cow.obj`;
+  const treeOBJ = `${__dirname}/Tree1.obj`;
+  const grassOBJ = `${__dirname}/grass.obj`;
+  const lartenOBJ = `${__dirname}/larten.obj`;
   const cowReadStream = createReadStream(cowOBJ);
   const treeReadStream = createReadStream(treeOBJ);
   const grassReadStream = createReadStream(grassOBJ);
@@ -47,10 +52,11 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const grassMesh = await readerObj.readStream(grassReadStream);
   const lartenMesh = await readerObj.readStream(lartenReadStream);
 
-  treeMesh.transform(transformations.scale3d(80, 80, 80));
-  treeMesh.transform(transformations.translate3d(600, -900, 0));
+  treeMesh.transform(transformations.scale3d(120, 120, 120));
+  treeMesh.transform(transformations.translate3d(600, 0, -1100));
+  treeMesh.transform(transformations.rotate3dX(2));
 
-  cowMesh.transform(transformations.translate3d(-400, -1000, 0));
+  cowMesh.transform(transformations.translate3d(-750, -1000, 300));
 
   grassMesh.transform(transformations.scale3d(400, 400, 400));
   grassMesh.transform(transformations.translate3d(-600, -1000, -400));
@@ -68,15 +74,55 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     600
   );
 
-  const directionalLight = new DirectionalLight(new Vector3D(-0.25, -1, 1));
-  const directionalLightUp = new DirectionalLight(new Vector3D(-1, -1, 1));
+  const directionalLight = new DirectionalLight(
+    new Vector3D(-1, -1, 1),
+    { r: 1, g: 1, b: 1 },
+    1
+  );
+
+  const lightDirectionalLight = new DirectionalLight(
+    new Vector3D(-1, -1, 1),
+    { r: 1, g: 1, b: 1 },
+    0.1
+  );
+
+  const pinkDirectionalLight = new DirectionalLight(
+    new Vector3D(-1, -1, 1),
+    { r: 1, g: 0.588252941, b: 0.7058823529 },
+    1
+  );
+
+  const greenEnvironmentalLight = new EnvironmentLight(
+    { r: 0.498, g: 1, b: 0 },
+    0.5
+  );
+
+  const lampLight = new VertexLight(
+    new Vertex3D(400, 340, -950),
+    {
+      r: 0.9411764706,
+      g: 0.9019607843,
+      b: 0.5490196078,
+    },
+    1000
+  );
+
+  const moonLight = new VertexLight(
+    new Vertex3D(-900, 1500, 1900),
+    {
+      r: 0.9411764706,
+      g: 0.9019607843,
+      b: 0.5490196078,
+    },
+    1000
+  );
 
   let scene;
   if (inputPath === 'cow.obj') {
     scene = new Scene({
       objects: cowMesh.primitives,
       camera,
-      light: directionalLight,
+      lights: [directionalLight],
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
   } else if (inputPath === 'cow-scene') {
@@ -89,7 +135,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
         ...grassMesh.primitives,
       ],
       camera,
-      light: directionalLight,
+      lights: [pinkDirectionalLight],
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
   } else if (inputPath === 'spheres') {
@@ -99,7 +145,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     scene = new Scene({
       objects: [sphere1, sphere2, sphere3],
       camera,
-      light: directionalLightUp,
+      lights: [directionalLight, greenEnvironmentalLight],
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
   } else if (inputPath === 'night_with_larten') {
@@ -112,7 +158,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
         moon,
       ],
       camera,
-      light: directionalLightUp,
+      lights: [lightDirectionalLight, moonLight],
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
     });
   } else {
@@ -124,7 +170,8 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   const renderer = new BMPRenderer(
     scene,
     outputWriteStream,
-    (obj) => new KDTraceableGroup(obj, builder)
+    (obj) => new KDTraceableGroup(obj, builder),
+    closestKdTraceableGroupFactory
   );
   await renderer.render();
 })();

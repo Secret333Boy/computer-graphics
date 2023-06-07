@@ -8,6 +8,7 @@ import { DumbTraceableGroup } from '../../lab3/structures/traceable-groups/DumbT
 import { Axis } from '../types/Axis';
 import { Boundable } from '../types/Boundable';
 import { Bounds3D, unionAllBounds3D, unionBounds3D } from './Bounds';
+import { AdditionalIntersectionParams } from '../../lab3/structures/traceable-groups/GenericTraceableGroup';
 
 export interface IKDTreeBuilder<T extends Traceable & Boundable> {
   build(params: KDTreeInitParams<T>): KDNode;
@@ -322,7 +323,10 @@ class BoundEdge<T extends Traceable & Boundable> {
   ) {}
 }
 
-export type KDNode = Traceable;
+export type KDNode = {
+  getIntersection(ray: Ray, options?: AdditionalIntersectionParams): Hit | null;
+  getWorldBounds(): Bounds3D;
+};
 
 export class KDLeaf<T extends Traceable> implements KDNode {
   private readonly traceableGroup: DumbTraceableGroup<T>;
@@ -336,8 +340,15 @@ export class KDLeaf<T extends Traceable> implements KDNode {
     return this.bounds;
   }
 
-  public getIntersection(ray: Ray): Hit | null {
-    return this.traceableGroup.getIntersection(ray);
+  public getIntersection(
+    ray: Ray,
+    options?: AdditionalIntersectionParams<T>
+  ): Hit | null {
+    options = {
+      lookForClosest: true,
+      ...options,
+    };
+    return this.traceableGroup.getIntersection(ray, options);
   }
 
   public get count(): number {
@@ -374,7 +385,14 @@ export class KDInternal implements KDNode {
     return this.bounds;
   }
 
-  public getIntersection(ray: Ray): Hit | null {
+  public getIntersection(
+    ray: Ray,
+    options: AdditionalIntersectionParams
+  ): Hit | null {
+    options = {
+      lookForClosest: true,
+      ...options,
+    };
     // intersection with the *bounds* of current node, initially self
     const intersection = this.bounds.pierceWith(ray);
     if (intersection === null) {
@@ -411,7 +429,11 @@ export class KDInternal implements KDNode {
       // to avoid using recursion, we have to be able to determine the type of kd node, at least for other nodes;
       // otherwise, we'll get a ton of props that can be null of KDNode
       if (node instanceof KDLeaf) {
-        const intersection = node.getIntersection(ray);
+        // hit!
+        const intersection = node.getIntersection(ray, options);
+        if (intersection !== null && !options.lookForClosest) {
+          return intersection;
+        }
         if (intersection !== null && intersection.t < rayTMax) {
           rayTMax = intersection.t;
           result = intersection;

@@ -4,7 +4,11 @@ import { Traceable } from '../../../lab1/types/Traceable';
 import { Bounds3D } from '../../../lab4/structures/Bounds';
 import { IKDTreeBuilder, KDNode } from '../../../lab4/structures/KDTree';
 import { PreRenderHookable } from '../../../lab4/types/PreRenderHookable';
-import { GenericTraceableGroup } from './GenericTraceableGroup';
+import {
+  AdditionalIntersectionParams,
+  GenericTraceableGroup,
+  ShadowTraceableGroupFactory,
+} from './GenericTraceableGroup';
 
 export class KDTraceableGroup<T extends Traceable = Traceable>
   extends GenericTraceableGroup<T>
@@ -34,8 +38,42 @@ export class KDTraceableGroup<T extends Traceable = Traceable>
     }
   }
 
-  public getIntersection(ray: Ray): Hit | null {
+  public getIntersection(
+    ray: Ray,
+    options?: AdditionalIntersectionParams<T>
+  ): Hit | null {
     if (!this.root) throw new Error('KDTree not built');
-    return this.root.getIntersection(ray);
+    return this.root.getIntersection(ray, {
+      lookForClosest: true,
+      ...options,
+    });
   }
 }
+
+export class ShadowKDTraceableGroup<
+  T extends Traceable = Traceable
+> extends GenericTraceableGroup<T> {
+  constructor(private baseGroup: KDTraceableGroup<T>) {
+    super(baseGroup.getTraceableObjects());
+  }
+
+  public getWorldBounds(): Bounds3D {
+    return this.baseGroup.getWorldBounds();
+  }
+
+  public getIntersection(
+    ray: Ray,
+    options: AdditionalIntersectionParams<T>
+  ): Hit | null {
+    return this.baseGroup.getIntersection(ray, {
+      lookForClosest: false,
+      ...options,
+    });
+  }
+}
+
+export const closestKdTraceableGroupFactory: ShadowTraceableGroupFactory<
+  GenericTraceableGroup,
+  KDTraceableGroup
+> = (objects: Traceable[], kdTraceableGroup: KDTraceableGroup<Traceable>) =>
+  new ShadowKDTraceableGroup(kdTraceableGroup);

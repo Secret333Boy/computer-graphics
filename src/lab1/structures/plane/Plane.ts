@@ -68,6 +68,7 @@ export default class Plane implements Traceable, Transformable, Boundable {
       vertex: pHit,
       t,
       object: this,
+      color: { r: 1, g: 1, b: 1 },
     };
   }
 }

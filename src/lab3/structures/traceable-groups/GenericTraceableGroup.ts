@@ -3,12 +3,18 @@ import { Hit } from '../../../lab1/types/Hit';
 import { Traceable } from '../../../lab1/types/Traceable';
 import { Bounds3D } from '../../../lab4/structures/Bounds';
 
-export abstract class GenericTraceableGroup<T extends Traceable = Traceable>
-  implements Traceable
-{
+export type AdditionalIntersectionParams<T extends Traceable = Traceable> = {
+  avoidPrimitives?: T[];
+  lookForClosest?: boolean;
+};
+
+export abstract class GenericTraceableGroup<T extends Traceable = Traceable> {
   constructor(protected traceableObjects: T[] = []) {}
 
-  public abstract getIntersection(ray: Ray): Hit | null;
+  public abstract getIntersection(
+    ray: Ray,
+    options?: AdditionalIntersectionParams<T>
+  ): Hit | null;
   public abstract getWorldBounds(): Bounds3D;
   public getTraceableObjects(): T[] {
     return this.traceableObjects;
@@ -18,3 +24,8 @@ export abstract class GenericTraceableGroup<T extends Traceable = Traceable>
 export type TraceableGroupFactory<
   TFactory extends GenericTraceableGroup = GenericTraceableGroup
 > = (traceableObjects: Traceable[]) => TFactory;
+
+export type ShadowTraceableGroupFactory<
+  TFactory extends GenericTraceableGroup = GenericTraceableGroup,
+  TBaseGroup extends GenericTraceableGroup = GenericTraceableGroup
+> = (traceableObjects: Traceable[], baseTraceableGroup: TBaseGroup) => TFactory;
