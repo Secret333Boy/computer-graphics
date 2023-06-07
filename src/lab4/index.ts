@@ -6,7 +6,6 @@ import { Scene } from '../lab1/types/Scene';
 import Camera from '../lab1/structures/camera/Camera';
 import Vertex3D from '../lab1/structures/vertex/Vertex3D';
 import { Sphere } from '../lab1/structures/sphere/Sphere';
-import Disk from '../lab1/structures/disk/Disk';
 import ReaderOBJ from '../lab3/ReaderOBJ';
 import { KDTreeBuilder } from './structures/KDTree';
 import { DumbTransformableGroup } from '../lab3/structures/transformable-groups/DumbTransformableGroup';
@@ -40,16 +39,19 @@ if (!outputPath) throw new Error('Invalid input: no output path');
 (async () => {
   const cowOBJ = `${__dirname}/cow.obj`;
   const treeOBJ = `${__dirname}/Tree1.obj`;
+  const rhinoOBJ = `${__dirname}/dragon1.obj`;
   const grassOBJ = `${__dirname}/grass.obj`;
   const lartenOBJ = `${__dirname}/larten.obj`;
   const cowReadStream = createReadStream(cowOBJ);
   const treeReadStream = createReadStream(treeOBJ);
   const grassReadStream = createReadStream(grassOBJ);
+  const rhinoReadStream = createReadStream(rhinoOBJ);
   const lartenReadStream = createReadStream(lartenOBJ);
   const readerObj = new ReaderOBJ((obj) => new DumbTransformableGroup(obj));
   const cowMesh = await readerObj.readStream(cowReadStream);
   const treeMesh = await readerObj.readStream(treeReadStream);
   const grassMesh = await readerObj.readStream(grassReadStream);
+  const rhinoMesh = await readerObj.readStream(rhinoReadStream);
   const lartenMesh = await readerObj.readStream(lartenReadStream);
 
   treeMesh.transform(transformations.scale3d(120, 120, 120));
@@ -63,6 +65,10 @@ if (!outputPath) throw new Error('Invalid input: no output path');
 
   lartenMesh.transform(transformations.scale3d(250, 250, 250));
   lartenMesh.transform(transformations.translate3d(400, -500, -900));
+
+  rhinoMesh.transform(transformations.scale3d(100, 100, 100));
+  rhinoMesh.transform(transformations.rotate3dY(1.55));
+  rhinoMesh.transform(transformations.rotate3dX(-0.3));
   console.log('Mesh loaded');
   const camera = new Camera(
     // use for relative to (0, 0, 0)
@@ -70,8 +76,8 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     new Vertex3D(0, 0, -2000),
     new Vector3D(0, 0, 1),
     Math.PI / 3,
-    600,
-    600
+    1000,
+    1000
   );
 
   const directionalLight = new DirectionalLight(
@@ -108,7 +114,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
   );
 
   const moonLight = new VertexLight(
-    new Vertex3D(-900, 1500, 1900),
+    new Vertex3D(-900, 1500, 1800),
     {
       r: 0.9411764706,
       g: 0.9019607843,
@@ -143,7 +149,7 @@ if (!outputPath) throw new Error('Invalid input: no output path');
     const sphere2 = new Sphere(new Vertex3D(-300, 1100, 1000), 500);
     const sphere3 = new Sphere(new Vertex3D(0, 200, 8000), 1500);
     scene = new Scene({
-      objects: [sphere1, sphere2, sphere3],
+      objects: [sphere1, sphere2, sphere3, ...rhinoMesh.primitives],
       camera,
       lights: [directionalLight, greenEnvironmentalLight],
       transformableGroupFactory: (obj) => new DumbTransformableGroup(obj),
